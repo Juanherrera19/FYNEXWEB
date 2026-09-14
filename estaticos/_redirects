@@ -1,0 +1,57 @@
+# Puente temporal hacia Debts Goodbye
+#
+# La version de la app publicada en Play Store llama a la API en www.fynexhq.com, que
+# ahora sirve este sitio. Sin estas reglas, cada peticion de la app recibe un 404 y la
+# aplicacion instalada queda inutilizable.
+#
+# Se usa 308 y no 301: el 301 permite al cliente convertir un POST en GET, lo que
+# rompería el login y cualquier alta. El 308 obliga a conservar metodo y cuerpo.
+#
+# CUANDO QUITAR ESTO
+# Cuando la version nueva de la app (que ya apunta a dgb.fynexhq.com) lleve suficiente
+# tiempo publicada como para que casi nadie use una anterior. Revisar los accesos a
+# estas rutas antes de retirarlas.
+
+/auth/*            https://dgb.fynexhq.com/auth/:splat            308
+/ingreso/*         https://dgb.fynexhq.com/ingreso/:splat         308
+/ingresos/*        https://dgb.fynexhq.com/ingresos/:splat        308
+/ingresos          https://dgb.fynexhq.com/ingresos               308
+/gasto/*           https://dgb.fynexhq.com/gasto/:splat           308
+/gastos/*          https://dgb.fynexhq.com/gastos/:splat          308
+/gastos            https://dgb.fynexhq.com/gastos                 308
+/deuda/*           https://dgb.fynexhq.com/deuda/:splat           308
+/deudas/*          https://dgb.fynexhq.com/deudas/:splat          308
+/deudas            https://dgb.fynexhq.com/deudas                 308
+/banco/*           https://dgb.fynexhq.com/banco/:splat           308
+/bancos            https://dgb.fynexhq.com/bancos                 308
+/tarjeta/*         https://dgb.fynexhq.com/tarjeta/:splat         308
+/tarjetas/*        https://dgb.fynexhq.com/tarjetas/:splat        308
+/tarjetas          https://dgb.fynexhq.com/tarjetas               308
+/movimiento/*      https://dgb.fynexhq.com/movimiento/:splat      308
+/movimientos/*     https://dgb.fynexhq.com/movimientos/:splat     308
+/movimiento_tc/*   https://dgb.fynexhq.com/movimiento_tc/:splat   308
+/movimientos_tc/*  https://dgb.fynexhq.com/movimientos_tc/:splat  308
+/movimiento        https://dgb.fynexhq.com/movimiento            308
+/movimiento_tc     https://dgb.fynexhq.com/movimiento_tc         308
+/presupuesto/*     https://dgb.fynexhq.com/presupuesto/:splat     308
+/presupuestos/*    https://dgb.fynexhq.com/presupuestos/:splat    308
+/presupuestos      https://dgb.fynexhq.com/presupuestos           308
+/viajes/*          https://dgb.fynexhq.com/viajes/:splat          308
+/pqrs/*            https://dgb.fynexhq.com/pqrs/:splat            308
+/asesor/*          https://dgb.fynexhq.com/asesor/:splat          308
+/tipo_deuda        https://dgb.fynexhq.com/tipo_deuda             308
+/tipos_deuda       https://dgb.fynexhq.com/tipos_deuda            308
+
+# Paginas de la app a las que la gente pueda tener enlaces guardados.
+/login             https://dgb.fynexhq.com/login                  301
+/register          https://dgb.fynexhq.com/register               301
+/dashboard         https://dgb.fynexhq.com/dashboard              301
+/main              https://dgb.fynexhq.com/main                   301
+/privacy-policy    https://dgb.fynexhq.com/privacy-policy         301
+/mobile/*          https://dgb.fynexhq.com/mobile/:splat          301
+
+# assetlinks.json NO se redirige a proposito. La verificacion de App Links de Android
+# no sigue redirecciones, asi que un 301 aqui no serviria de nada; y el estado 200
+# (rewrite) de Cloudflare Pages solo funciona dentro del mismo sitio, no hacia otro
+# dominio. Si en algun momento se necesitan App Links sobre fynexhq.com, hay que
+# servir el archivo desde este mismo sitio con los datos del paquete.
