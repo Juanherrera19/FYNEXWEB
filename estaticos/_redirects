@@ -14,17 +14,22 @@
 
 /auth/*            https://dgb.fynexhq.com/auth/:splat            308
 /ingreso/*         https://dgb.fynexhq.com/ingreso/:splat         308
+/ingreso           https://dgb.fynexhq.com/ingreso               308
 /ingresos/*        https://dgb.fynexhq.com/ingresos/:splat        308
 /ingresos          https://dgb.fynexhq.com/ingresos               308
 /gasto/*           https://dgb.fynexhq.com/gasto/:splat           308
+/gasto             https://dgb.fynexhq.com/gasto                 308
 /gastos/*          https://dgb.fynexhq.com/gastos/:splat          308
 /gastos            https://dgb.fynexhq.com/gastos                 308
 /deuda/*           https://dgb.fynexhq.com/deuda/:splat           308
+/deuda             https://dgb.fynexhq.com/deuda                 308
 /deudas/*          https://dgb.fynexhq.com/deudas/:splat          308
 /deudas            https://dgb.fynexhq.com/deudas                 308
 /banco/*           https://dgb.fynexhq.com/banco/:splat           308
+/banco             https://dgb.fynexhq.com/banco                 308
 /bancos            https://dgb.fynexhq.com/bancos                 308
 /tarjeta/*         https://dgb.fynexhq.com/tarjeta/:splat         308
+/tarjeta           https://dgb.fynexhq.com/tarjeta               308
 /tarjetas/*        https://dgb.fynexhq.com/tarjetas/:splat        308
 /tarjetas          https://dgb.fynexhq.com/tarjetas               308
 /movimiento/*      https://dgb.fynexhq.com/movimiento/:splat      308

@@ -84,6 +84,21 @@ El sitio son archivos estáticos, así que sirve cualquier hosting. Configuraci�
 Conecta el repositorio y usa esos dos valores. El despliegue se dispara solo con cada
 push. Ambos sirven `404.html` automáticamente para rutas inexistentes.
 
+> **Tiene que ser un despliegue con build, no una subida manual de `dist/`.**
+> `dist/` no se versiona, así que si el proyecto se creó subiendo la carpeta a mano,
+> los cambios en `estaticos/_redirects` no llegan nunca y el puente de la API queda
+> fuera. Para comprobar que está vivo:
+>
+> ```bash
+> curl -s -o /dev/null -w "%{http_code} %{redirect_url}
+" \
+>   -X POST https://www.fynexhq.com/auth/login
+> ```
+>
+> Tiene que responder `308 https://dgb.fynexhq.com/auth/login`. Si responde `404`,
+> el `_redirects` no está desplegado y **todas las versiones de la app instaladas
+> desde Play Store están sin servicio**, porque llaman a la API en este dominio.
+
 ### GitHub Pages
 
 Necesita una acción que ejecute el build y publique `dist/`, porque `dist/` no se
