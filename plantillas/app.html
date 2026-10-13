@@ -150,7 +150,7 @@ document.getElementById('anio').textContent = new Date().getFullYear();
         entradas.forEach(function (e) {
             if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
         });
-    }, { threshold: 0.1, rootMargin: '0px 0px -30px' });
+    }, { threshold: 0.05, rootMargin: '0px 0px -10px' });
     elementos.forEach(function (el) { obs.observe(el); });
 })();
 

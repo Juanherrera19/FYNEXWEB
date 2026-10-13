@@ -203,7 +203,7 @@ document.getElementById('anio').textContent = new Date().getFullYear();
                 obs.unobserve(entrada.target);
             }
         });
-    }, { threshold: 0.1, rootMargin: '0px 0px -30px' });
+    }, { threshold: 0.05, rootMargin: '0px 0px -10px' });
     elementos.forEach(function (el) { obs.observe(el); });
 })();
 
@@ -225,6 +225,7 @@ document.getElementById('anio').textContent = new Date().getFullYear();
 (function () {
     var btns = document.querySelectorAll('.fx-filtro-btn');
     var cards = document.querySelectorAll('#catalogoGrid .fx-card');
+    var catalogoGrid = document.getElementById('catalogoGrid');
     if (!btns.length || !cards.length) return;
 
     btns.forEach(function (btn) {
@@ -242,6 +243,9 @@ document.getElementById('anio').textContent = new Date().getFullYear();
                     card.style.display = 'none';
                 }
             });
+            if (catalogoGrid) {
+                catalogoGrid.scrollTo({ left: 0, behavior: 'smooth' });
+            }
         });
     });
 })();

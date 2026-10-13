@@ -125,9 +125,10 @@ button { font-family: inherit; }
     object-fit: contain;
     filter: drop-shadow(0 0 12px rgba(255, 122, 24, 0.45));
     transition: filter 0.3s ease, transform 0.3s ease;
+    animation: fxHaloGlow 4s infinite ease-in-out;
 }
 .fx-marca:hover .fx-marca-ave {
-    filter: drop-shadow(0 0 18px rgba(255, 198, 50, 0.65));
+    filter: drop-shadow(0 0 18px rgba(255, 198, 50, 0.7));
     transform: rotate(4deg) scale(1.05);
 }
 .fx-nav {
@@ -227,10 +228,6 @@ button { font-family: inherit; }
     box-shadow: 0 0 8px #ff7a18;
     animation: fxPulso 2s infinite ease-in-out;
 }
-@keyframes fxPulso {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(0.8); }
-}
 
 .fx-hero h1 {
     font-size: clamp(2.3rem, 6vw, 4.3rem);
@@ -300,13 +297,14 @@ button { font-family: inherit; }
     transform: translateY(-2px);
 }
 .fx-btn:active {
-    transform: translateY(0) scale(0.98);
+    transform: translateY(0) scale(0.96);
+    filter: brightness(1.1);
 }
 
 .fx-btn-primario {
     background: var(--fx-gradiente-fuego);
     color: #160a02;
-    box-shadow: 0 8px 26px rgba(255, 122, 24, 0.32);
+    box-shadow: 0 8px 28px rgba(255, 122, 24, 0.32);
 }
 .fx-btn-primario:hover {
     box-shadow: 0 12px 34px rgba(255, 122, 24, 0.48);
@@ -326,7 +324,7 @@ button { font-family: inherit; }
 .fx-btn-app {
     background: linear-gradient(135deg, var(--app-color) 0%, #15939f 100%);
     color: #ffffff;
-    box-shadow: 0 8px 26px var(--app-glow);
+    box-shadow: 0 8px 28px var(--app-glow);
 }
 .fx-btn-app:hover {
     box-shadow: 0 12px 34px rgba(30, 120, 129, 0.55);
@@ -487,12 +485,16 @@ button { font-family: inherit; }
     display: inline-block;
     transition: transform 0.3s ease;
     max-width: 100%;
+    animation: fxLevitacion 4.5s ease-in-out infinite alternate;
 }
 .fx-destacada-mockup-wrap:hover {
     transform: translateY(-5px) rotate(1deg);
 }
 .fx-destacada-visual img.fx-app-preview {
     width: 250px;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
     border-radius: 34px;
     box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7), 0 0 45px var(--app-glow);
     border: 1px solid rgba(255, 255, 255, 0.14);
@@ -527,10 +529,6 @@ button { font-family: inherit; }
     left: -18px;
     animation-delay: 1.8s;
 }
-@keyframes fxFlotar {
-    0% { transform: translateY(0); }
-    100% { transform: translateY(-8px); }
-}
 
 /* ── Filtros del Catálogo ── */
 .fx-filtros {
@@ -563,7 +561,7 @@ button { font-family: inherit; }
     box-shadow: 0 4px 18px rgba(255, 122, 24, 0.18);
 }
 
-/* ── Cuadrícula de Apps (Catálogo) ── */
+/* ── Cuadrícula de Apps (Catálogo de Proyectos) ── */
 .fx-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -587,6 +585,9 @@ button { font-family: inherit; }
     transform: translateY(-5px);
     border-color: rgba(255, 255, 255, 0.24);
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+}
+.fx-card:active {
+    transform: scale(0.98);
 }
 .fx-card::before {
     content: "";
@@ -698,30 +699,35 @@ button { font-family: inherit; }
 /* ── Valores del Estudio ── */
 .fx-valores-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 26px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
 }
 .fx-valor-card {
     background: var(--fx-surface-glass);
     border: 1px solid var(--fx-border);
     border-radius: var(--fx-radio);
-    padding: 34px 28px;
+    padding: 34px 26px;
     position: relative;
     overflow: hidden;
     backdrop-filter: blur(14px);
     transition: transform 0.26s var(--fx-trans-suave), border-color 0.24s;
+    display: flex;
+    flex-direction: column;
 }
 .fx-valor-card:hover {
     transform: translateY(-5px);
     border-color: rgba(255, 122, 24, 0.35);
 }
+.fx-valor-card:active {
+    transform: scale(0.98);
+}
 .fx-valor-numero {
     position: absolute;
     top: 16px;
-    right: 22px;
-    font-size: 3.8rem;
+    right: 20px;
+    font-size: 3.4rem;
     font-weight: 900;
-    color: rgba(255, 255, 255, 0.025);
+    color: rgba(255, 255, 255, 0.028);
     user-select: none;
     line-height: 1;
 }
@@ -731,15 +737,15 @@ button { font-family: inherit; }
     display: inline-block;
 }
 .fx-valor-card h4 {
-    font-size: 1.16rem;
+    font-size: 1.15rem;
     font-weight: 750;
     letter-spacing: -0.02em;
     margin-bottom: 10px;
 }
 .fx-valor-card p {
     color: var(--fx-txt-2);
-    font-size: 0.94rem;
-    line-height: 1.6;
+    font-size: 0.93rem;
+    line-height: 1.58;
 }
 
 /* ── Contacto ── */
@@ -848,6 +854,7 @@ button { font-family: inherit; }
 
 .fx-app-icono-wrap {
     position: relative;
+    animation: fxLevitacion 4.5s ease-in-out infinite alternate;
 }
 .fx-app-icono {
     width: 136px;
@@ -942,6 +949,9 @@ button { font-family: inherit; }
 .fx-metrica-card:hover {
     transform: translateY(-4px);
     border-color: rgba(45, 212, 191, 0.4);
+}
+.fx-metrica-card:active {
+    transform: scale(0.98);
 }
 .fx-metrica-icono {
     width: 48px;
@@ -1089,7 +1099,6 @@ button { font-family: inherit; }
     user-select: none;
     margin: 0 auto;
 }
-/* Altavoz superior */
 .fx-celular-speaker {
     width: 48px;
     height: 4px;
@@ -1225,6 +1234,9 @@ button { font-family: inherit; }
     border-color: rgba(45, 212, 191, 0.4);
     box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
 }
+.fx-novedad-card:active {
+    transform: scale(0.98);
+}
 .fx-novedad-top {
     display: flex;
     align-items: center;
@@ -1269,6 +1281,9 @@ button { font-family: inherit; }
 .fx-caracteristica:hover {
     transform: translateY(-4px);
     border-color: rgba(255, 255, 255, 0.22);
+}
+.fx-caracteristica:active {
+    transform: scale(0.98);
 }
 .fx-caracteristica .emoji {
     font-size: 1.8rem;
@@ -1388,22 +1403,66 @@ button { font-family: inherit; }
     flex-wrap: wrap;
 }
 
-/* ── Entrada al hacer scroll ── */
+/* ═══════════════════════════════════════════════════════════════
+   ANIMACIONES AVANZADAS Y SCROLL REVEAL (POTENCIADAS PARA MÓVIL)
+   ═══════════════════════════════════════════════════════════════ */
+
+@keyframes fxEntradaHero {
+    0% {
+        opacity: 0;
+        transform: translateY(32px) scale(0.96);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes fxLevitacion {
+    0% { transform: translateY(0) rotate(0deg); }
+    100% { transform: translateY(-7px) rotate(0.5deg); }
+}
+
+@keyframes fxHaloGlow {
+    0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 122, 24, 0.35)); }
+    50% { filter: drop-shadow(0 0 20px rgba(255, 198, 50, 0.7)); }
+}
+
+@keyframes fxFlotar {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-8px); }
+}
+
+@keyframes fxPulso {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.45; transform: scale(0.8); }
+}
+
+/* Animación inicial del Hero (visible al cargar sin esperar scroll) */
+.fx-hero .fx-etiqueta { animation: fxEntradaHero 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both; }
+.fx-hero h1 { animation: fxEntradaHero 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both; }
+.fx-hero p { animation: fxEntradaHero 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both; }
+.fx-hero .fx-acciones { animation: fxEntradaHero 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both; }
+
+/* Entrada de Scroll Reveal potenciada */
 .fx-revelar {
     opacity: 0;
-    transform: translateY(22px);
-    transition: opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateY(28px) scale(0.98);
+    transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), 
+                transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
 }
 .fx-revelar.visible {
     opacity: 1;
-    transform: none;
+    transform: translateY(0) scale(1);
 }
+
 .fx-revelar:nth-child(2) { transition-delay: 0.08s; }
 .fx-revelar:nth-child(3) { transition-delay: 0.16s; }
 .fx-revelar:nth-child(4) { transition-delay: 0.24s; }
 
 /* ═══════════════════════════════════════════════════════════════
-   RESPONSIVIDAD Y OPTIMIZACIÓN MÓVIL PROFUNDA (<860px y <600px)
+   RESPONSIVIDAD Y EXPERIENCIA MÓVIL PERFECCIONADA (<860px)
    ═══════════════════════════════════════════════════════════════ */
 
 @media (max-width: 860px) {
@@ -1462,19 +1521,22 @@ button { font-family: inherit; }
         font-size: 0.96rem;
     }
 
-    /* ── Bloque Destacado de Portada ── */
+    /* ── Bloque Destacado de Portada Acomodado ── */
     .fx-destacada {
         grid-template-columns: 1fr;
-        padding: 32px 20px;
-        gap: 30px;
+        padding: 34px 20px;
+        gap: 28px;
         border-radius: 24px;
+        text-align: center;
     }
     .fx-destacada-txt {
         order: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
-    .fx-destacada-visual {
-        order: 2;
-        width: 100%;
+    .fx-destacada-badges {
+        justify-content: center;
     }
     .fx-destacada h3 {
         font-size: clamp(1.8rem, 6.5vw, 2.4rem);
@@ -1482,29 +1544,51 @@ button { font-family: inherit; }
     .fx-destacada-puntos {
         grid-template-columns: 1fr 1fr;
         gap: 8px;
-        margin-bottom: 26px;
+        margin-bottom: 24px;
+        width: 100%;
     }
     .fx-destacada-punto {
-        padding: 8px 10px;
+        padding: 9px 10px;
         font-size: 0.82rem;
         gap: 6px;
+        justify-content: center;
+    }
+    .fx-destacada .fx-acciones {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Mockup destacado sin estiramiento y centrado */
+    .fx-destacada-visual {
+        order: 2;
+        width: 100%;
+        margin: 6px 0 14px;
+    }
+    .fx-destacada-mockup-wrap {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
     }
     .fx-destacada-visual img.fx-app-preview {
-        width: min(210px, 65%);
-        border-radius: 28px;
+        width: min(180px, 56vw);
+        height: auto;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        border-radius: 30px;
+        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.75), 0 0 35px var(--app-glow);
     }
-    /* Badges flotantes contenidos sin desbordamiento */
     .fx-flotante-badge.pos-arriba {
-        top: 6px;
-        right: 6px;
-        font-size: 0.74rem;
-        padding: 6px 10px;
+        top: -6px;
+        right: -8px;
+        font-size: 0.72rem;
+        padding: 6px 11px;
     }
     .fx-flotante-badge.pos-abajo {
-        bottom: 6px;
-        left: 6px;
-        font-size: 0.74rem;
-        padding: 6px 10px;
+        bottom: -6px;
+        left: -8px;
+        font-size: 0.72rem;
+        padding: 6px 11px;
     }
 
     /* ── Filtros del Catálogo en Móvil ── */
@@ -1513,7 +1597,7 @@ button { font-family: inherit; }
         overflow-x: auto;
         justify-content: flex-start;
         padding: 4px 4px 14px;
-        margin-bottom: 24px;
+        margin-bottom: 20px;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
     }
@@ -1525,13 +1609,57 @@ button { font-family: inherit; }
         font-size: 0.84rem;
     }
 
-    /* ── Cuadrícula de Apps ── */
+    /* ── Catálogo en Horizontal como en la Web (Swipeable Fila con Scroll-Snap) ── */
     .fx-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
+        display: flex !important;
+        flex-direction: row;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        gap: 16px;
+        padding: 8px 18px 24px 18px;
+        margin: 0 -18px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
     }
+    .fx-grid::-webkit-scrollbar { display: none; }
     .fx-card {
+        flex: 0 0 min(290px, 82vw);
+        width: min(290px, 82vw);
+        min-width: min(290px, 82vw);
+        scroll-snap-align: center;
         padding: 24px 20px;
+        border-radius: 20px;
+    }
+
+    /* ── Principios de Ingeniería y Diseño: EXACTAMENTE EN 3 COLUMNAS ── */
+    .fx-valores-grid {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 10px;
+    }
+    .fx-valor-card {
+        padding: 18px 12px;
+        border-radius: 16px;
+        min-width: 0;
+    }
+    .fx-valor-numero {
+        font-size: 1.6rem;
+        top: 6px;
+        right: 8px;
+    }
+    .fx-valor-icono {
+        font-size: 1.6rem;
+        margin-bottom: 8px;
+    }
+    .fx-valor-card h4 {
+        font-size: 0.86rem;
+        font-weight: 750;
+        line-height: 1.25;
+        margin-bottom: 6px;
+    }
+    .fx-valor-card p {
+        font-size: 0.74rem;
+        line-height: 1.38;
     }
 
     /* ── Hero Página de Producto (Debts Goodbye) ── */
@@ -1561,7 +1689,7 @@ button { font-family: inherit; }
         gap: 12px;
     }
 
-    /* ── Métricas en Móvil: Cuadrícula 2x2 Compacta y Elegante ── */
+    /* ── Métricas en Móvil: Cuadrícula 2x2 Compacta ── */
     .fx-metricas-grid {
         grid-template-columns: 1fr 1fr;
         gap: 10px;
@@ -1625,7 +1753,6 @@ button { font-family: inherit; }
         box-shadow: 0 4px 16px rgba(30, 120, 129, 0.3);
     }
 
-    /* Ocultar las 6 pestañas largas de escritorio en móvil */
     .fx-showcase-tabs {
         display: none;
     }
@@ -1637,7 +1764,7 @@ button { font-family: inherit; }
         border-radius: 24px;
     }
 
-    /* Celular en móvil */
+    /* Celular en móvil con relación 982/1560 exacta */
     .fx-celular-frame {
         width: min(280px, 80vw);
         border-radius: 38px;
@@ -1711,9 +1838,35 @@ button { font-family: inherit; }
     }
 }
 
+/* ── Pantallas Muy Compactas (<480px) ── */
 @media (max-width: 480px) {
     .fx-destacada-puntos {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+    }
+    .fx-destacada-punto {
+        padding: 8px 6px;
+        font-size: 0.76rem;
+    }
+    .fx-valores-grid {
+        gap: 6px !important;
+    }
+    .fx-valor-card {
+        padding: 14px 7px;
+        border-radius: 13px;
+    }
+    .fx-valor-icono {
+        font-size: 1.35rem;
+        margin-bottom: 6px;
+    }
+    .fx-valor-card h4 {
+        font-size: 0.76rem;
+        line-height: 1.2;
+        margin-bottom: 4px;
+    }
+    .fx-valor-card p {
+        font-size: 0.67rem;
+        line-height: 1.32;
     }
     .fx-arquitectura-grid {
         grid-template-columns: 1fr;
@@ -1724,6 +1877,7 @@ button { font-family: inherit; }
 @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     .fx-revelar { opacity: 1; transform: none; transition: none; }
+    .fx-hero .fx-etiqueta, .fx-hero h1, .fx-hero p, .fx-hero .fx-acciones { animation: none; }
     .fx-card, .fx-btn, .fx-showcase-tab, .fx-metrica-card, .fx-showcase-chip { transition: none; }
-    .fx-flotante-badge, .fx-etiqueta-punto { animation: none; }
+    .fx-flotante-badge, .fx-etiqueta-punto, .fx-destacada-mockup-wrap, .fx-app-icono-wrap, .fx-marca-ave { animation: none; }
 }
