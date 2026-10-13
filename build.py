@@ -169,7 +169,7 @@ def seccion_destacada(app) -> str:
                         <span class="ico">✨</span> <span>Asesor Fynex IA diario</span>
                     </div>
                     <div class="fx-destacada-punto">
-                        <span class="ico">🧮</span> <span>Simulador de 9 créditos</span>
+                        <span class="ico">🧮</span> <span>Simulador de amortización</span>
                     </div>
                     <div class="fx-destacada-punto">
                         <span class="ico">📱</span> <span>Widgets nativos Android</span>
@@ -243,7 +243,7 @@ def generar_detalle(app: dict) -> str:
     if app.get("showcase"):
         primero = app["showcase"][0]
         tabs = "".join("""
-            <button type="button" class="fx-showcase-tab%s" data-id="%s" data-img="/%s" data-titulo="%s">
+            <button type="button" class="fx-showcase-tab%s" data-id="%s" data-img="/%s" data-titulo="%s" data-badge="%s" data-desc="%s">
                 <div class="fx-showcase-tab-header">
                     <span class="fx-showcase-tab-titulo">%s</span>
                     <span class="fx-showcase-tab-badge">%s</span>
@@ -251,27 +251,50 @@ def generar_detalle(app: dict) -> str:
                 <p class="fx-showcase-tab-desc">%s</p>
             </button>""" % (
             " activa" if i == 0 else "",
-            esc(s["id"]), esc(s["captura"]), esc(s["titulo"]),
+            esc(s["id"]), esc(s["captura"]), esc(s["titulo"]), esc(s["badge"]), esc(s["desc"]),
             esc(s["titulo"]), esc(s["badge"]), esc(s["desc"])
         ) for i, s in enumerate(app["showcase"]))
 
+        chips_movil = "".join("""
+            <button type="button" class="fx-showcase-chip%s" data-id="%s" data-img="/%s" data-titulo="%s" data-badge="%s" data-desc="%s">
+                <span>%s</span> <span>%s</span>
+            </button>""" % (
+            " activa" if i == 0 else "",
+            esc(s["id"]), esc(s["captura"]), esc(s["titulo"]), esc(s["badge"]), esc(s["desc"]),
+            esc(s.get("icono_corto", "✦")), esc(s.get("nombre_corto", s["titulo"]))
+        ) for i, s in enumerate(app["showcase"]))
+
         showcase = """
-<section class="fx-seccion fx-seccion-alt">
+<section class="fx-seccion fx-seccion-alt" id="showcase">
     <div class="fx-contenedor">
         <div class="fx-seccion-cab centrado fx-revelar">
             <h2>Explora cada módulo de la aplicación</h2>
             <p>Capturas reales de la experiencia en ejecución. Selecciona cada herramienta para verla en acción.</p>
         </div>
+
+        <!-- Selector horizontal deslizable para pantallas móviles -->
+        <div class="fx-showcase-nav-mobile fx-revelar">
+            %s
+        </div>
+
         <div class="fx-showcase fx-revelar">
             <div class="fx-showcase-tabs">
                 %s
             </div>
             <div class="fx-showcase-display">
                 <div class="fx-celular-frame">
+                    <div class="fx-celular-speaker"></div>
                     <div class="fx-celular-pantalla">
                         <img src="/%s" alt="%s" class="fx-celular-img" id="mockupPantalla">
                     </div>
                 </div>
+
+                <div class="fx-showcase-info-active" id="infoShowcaseActiva">
+                    <span class="fx-showcase-tab-badge" id="infoShowcaseBadge">%s</span>
+                    <h4 id="infoShowcaseTitulo">%s</h4>
+                    <p id="infoShowcaseDesc">%s</p>
+                </div>
+
                 <button type="button" class="fx-btn-inspeccionar" id="btnInspeccionar" data-img="/%s" data-titulo="%s">
                     🔍 Ampliar captura a pantalla completa
                 </button>
@@ -279,8 +302,10 @@ def generar_detalle(app: dict) -> str:
         </div>
     </div>
 </section>""" % (
+            chips_movil,
             tabs,
             esc(primero["captura"]), esc(primero["titulo"]),
+            esc(primero["badge"]), esc(primero["titulo"]), esc(primero["desc"]),
             esc(primero["captura"]), esc(primero["titulo"]),
         )
 

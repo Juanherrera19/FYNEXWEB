@@ -22,7 +22,7 @@ APPS: List[dict] = [
         "tagline": "Sal de tus deudas con un plan, no con suerte.",
         "descripcion_corta": (
             "Controla ingresos, gastos, deudas y tarjetas en un solo lugar con Fynex IA, "
-            "métodos Avalancha y Bola de Nieve, simulador de 9 créditos y widgets para Android."
+            "métodos Avalancha y Bola de Nieve, simulador de amortización y widgets para Android."
         ),
         "descripcion_larga": (
             "Debts Goodbye reúne tu vida financiera en una sola vista integral: cuánto entra, "
@@ -30,7 +30,7 @@ APPS: List[dict] = [
             "y web sobre la misma base de datos en tiempo real, incorpora un asesor financiero con IA "
             "(Fynex IA), estrategias científicas de amortización acelerada (Avalancha y Bola de Nieve), "
             "matemática unificada de cuotas de tarjeta de crédito con anclaje bancario, simulador "
-            "multiproducto de 9 modalidades de crédito, presupuestos flexibles con categorías personalizables "
+            "multiproducto de amortización y crédito, presupuestos flexibles con categorías personalizables "
             "y widgets interactivos para la pantalla de inicio de Android."
         ),
         "icono": "img/apps/debts-goodbye.png",
@@ -42,8 +42,8 @@ APPS: List[dict] = [
                 "icono": "🛡️",
             },
             {
-                "valor": "9 Créditos",
-                "etiqueta": "Simulador multiproducto con tablas EA/MV",
+                "valor": "Simulador",
+                "etiqueta": "Amortización, tasas EA/MV y ahorro en cuotas",
                 "icono": "🧮",
             },
             {
@@ -61,6 +61,8 @@ APPS: List[dict] = [
             {
                 "id": "ia",
                 "badge": "Asesor Financiero IA",
+                "nombre_corto": "Asesor IA",
+                "icono_corto": "✨",
                 "titulo": "Fynex IA a tu Servicio",
                 "subtitulo": "Estrategias personalizadas para liquidar tus deudas",
                 "desc": (
@@ -74,6 +76,8 @@ APPS: List[dict] = [
             {
                 "id": "dashboard",
                 "badge": "Visión Financiera 360°",
+                "nombre_corto": "Visión 360°",
+                "icono_corto": "📊",
                 "titulo": "Control Total de tus Finanzas",
                 "subtitulo": "Ingresos, gastos, deudas y flujo libre en un solo lugar",
                 "desc": (
@@ -86,6 +90,8 @@ APPS: List[dict] = [
             {
                 "id": "deudas",
                 "badge": "Métodos Avalancha y Bola de Nieve",
+                "nombre_corto": "Plan Deudas",
+                "icono_corto": "📉",
                 "titulo": "Plan Maestro de Deudas",
                 "subtitulo": "Ahorra millones en intereses y acelera tu libertad",
                 "desc": (
@@ -99,6 +105,8 @@ APPS: List[dict] = [
             {
                 "id": "tarjetas",
                 "badge": "Gestión Inteligente de Tarjetas",
+                "nombre_corto": "Tarjetas",
+                "icono_corto": "💳",
                 "titulo": "Tarjetas y Matemática de Cuotas",
                 "subtitulo": "Cupos, fechas de corte, pagos mínimos y diferidos",
                 "desc": (
@@ -112,8 +120,10 @@ APPS: List[dict] = [
             {
                 "id": "simulador",
                 "badge": "Simulador Multiproducto",
-                "titulo": "9 Modalidades de Crédito y Conversión EA/MV",
-                "subtitulo": "Calcula cuotas exactas de libre inversión, vivienda y UVR",
+                "nombre_corto": "Simulador",
+                "icono_corto": "🧮",
+                "titulo": "Simulador de Crédito y Amortización",
+                "subtitulo": "Calcula cuotas exactas, tablas de amortización y UVR",
                 "desc": (
                     "Simula créditos de vehículo, libranza, leasing habitacional y préstamos con seguro "
                     "de vida y capitalización. Visualiza el calendario de amortización detallado y exporta a Excel/PDF."
@@ -124,6 +134,8 @@ APPS: List[dict] = [
             {
                 "id": "presupuestos",
                 "badge": "Presupuestos y Flujo de Caja",
+                "nombre_corto": "Presupuestos",
+                "icono_corto": "🎯",
                 "titulo": "Protege tu Flujo de Caja",
                 "subtitulo": "Establece metas mensuales y evita gastos innecesarios",
                 "desc": (
@@ -190,7 +202,7 @@ APPS: List[dict] = [
             },
             {
                 "emoji": "🧮",
-                "titulo": "Simulador de 9 tipos de crédito",
+                "titulo": "Simulador de amortización y crédito",
                 "texto": "Compara escenarios para libre inversión, vivienda, UVR o vehículos y descubre cuánto ahorras en intereses abonando de otra forma.",
             },
             {

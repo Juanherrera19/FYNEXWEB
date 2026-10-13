@@ -168,32 +168,77 @@ document.getElementById('anio').textContent = new Date().getFullYear();
     });
 })();
 
-// Showcase interactivo (pestañas y cambio de pantalla en el celular)
+// Showcase interactivo (sincronización entre tabs, chips móviles y mockup)
 (function () {
     var tabs = document.querySelectorAll('.fx-showcase-tab');
+    var chips = document.querySelectorAll('.fx-showcase-chip');
     var mockupImg = document.getElementById('mockupPantalla');
     var btnInspeccionar = document.getElementById('btnInspeccionar');
-    if (!tabs.length || !mockupImg) return;
+    var infoBadge = document.getElementById('infoShowcaseBadge');
+    var infoTitulo = document.getElementById('infoShowcaseTitulo');
+    var infoDesc = document.getElementById('infoShowcaseDesc');
+
+    if (!mockupImg) return;
+
+    function seleccionarModulo(id, img, titulo, badge, desc) {
+        // Sincronizar tabs de escritorio
+        tabs.forEach(function (t) {
+            if (t.getAttribute('data-id') === id) t.classList.add('activa');
+            else t.classList.remove('activa');
+        });
+
+        // Sincronizar chips móviles
+        chips.forEach(function (c) {
+            if (c.getAttribute('data-id') === id) {
+                c.classList.add('activa');
+                // Auto scroll suave del chip activo en móvil
+                try {
+                    c.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                } catch (e) {}
+            } else {
+                c.classList.remove('activa');
+            }
+        });
+
+        // Actualizar imagen en el mockup de celular
+        mockupImg.classList.add('cambiando');
+        setTimeout(function () {
+            mockupImg.src = img;
+            mockupImg.alt = titulo;
+            mockupImg.classList.remove('cambiando');
+        }, 160);
+
+        // Actualizar tarjeta de info
+        if (infoBadge && badge) infoBadge.textContent = badge;
+        if (infoTitulo && titulo) infoTitulo.textContent = titulo;
+        if (infoDesc && desc) infoDesc.textContent = desc;
+
+        // Actualizar botón de inspeccionar
+        if (btnInspeccionar) {
+            btnInspeccionar.setAttribute('data-img', img);
+            btnInspeccionar.setAttribute('data-titulo', titulo);
+        }
+    }
 
     tabs.forEach(function (tab) {
         tab.addEventListener('click', function () {
-            tabs.forEach(function (t) { t.classList.remove('activa'); });
-            tab.classList.add('activa');
+            var id = tab.getAttribute('data-id');
+            var img = tab.getAttribute('data-img');
+            var titulo = tab.getAttribute('data-titulo');
+            var badge = tab.getAttribute('data-badge');
+            var desc = tab.getAttribute('data-desc');
+            seleccionarModulo(id, img, titulo, badge, desc);
+        });
+    });
 
-            var nuevaImg = tab.getAttribute('data-img');
-            var nuevoTitulo = tab.getAttribute('data-titulo');
-
-            mockupImg.classList.add('cambiando');
-            setTimeout(function () {
-                mockupImg.src = nuevaImg;
-                mockupImg.alt = nuevoTitulo;
-                mockupImg.classList.remove('cambiando');
-            }, 180);
-
-            if (btnInspeccionar) {
-                btnInspeccionar.setAttribute('data-img', nuevaImg);
-                btnInspeccionar.setAttribute('data-titulo', nuevoTitulo);
-            }
+    chips.forEach(function (chip) {
+        chip.addEventListener('click', function () {
+            var id = chip.getAttribute('data-id');
+            var img = chip.getAttribute('data-img');
+            var titulo = chip.getAttribute('data-titulo');
+            var badge = chip.getAttribute('data-badge');
+            var desc = chip.getAttribute('data-desc');
+            seleccionarModulo(id, img, titulo, badge, desc);
         });
     });
 })();

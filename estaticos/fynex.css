@@ -8,8 +8,8 @@
     --fx-bg-alt: #0a0d15;
     --fx-surface: #101522;
     --fx-surface-2: #161c2c;
-    --fx-surface-glass: rgba(16, 21, 34, 0.72);
-    --fx-surface-glass-hover: rgba(22, 28, 44, 0.85);
+    --fx-surface-glass: rgba(16, 21, 34, 0.75);
+    --fx-surface-glass-hover: rgba(22, 28, 44, 0.88);
 
     --fx-border: rgba(255, 255, 255, 0.08);
     --fx-border-fuerte: rgba(255, 255, 255, 0.16);
@@ -47,6 +47,7 @@
 html {
     scroll-behavior: smooth;
     scroll-padding-top: 84px;
+    overflow-x: hidden;
 }
 
 body {
@@ -59,6 +60,7 @@ body {
     overflow-x: hidden;
     position: relative;
     min-height: 100vh;
+    width: 100%;
 }
 
 /* ── Fondo Atmosférico con Malla ── */
@@ -91,7 +93,7 @@ button { font-family: inherit; }
     position: sticky;
     top: 0;
     z-index: 100;
-    background: rgba(6, 8, 14, 0.82);
+    background: rgba(6, 8, 14, 0.84);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--fx-border);
@@ -102,7 +104,7 @@ button { font-family: inherit; }
     align-items: center;
     justify-content: space-between;
     height: 72px;
-    gap: 24px;
+    gap: 20px;
 }
 .fx-marca {
     display: flex;
@@ -112,6 +114,7 @@ button { font-family: inherit; }
     font-size: 1.28rem;
     letter-spacing: -0.025em;
     transition: transform 0.2s ease;
+    user-select: none;
 }
 .fx-marca:hover {
     transform: translateY(-1px);
@@ -130,13 +133,13 @@ button { font-family: inherit; }
 .fx-nav {
     display: flex;
     align-items: center;
-    gap: 28px;
+    gap: 24px;
 }
 .fx-nav a {
     color: var(--fx-txt-2);
     font-size: 0.92rem;
     font-weight: 550;
-    padding: 6px 10px;
+    padding: 6px 12px;
     border-radius: 8px;
     transition: color 0.2s ease, background 0.2s ease;
 }
@@ -146,9 +149,10 @@ button { font-family: inherit; }
 }
 .fx-nav-cta {
     background: rgba(255, 122, 24, 0.12) !important;
-    border: 1px solid rgba(255, 122, 24, 0.32);
+    border: 1px solid rgba(255, 122, 24, 0.35);
     color: #ffaa5a !important;
-    font-weight: 600 !important;
+    font-weight: 650 !important;
+    box-shadow: 0 2px 10px rgba(255, 122, 24, 0.15);
 }
 .fx-nav-cta:hover {
     background: rgba(255, 122, 24, 0.22) !important;
@@ -162,37 +166,17 @@ button { font-family: inherit; }
     color: var(--fx-txt);
     font-size: 1.4rem;
     cursor: pointer;
-    padding: 6px 12px;
+    padding: 7px 12px;
     border-radius: 10px;
     transition: background 0.2s;
+    line-height: 1;
 }
 .fx-nav-toggle:hover { background: rgba(255, 255, 255, 0.1); }
-
-@media (max-width: 740px) {
-    .fx-nav {
-        position: absolute;
-        top: 72px;
-        left: 0;
-        right: 0;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 4px;
-        background: rgba(10, 13, 21, 0.98);
-        backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
-        border-bottom: 1px solid var(--fx-border-fuerte);
-        padding: 16px 24px 22px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-    }
-    .fx-nav[hidden] { display: none; }
-    .fx-nav a { padding: 12px 14px; }
-    .fx-nav-toggle { display: block; }
-}
 
 /* ── Hero ── */
 .fx-hero {
     position: relative;
-    padding: 116px 0 96px;
+    padding: 108px 0 92px;
     overflow: hidden;
 }
 .fx-hero::before {
@@ -201,12 +185,12 @@ button { font-family: inherit; }
     top: -240px;
     left: 50%;
     transform: translateX(-50%);
-    width: 960px;
+    width: min(960px, 120vw);
     height: 740px;
     background: radial-gradient(
         ellipse at center,
-        rgba(255, 122, 24, 0.24) 0%,
-        rgba(255, 198, 50, 0.10) 36%,
+        rgba(255, 122, 24, 0.22) 0%,
+        rgba(255, 198, 50, 0.09) 36%,
         transparent 70%
     );
     pointer-events: none;
@@ -249,8 +233,8 @@ button { font-family: inherit; }
 }
 
 .fx-hero h1 {
-    font-size: clamp(2.4rem, 6.2vw, 4.4rem);
-    line-height: 1.06;
+    font-size: clamp(2.3rem, 6vw, 4.3rem);
+    line-height: 1.07;
     font-weight: 850;
     letter-spacing: -0.038em;
     margin-bottom: 24px;
@@ -264,9 +248,9 @@ button { font-family: inherit; }
 }
 .fx-hero p {
     max-width: 640px;
-    margin: 0 auto 38px;
+    margin: 0 auto 36px;
     color: var(--fx-txt-2);
-    font-size: clamp(1.04rem, 2vw, 1.2rem);
+    font-size: clamp(1.02rem, 2vw, 1.18rem);
     line-height: 1.62;
 }
 
@@ -295,6 +279,7 @@ button { font-family: inherit; }
     text-decoration: none;
     position: relative;
     overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
 }
 .fx-btn::after {
     content: "";
@@ -321,10 +306,10 @@ button { font-family: inherit; }
 .fx-btn-primario {
     background: var(--fx-gradiente-fuego);
     color: #160a02;
-    box-shadow: 0 8px 28px rgba(255, 122, 24, 0.32);
+    box-shadow: 0 8px 26px rgba(255, 122, 24, 0.32);
 }
 .fx-btn-primario:hover {
-    box-shadow: 0 12px 36px rgba(255, 122, 24, 0.48);
+    box-shadow: 0 12px 34px rgba(255, 122, 24, 0.48);
 }
 
 .fx-btn-secundario {
@@ -341,10 +326,10 @@ button { font-family: inherit; }
 .fx-btn-app {
     background: linear-gradient(135deg, var(--app-color) 0%, #15939f 100%);
     color: #ffffff;
-    box-shadow: 0 8px 28px var(--app-glow);
+    box-shadow: 0 8px 26px var(--app-glow);
 }
 .fx-btn-app:hover {
-    box-shadow: 0 12px 36px rgba(30, 120, 129, 0.55);
+    box-shadow: 0 12px 34px rgba(30, 120, 129, 0.55);
 }
 
 .fx-btn-sm {
@@ -356,7 +341,7 @@ button { font-family: inherit; }
 
 /* ── Secciones Generales ── */
 .fx-seccion {
-    padding: 96px 0;
+    padding: 92px 0;
     position: relative;
 }
 .fx-seccion-alt {
@@ -367,7 +352,7 @@ button { font-family: inherit; }
 
 .fx-seccion-cab {
     max-width: 680px;
-    margin-bottom: 52px;
+    margin-bottom: 50px;
 }
 .fx-seccion-cab.centrado {
     margin-left: auto;
@@ -379,7 +364,7 @@ button { font-family: inherit; }
     font-weight: 800;
     letter-spacing: -0.03em;
     margin-bottom: 14px;
-    line-height: 1.14;
+    line-height: 1.15;
 }
 .fx-seccion-cab p {
     color: var(--fx-txt-2);
@@ -393,7 +378,7 @@ button { font-family: inherit; }
     grid-template-columns: 1.15fr 0.85fr;
     gap: 48px;
     align-items: center;
-    background: linear-gradient(135deg, rgba(16, 21, 34, 0.88) 0%, rgba(10, 13, 21, 0.95) 100%);
+    background: linear-gradient(135deg, rgba(16, 21, 34, 0.9) 0%, rgba(10, 13, 21, 0.96) 100%);
     border: 1px solid rgba(255, 255, 255, 0.10);
     border-radius: var(--fx-radio-lg);
     padding: 56px;
@@ -469,7 +454,7 @@ button { font-family: inherit; }
 }
 .fx-destacada-puntos {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
     margin-bottom: 32px;
 }
@@ -480,12 +465,13 @@ button { font-family: inherit; }
     font-size: 0.88rem;
     color: var(--fx-txt-2);
     background: rgba(255, 255, 255, 0.03);
-    padding: 8px 12px;
+    padding: 9px 12px;
     border-radius: 10px;
     border: 1px solid rgba(255, 255, 255, 0.04);
 }
 .fx-destacada-punto span.ico {
     font-size: 1.1rem;
+    flex-shrink: 0;
 }
 
 /* Visual / Mockup del bloque destacado */
@@ -500,15 +486,18 @@ button { font-family: inherit; }
     position: relative;
     display: inline-block;
     transition: transform 0.3s ease;
+    max-width: 100%;
 }
 .fx-destacada-mockup-wrap:hover {
-    transform: translateY(-6px) rotate(1deg);
+    transform: translateY(-5px) rotate(1deg);
 }
 .fx-destacada-visual img.fx-app-preview {
     width: 250px;
     border-radius: 34px;
     box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7), 0 0 45px var(--app-glow);
     border: 1px solid rgba(255, 255, 255, 0.14);
+    display: block;
+    margin: 0 auto;
 }
 .fx-flotante-badge {
     position: absolute;
@@ -516,7 +505,7 @@ button { font-family: inherit; }
     align-items: center;
     gap: 8px;
     padding: 8px 14px;
-    background: rgba(16, 21, 34, 0.92);
+    background: rgba(16, 21, 34, 0.94);
     border: 1px solid rgba(255, 255, 255, 0.16);
     border-radius: 12px;
     color: var(--fx-txt);
@@ -526,34 +515,21 @@ button { font-family: inherit; }
     backdrop-filter: blur(14px);
     z-index: 3;
     animation: fxFlotar 4s ease-in-out infinite alternate;
+    white-space: nowrap;
 }
 .fx-flotante-badge.pos-arriba {
-    top: -12px;
-    right: -16px;
+    top: -10px;
+    right: -12px;
     animation-delay: 0.2s;
 }
 .fx-flotante-badge.pos-abajo {
-    bottom: 24px;
-    left: -24px;
+    bottom: 20px;
+    left: -18px;
     animation-delay: 1.8s;
 }
 @keyframes fxFlotar {
     0% { transform: translateY(0); }
     100% { transform: translateY(-8px); }
-}
-
-@media (max-width: 920px) {
-    .fx-destacada {
-        grid-template-columns: 1fr;
-        padding: 40px 28px;
-        gap: 36px;
-    }
-    .fx-destacada-visual {
-        order: -1;
-    }
-    .fx-destacada-visual img.fx-app-preview {
-        width: 190px;
-    }
 }
 
 /* ── Filtros del Catálogo ── */
@@ -574,6 +550,7 @@ button { font-family: inherit; }
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
 }
 .fx-filtro-btn:hover {
     color: var(--fx-txt);
@@ -607,12 +584,11 @@ button { font-family: inherit; }
     transition: transform 0.26s var(--fx-trans-suave), border-color 0.26s ease, box-shadow 0.26s ease;
 }
 .fx-card:hover {
-    transform: translateY(-6px);
+    transform: translateY(-5px);
     border-color: rgba(255, 255, 255, 0.24);
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
 }
 .fx-card::before {
-    /* Spotlight dinámico con variables CSS fijadas por JS */
     content: "";
     position: absolute;
     inset: 0;
@@ -653,7 +629,7 @@ button { font-family: inherit; }
     transition: transform 0.24s ease;
 }
 .fx-card:hover .fx-card-icono {
-    transform: scale(1.05);
+    transform: scale(1.04);
 }
 .fx-card-icono-vacio {
     display: flex;
@@ -768,7 +744,7 @@ button { font-family: inherit; }
 
 /* ── Contacto ── */
 .fx-contacto-card {
-    background: linear-gradient(135deg, rgba(22, 28, 44, 0.75) 0%, rgba(12, 16, 26, 0.9) 100%);
+    background: linear-gradient(135deg, rgba(22, 28, 44, 0.75) 0%, rgba(12, 16, 26, 0.92) 100%);
     border: 1px solid var(--fx-border-fuerte);
     border-radius: var(--fx-radio-lg);
     padding: 56px 36px;
@@ -811,6 +787,7 @@ button { font-family: inherit; }
     align-items: center;
     gap: 8px;
     transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
 }
 .fx-btn-copiar:hover {
     background: rgba(255, 255, 255, 0.1);
@@ -822,7 +799,7 @@ button { font-family: inherit; }
    ═══════════════════════════════════════════════════════════════ */
 
 .fx-app-hero {
-    padding: 68px 0 64px;
+    padding: 68px 0 60px;
     position: relative;
     overflow: hidden;
 }
@@ -832,7 +809,7 @@ button { font-family: inherit; }
     top: -300px;
     left: 50%;
     transform: translateX(-50%);
-    width: 1000px;
+    width: min(1000px, 130vw);
     height: 700px;
     background: radial-gradient(ellipse at center, var(--app-color, #1E7881) 0%, transparent 65%);
     opacity: 0.24;
@@ -847,7 +824,7 @@ button { font-family: inherit; }
     color: var(--fx-txt-2);
     font-size: 0.88rem;
     font-weight: 600;
-    padding: 7px 14px;
+    padding: 7px 15px;
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid var(--fx-border);
     border-radius: 999px;
@@ -923,7 +900,7 @@ button { font-family: inherit; }
 }
 .fx-app-hero .fx-tagline {
     color: #38bdf8;
-    font-size: clamp(1.08rem, 2.2vw, 1.28rem);
+    font-size: clamp(1.06rem, 2.2vw, 1.26rem);
     font-weight: 600;
     margin-bottom: 20px;
     line-height: 1.45;
@@ -944,33 +921,21 @@ button { font-family: inherit; }
     font-weight: 600;
 }
 
-@media (max-width: 760px) {
-    .fx-app-hero-inner {
-        grid-template-columns: 1fr;
-        text-align: center;
-        justify-items: center;
-        gap: 28px;
-    }
-    .fx-app-hero-meta, .fx-plataformas, .fx-acciones {
-        justify-content: center;
-    }
-}
-
 /* ── Franja de Métricas / Credenciales ── */
 .fx-metricas-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 20px;
-    margin-top: 16px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-top: 26px;
 }
 .fx-metrica-card {
     background: var(--fx-surface-glass);
     border: 1px solid var(--fx-border);
     border-radius: var(--fx-radio);
-    padding: 24px 22px;
+    padding: 22px 20px;
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 15px;
     backdrop-filter: blur(14px);
     transition: transform 0.22s ease, border-color 0.22s ease;
 }
@@ -991,26 +956,33 @@ button { font-family: inherit; }
     flex-shrink: 0;
 }
 .fx-metrica-valor {
-    font-size: 1.34rem;
+    font-size: 1.28rem;
     font-weight: 800;
     letter-spacing: -0.02em;
     color: var(--fx-txt);
     line-height: 1.15;
 }
 .fx-metrica-etiqueta {
-    font-size: 0.82rem;
+    font-size: 0.81rem;
     color: var(--fx-txt-2);
     margin-top: 3px;
     line-height: 1.35;
 }
 
-/* ── Showcase / Galería Interactiva con Mockup de Celular ── */
+/* ── Showcase / Galería Interactiva ── */
+.fx-showcase-nav-mobile {
+    display: none;
+}
+.fx-showcase-info-active {
+    display: none;
+}
+
 .fx-showcase {
     display: grid;
     grid-template-columns: 1.15fr 0.85fr;
     gap: 48px;
     align-items: center;
-    background: linear-gradient(135deg, rgba(16, 21, 34, 0.8) 0%, rgba(10, 13, 21, 0.95) 100%);
+    background: linear-gradient(135deg, rgba(16, 21, 34, 0.85) 0%, rgba(10, 13, 21, 0.96) 100%);
     border: 1px solid var(--fx-border-fuerte);
     border-radius: var(--fx-radio-lg);
     padding: 48px;
@@ -1027,12 +999,12 @@ button { font-family: inherit; }
     width: 480px;
     height: 480px;
     background: radial-gradient(circle, var(--app-color) 0%, transparent 68%);
-    opacity: 0.2;
+    opacity: 0.22;
     pointer-events: none;
     filter: blur(40px);
 }
 
-/* Pestañas laterales */
+/* Pestañas laterales de escritorio */
 .fx-showcase-tabs {
     display: flex;
     flex-direction: column;
@@ -1050,6 +1022,7 @@ button { font-family: inherit; }
     display: flex;
     flex-direction: column;
     gap: 4px;
+    -webkit-tap-highlight-color: transparent;
 }
 .fx-showcase-tab:hover {
     background: rgba(255, 255, 255, 0.07);
@@ -1094,71 +1067,55 @@ button { font-family: inherit; }
     line-height: 1.45;
 }
 
-/* Mockup de Celular */
+/* ── Mockup de Celular Perfeccionado ── */
 .fx-showcase-display {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     position: relative;
+    width: 100%;
 }
 .fx-celular-frame {
     position: relative;
-    width: 290px;
-    height: 580px;
-    background: #000000;
-    border-radius: 46px;
-    padding: 10px;
-    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.8), 0 0 0 2px rgba(255, 255, 255, 0.18), 0 0 35px var(--app-glow);
+    width: min(300px, 82vw);
+    background: #090c14;
+    border-radius: 42px;
+    padding: 8px 8px 12px 8px;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.8), 
+                0 0 0 2px rgba(255, 255, 255, 0.16), 
+                0 0 35px var(--app-glow);
     overflow: hidden;
     user-select: none;
+    margin: 0 auto;
 }
-/* Isla dinámica / bocina */
-.fx-celular-frame::before {
-    content: "";
-    position: absolute;
-    top: 18px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90px;
-    height: 22px;
-    background: #000000;
-    border-radius: 20px;
-    z-index: 10;
-    box-shadow: inset 0 0 2px rgba(255, 255, 255, 0.2);
+/* Altavoz superior */
+.fx-celular-speaker {
+    width: 48px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.22);
+    border-radius: 3px;
+    margin: 4px auto 8px auto;
 }
-/* Reflejo de cristal */
-.fx-celular-frame::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 50%;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, transparent 60%);
-    pointer-events: none;
-    z-index: 8;
-    border-top-left-radius: 46px;
-    border-top-right-radius: 46px;
-}
+/* Pantalla con relación exacta de las capturas (982 / 1560) */
 .fx-celular-pantalla {
     width: 100%;
-    height: 100%;
-    border-radius: 38px;
+    aspect-ratio: 982 / 1560;
+    border-radius: 34px;
     overflow: hidden;
-    background: #080c14;
+    background: #03060c;
     position: relative;
 }
 .fx-celular-img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    object-position: top center;
-    transition: opacity 0.35s ease, transform 0.35s ease;
+    display: block;
+    object-fit: fill;
+    transition: opacity 0.22s ease, transform 0.22s ease;
 }
 .fx-celular-img.cambiando {
-    opacity: 0;
-    transform: scale(0.97);
+    opacity: 0.15;
+    transform: scale(0.98);
 }
 
 .fx-btn-inspeccionar {
@@ -1166,7 +1123,7 @@ button { font-family: inherit; }
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--fx-border-fuerte);
     color: var(--fx-txt-2);
-    padding: 8px 16px;
+    padding: 9px 18px;
     border-radius: 10px;
     font-size: 0.84rem;
     font-weight: 600;
@@ -1175,6 +1132,7 @@ button { font-family: inherit; }
     align-items: center;
     gap: 7px;
     transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
 }
 .fx-btn-inspeccionar:hover {
     color: var(--fx-txt);
@@ -1182,30 +1140,18 @@ button { font-family: inherit; }
     border-color: rgba(255, 255, 255, 0.3);
 }
 
-@media (max-width: 980px) {
-    .fx-showcase {
-        grid-template-columns: 1fr;
-        padding: 34px 24px;
-        gap: 36px;
-    }
-    .fx-celular-frame {
-        width: 260px;
-        height: 520px;
-    }
-}
-
 /* ── Lightbox para ver capturas en pantalla completa ── */
 .fx-lightbox {
     position: fixed;
     inset: 0;
     z-index: 1000;
-    background: rgba(4, 6, 10, 0.92);
+    background: rgba(4, 6, 10, 0.94);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 24px;
+    padding: 20px;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;
@@ -1216,15 +1162,15 @@ button { font-family: inherit; }
 }
 .fx-lightbox-content {
     position: relative;
-    max-width: 90vw;
-    max-height: 90vh;
+    max-width: 92vw;
+    max-height: 92vh;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 .fx-lightbox-img {
     max-width: 100%;
-    max-height: 82vh;
+    max-height: 80vh;
     border-radius: 18px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.15);
     object-fit: contain;
@@ -1408,9 +1354,6 @@ button { font-family: inherit; }
     gap: 48px;
     margin-bottom: 46px;
 }
-@media (max-width: 760px) {
-    .fx-footer-grid { grid-template-columns: 1fr; gap: 32px; }
-}
 .fx-footer h5 {
     font-size: 0.84rem;
     font-weight: 750;
@@ -1455,16 +1398,332 @@ button { font-family: inherit; }
     opacity: 1;
     transform: none;
 }
-
-/* Stagger delay */
 .fx-revelar:nth-child(2) { transition-delay: 0.08s; }
 .fx-revelar:nth-child(3) { transition-delay: 0.16s; }
 .fx-revelar:nth-child(4) { transition-delay: 0.24s; }
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVIDAD Y OPTIMIZACIÓN MÓVIL PROFUNDA (<860px y <600px)
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 860px) {
+    .fx-contenedor {
+        padding: 0 18px;
+    }
+
+    /* ── Cabecera y Nav Móvil ── */
+    .fx-header-inner {
+        height: 66px;
+    }
+    .fx-nav {
+        position: absolute;
+        top: 66px;
+        left: 12px;
+        right: 12px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+        background: rgba(10, 13, 21, 0.97);
+        backdrop-filter: blur(28px);
+        -webkit-backdrop-filter: blur(28px);
+        border: 1px solid var(--fx-border-fuerte);
+        border-radius: 18px;
+        padding: 16px 18px 20px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+    }
+    .fx-nav[hidden] { display: none; }
+    .fx-nav a {
+        padding: 12px 14px;
+        border-radius: 10px;
+        font-size: 0.96rem;
+    }
+    .fx-nav-toggle { display: block; }
+
+    /* ── Hero Portada ── */
+    .fx-hero {
+        padding: 68px 0 52px;
+    }
+    .fx-hero h1 {
+        font-size: clamp(2rem, 7.8vw, 2.9rem);
+        line-height: 1.12;
+    }
+    .fx-hero p {
+        font-size: 1.02rem;
+        margin-bottom: 28px;
+    }
+    .fx-acciones {
+        flex-direction: column;
+        width: 100%;
+        gap: 12px;
+    }
+    .fx-btn {
+        width: 100%;
+        padding: 14px 22px;
+        font-size: 0.96rem;
+    }
+
+    /* ── Bloque Destacado de Portada ── */
+    .fx-destacada {
+        grid-template-columns: 1fr;
+        padding: 32px 20px;
+        gap: 30px;
+        border-radius: 24px;
+    }
+    .fx-destacada-txt {
+        order: 1;
+    }
+    .fx-destacada-visual {
+        order: 2;
+        width: 100%;
+    }
+    .fx-destacada h3 {
+        font-size: clamp(1.8rem, 6.5vw, 2.4rem);
+    }
+    .fx-destacada-puntos {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 26px;
+    }
+    .fx-destacada-punto {
+        padding: 8px 10px;
+        font-size: 0.82rem;
+        gap: 6px;
+    }
+    .fx-destacada-visual img.fx-app-preview {
+        width: min(210px, 65%);
+        border-radius: 28px;
+    }
+    /* Badges flotantes contenidos sin desbordamiento */
+    .fx-flotante-badge.pos-arriba {
+        top: 6px;
+        right: 6px;
+        font-size: 0.74rem;
+        padding: 6px 10px;
+    }
+    .fx-flotante-badge.pos-abajo {
+        bottom: 6px;
+        left: 6px;
+        font-size: 0.74rem;
+        padding: 6px 10px;
+    }
+
+    /* ── Filtros del Catálogo en Móvil ── */
+    .fx-filtros {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        justify-content: flex-start;
+        padding: 4px 4px 14px;
+        margin-bottom: 24px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+    .fx-filtros::-webkit-scrollbar { display: none; }
+    .fx-filtro-btn {
+        white-space: nowrap;
+        flex-shrink: 0;
+        padding: 8px 16px;
+        font-size: 0.84rem;
+    }
+
+    /* ── Cuadrícula de Apps ── */
+    .fx-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    .fx-card {
+        padding: 24px 20px;
+    }
+
+    /* ── Hero Página de Producto (Debts Goodbye) ── */
+    .fx-app-hero {
+        padding: 44px 0 40px;
+    }
+    .fx-app-hero-inner {
+        grid-template-columns: 1fr;
+        text-align: center;
+        justify-items: center;
+        gap: 22px;
+    }
+    .fx-app-icono {
+        width: 104px;
+        height: 104px;
+        border-radius: 26px;
+    }
+    .fx-app-hero h1 {
+        font-size: clamp(2rem, 7.5vw, 2.8rem);
+    }
+    .fx-app-hero-meta, .fx-plataformas, .fx-app-hero-txt .fx-acciones {
+        justify-content: center;
+    }
+    .fx-app-hero-txt .fx-acciones {
+        width: 100%;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    /* ── Métricas en Móvil: Cuadrícula 2x2 Compacta y Elegante ── */
+    .fx-metricas-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 24px;
+    }
+    .fx-metrica-card {
+        padding: 14px 12px;
+        gap: 10px;
+        border-radius: 16px;
+    }
+    .fx-metrica-icono {
+        width: 38px;
+        height: 38px;
+        font-size: 1.15rem;
+        border-radius: 11px;
+    }
+    .fx-metrica-valor {
+        font-size: 1.12rem;
+    }
+    .fx-metrica-etiqueta {
+        font-size: 0.73rem;
+        line-height: 1.25;
+    }
+
+    /* ── Showcase Interactivo en Móvil ── */
+    .fx-showcase-nav-mobile {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding: 4px 2px 14px;
+        margin-bottom: 22px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+    .fx-showcase-nav-mobile::-webkit-scrollbar { display: none; }
+    .fx-showcase-chip {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--fx-border);
+        border-radius: 999px;
+        padding: 8px 16px;
+        color: var(--fx-txt-2);
+        font-size: 0.84rem;
+        font-weight: 650;
+        white-space: nowrap;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        flex-shrink: 0;
+        transition: all 0.2s ease;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .fx-showcase-chip:hover {
+        background: rgba(255, 255, 255, 0.09);
+        color: var(--fx-txt);
+    }
+    .fx-showcase-chip.activa {
+        background: linear-gradient(135deg, rgba(30, 120, 129, 0.35) 0%, rgba(45, 212, 191, 0.22) 100%);
+        border-color: rgba(45, 212, 191, 0.7);
+        color: #5eead4;
+        box-shadow: 0 4px 16px rgba(30, 120, 129, 0.3);
+    }
+
+    /* Ocultar las 6 pestañas largas de escritorio en móvil */
+    .fx-showcase-tabs {
+        display: none;
+    }
+
+    .fx-showcase {
+        grid-template-columns: 1fr;
+        padding: 26px 16px;
+        gap: 18px;
+        border-radius: 24px;
+    }
+
+    /* Celular en móvil */
+    .fx-celular-frame {
+        width: min(280px, 80vw);
+        border-radius: 38px;
+        padding: 7px 7px 10px 7px;
+    }
+    .fx-celular-pantalla {
+        border-radius: 30px;
+    }
+
+    /* Tarjeta explicativa del módulo activo en móvil */
+    .fx-showcase-info-active {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        background: rgba(16, 21, 34, 0.92);
+        border: 1px solid var(--fx-border-fuerte);
+        border-radius: 18px;
+        padding: 18px 20px;
+        margin-top: 18px;
+        text-align: left;
+        width: 100%;
+        backdrop-filter: blur(16px);
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+    }
+    .fx-showcase-info-active h4 {
+        font-size: 1.12rem;
+        font-weight: 750;
+        color: #5eead4;
+        letter-spacing: -0.02em;
+    }
+    .fx-showcase-info-active p {
+        font-size: 0.88rem;
+        color: var(--fx-txt-2);
+        line-height: 1.48;
+    }
+
+    /* ── Novedades y Características en Móvil ── */
+    .fx-novedades-grid, .fx-caracteristicas {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    .fx-novedad-card, .fx-caracteristica {
+        padding: 22px 18px;
+        border-radius: 16px;
+    }
+
+    .fx-arquitectura-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    .fx-arquitectura-card {
+        padding: 18px 14px;
+    }
+
+    /* ── CTA Banner en Móvil ── */
+    .fx-cta-banner {
+        padding: 42px 20px;
+        border-radius: 22px;
+    }
+    .fx-cta-banner h2 {
+        font-size: clamp(1.8rem, 6.5vw, 2.3rem);
+    }
+
+    /* ── Pie en Móvil ── */
+    .fx-footer {
+        padding: 48px 0 32px;
+    }
+    .fx-footer-grid {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+}
+
+@media (max-width: 480px) {
+    .fx-destacada-puntos {
+        grid-template-columns: 1fr;
+    }
+    .fx-arquitectura-grid {
+        grid-template-columns: 1fr;
+    }
+}
 
 /* ── Reducción de Movimiento ── */
 @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     .fx-revelar { opacity: 1; transform: none; transition: none; }
-    .fx-card, .fx-btn, .fx-showcase-tab, .fx-metrica-card { transition: none; }
+    .fx-card, .fx-btn, .fx-showcase-tab, .fx-metrica-card, .fx-showcase-chip { transition: none; }
     .fx-flotante-badge, .fx-etiqueta-punto { animation: none; }
 }
