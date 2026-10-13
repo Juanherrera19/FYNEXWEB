@@ -8,10 +8,6 @@ que cualquier hosting estático sirve al instante, sin arranque en frío.
 
     python build.py            genera dist/
     python build.py --servir   genera y levanta un servidor local para revisarlo
-
-Todo texto que sale del catálogo se escapa antes de insertarse. Hoy el catálogo lo
-escribimos nosotros, pero así el día que venga de otra fuente la página ya está
-preparada.
 """
 
 import argparse
@@ -64,52 +60,69 @@ def botones(app: dict, clase_extra: str = "") -> str:
     partes = []
 
     if app.get("url_propia"):
+        clase_btn = "fx-btn-app" if app.get("destacada") else "fx-btn-primario"
         partes.append(
-            '<a href="%s" class="fx-btn fx-btn-primario%s">Abrir %s</a>'
-            % (esc(app["url_propia"]), clase_extra, esc(app["nombre"]))
+            '<a href="%s" target="_blank" rel="noopener noreferrer" class="fx-btn %s%s">Abrir %s ↗</a>'
+            % (esc(app["url_propia"]), clase_btn, clase_extra, esc(app["nombre"]))
         )
 
     for tienda in app.get("tiendas", []):
         partes.append(
             '<a href="%s" class="fx-btn fx-btn-secundario%s" target="_blank" '
             'rel="noopener noreferrer">%s %s</a>'
-            % (esc(tienda["url"]), clase_extra, esc(tienda.get("icono", "↗")),
+            % (esc(tienda["url"]), clase_extra, esc(tienda.get("icono", "▶")),
                esc(tienda["nombre"]))
         )
 
     if not partes:
-        partes.append('<span class="fx-insignia-pronto">Próximamente</span>')
+        partes.append('<span class="fx-insignia-pronto">En desarrollo</span>')
 
     return "".join(partes)
 
 
 def tarjeta(app: dict) -> str:
-    """Una tarjeta del catálogo."""
+    """Una tarjeta del catálogo con spotlight y atributos de filtro."""
     pronto = app["estado"] != "publicada"
     clases = "fx-card fx-revelar" + (" fx-card-pronto" if pronto else "")
+    tipo = esc(app.get("tipo", "app"))
 
     if app.get("icono"):
-        icono = ('<img src="/%s" alt="" class="fx-card-icono" width="62" height="62" '
-                 'loading="lazy">' % esc(app["icono"]))
+        icono = ('<img src="/%s" alt="%s" class="fx-card-icono" width="68" height="68" '
+                 'loading="lazy">' % (esc(app["icono"]), esc(app["nombre"])))
     else:
         icono = '<div class="fx-card-icono fx-card-icono-vacio">✦</div>'
 
     if pronto:
-        pie = '<span class="fx-insignia-pronto">Próximamente</span>'
+        badge_status = '<span class="fx-card-badge-status fx-card-badge-pronto">Próximamente</span>'
+        pie = '<span class="fx-insignia-pronto">Muy pronto</span>'
     else:
+        badge_status = '<span class="fx-card-badge-status">Disponible</span>'
         pie = ('<a href="/apps/%s/" class="fx-btn fx-btn-secundario fx-btn-sm">Ver detalles</a>'
                % esc(app["slug"])) + botones(app, " fx-btn-sm")
 
+    chips_plataforma = "".join(
+        '<span class="fx-plataforma" style="font-size:0.75rem; padding:3px 8px;">%s</span>' % esc(p)
+        for p in app.get("plataformas", [])
+    )
+
     return """
-        <article class="%s" style="--app-color: %s;">
-            %s
-            <div class="fx-card-cat">%s</div>
+        <article class="%s" data-tipo="%s" style="--app-color: %s;">
+            <div class="fx-card-top">
+                %s
+                <div class="fx-card-badges-row">
+                    <span class="fx-card-cat">%s</span>
+                    %s
+                </div>
+            </div>
             <h3>%s</h3>
-            <p>%s</p>
+            <p class="fx-card-desc">%s</p>
+            <div class="fx-plataformas" style="margin-bottom:18px;">%s</div>
             <div class="fx-card-pie">%s</div>
         </article>""" % (
-        clases, esc(app["color"]), icono, esc(app["categoria"]),
-        esc(app["nombre"]), esc(app["descripcion_corta"]), pie,
+        clases, tipo, esc(app["color"]),
+        icono, esc(app["categoria"]), badge_status,
+        esc(app["nombre"]), esc(app["descripcion_corta"]),
+        chips_plataforma, pie,
     )
 
 
@@ -119,21 +132,52 @@ def seccion_destacada(app) -> str:
 
     visual = ""
     if app.get("icono"):
-        visual = ('<div class="fx-destacada-visual">'
-                  '<img src="/%s" alt="%s" width="260" height="260"></div>'
-                  % (esc(app["icono"]), esc(app["nombre"])))
+        visual = """
+        <div class="fx-destacada-visual">
+            <div class="fx-destacada-mockup-wrap">
+                <div class="fx-flotante-badge pos-arriba">
+                    <span>✨</span> <span>Fynex IA Activa</span>
+                </div>
+                <img src="/%s" alt="%s" class="fx-app-preview" width="250" height="250">
+                <div class="fx-flotante-badge pos-abajo">
+                    <span>📊</span> <span>Avalancha & Nieve</span>
+                </div>
+            </div>
+        </div>""" % (esc(app["icono"]), esc(app["nombre"]))
+
+    version = esc(app.get("version", "1.2.18"))
 
     return """
 <section class="fx-seccion">
     <div class="fx-contenedor">
         <div class="fx-destacada fx-revelar" style="--app-color: %s;">
             <div class="fx-destacada-txt">
-                <span class="fx-destacada-cat">Destacada · %s</span>
+                <div class="fx-destacada-badges">
+                    <span class="fx-destacada-cat">✦ Proyecto Destacado · %s</span>
+                    <span class="fx-destacada-pill">v%s</span>
+                    <span class="fx-destacada-pill">100%% Gratis</span>
+                </div>
                 <h3>%s</h3>
                 <p class="fx-tagline">%s</p>
                 <p class="fx-desc">%s</p>
+
+                <div class="fx-destacada-puntos">
+                    <div class="fx-destacada-punto">
+                        <span class="ico">🛡️</span> <span>Sin anuncios ni paywalls</span>
+                    </div>
+                    <div class="fx-destacada-punto">
+                        <span class="ico">✨</span> <span>Asesor Fynex IA diario</span>
+                    </div>
+                    <div class="fx-destacada-punto">
+                        <span class="ico">🧮</span> <span>Simulador de 9 créditos</span>
+                    </div>
+                    <div class="fx-destacada-punto">
+                        <span class="ico">📱</span> <span>Widgets nativos Android</span>
+                    </div>
+                </div>
+
                 <div class="fx-acciones" style="justify-content:flex-start;">
-                    <a href="/apps/%s/" class="fx-btn fx-btn-secundario">Ver detalles</a>
+                    <a href="/apps/%s/" class="fx-btn fx-btn-primario">Explorar Debts Goodbye</a>
                     %s
                 </div>
             </div>
@@ -141,7 +185,7 @@ def seccion_destacada(app) -> str:
         </div>
     </div>
 </section>""" % (
-        esc(app["color"]), esc(app["categoria"]), esc(app["nombre"]),
+        esc(app["color"]), esc(app["categoria"]), version, esc(app["nombre"]),
         esc(app["tagline"]), esc(app["descripcion_corta"]), esc(app["slug"]),
         botones(app), visual,
     )
@@ -173,24 +217,110 @@ def generar_portada() -> str:
 def generar_detalle(app: dict) -> str:
     plantilla = (PLANTILLAS / "app.html").read_text(encoding="utf-8")
 
+    # Icono principal en alta resolución
     if app.get("icono"):
-        icono = ('<img src="/%s" alt="%s" class="fx-app-icono" width="122" height="122">'
+        icono = ('<img src="/%s" alt="%s" class="fx-app-icono" width="136" height="136">'
                  % (esc(app["icono"]), esc(app["nombre"])))
     else:
         icono = '<div class="fx-app-icono fx-card-icono-vacio">✦</div>'
 
+    # Franja de métricas
+    metricas = ""
+    if app.get("metas"):
+        items = "".join("""
+            <div class="fx-metrica-card">
+                <div class="fx-metrica-icono">%s</div>
+                <div>
+                    <div class="fx-metrica-valor">%s</div>
+                    <div class="fx-metrica-etiqueta">%s</div>
+                </div>
+            </div>""" % (esc(m["icono"]), esc(m["valor"]), esc(m["etiqueta"]))
+            for m in app["metas"])
+        metricas = '<div class="fx-metricas-grid fx-revelar">%s</div>' % items
+
+    # Showcase interactivo (Galería de pantallas con mockup)
+    showcase = ""
+    if app.get("showcase"):
+        primero = app["showcase"][0]
+        tabs = "".join("""
+            <button type="button" class="fx-showcase-tab%s" data-id="%s" data-img="/%s" data-titulo="%s">
+                <div class="fx-showcase-tab-header">
+                    <span class="fx-showcase-tab-titulo">%s</span>
+                    <span class="fx-showcase-tab-badge">%s</span>
+                </div>
+                <p class="fx-showcase-tab-desc">%s</p>
+            </button>""" % (
+            " activa" if i == 0 else "",
+            esc(s["id"]), esc(s["captura"]), esc(s["titulo"]),
+            esc(s["titulo"]), esc(s["badge"]), esc(s["desc"])
+        ) for i, s in enumerate(app["showcase"]))
+
+        showcase = """
+<section class="fx-seccion fx-seccion-alt">
+    <div class="fx-contenedor">
+        <div class="fx-seccion-cab centrado fx-revelar">
+            <h2>Explora cada módulo de la aplicación</h2>
+            <p>Capturas reales de la experiencia en ejecución. Selecciona cada herramienta para verla en acción.</p>
+        </div>
+        <div class="fx-showcase fx-revelar">
+            <div class="fx-showcase-tabs">
+                %s
+            </div>
+            <div class="fx-showcase-display">
+                <div class="fx-celular-frame">
+                    <div class="fx-celular-pantalla">
+                        <img src="/%s" alt="%s" class="fx-celular-img" id="mockupPantalla">
+                    </div>
+                </div>
+                <button type="button" class="fx-btn-inspeccionar" id="btnInspeccionar" data-img="/%s" data-titulo="%s">
+                    🔍 Ampliar captura a pantalla completa
+                </button>
+            </div>
+        </div>
+    </div>
+</section>""" % (
+            tabs,
+            esc(primero["captura"]), esc(primero["titulo"]),
+            esc(primero["captura"]), esc(primero["titulo"]),
+        )
+
+    # Descripción larga
     descripcion = ""
     if app.get("descripcion_larga"):
         descripcion = """
-<section class="fx-seccion fx-seccion-alt">
+<section class="fx-seccion">
     <div class="fx-contenedor">
-        <div class="fx-seccion-cab">
-            <h2>Qué hace</h2>
-            <p>%s</p>
+        <div class="fx-seccion-cab fx-revelar" style="max-width:820px; margin-left:auto; margin-right:auto; text-align:center;">
+            <h2>Control financiero con rigor matemático</h2>
+            <p style="font-size:1.1rem; line-height:1.7;">%s</p>
         </div>
     </div>
 </section>""" % esc(app["descripcion_larga"])
 
+    # Novedades recientes del README
+    novedades = ""
+    if app.get("novedades"):
+        cards = "".join("""
+            <article class="fx-novedad-card fx-revelar">
+                <div class="fx-novedad-top">
+                    <span class="fx-novedad-icono">%s</span>
+                    <h4>%s</h4>
+                </div>
+                <p>%s</p>
+            </article>""" % (esc(n["icono"]), esc(n["titulo"]), esc(n["desc"]))
+            for n in app["novedades"])
+        novedades = """
+<section class="fx-seccion fx-seccion-alt">
+    <div class="fx-contenedor">
+        <div class="fx-seccion-cab centrado fx-revelar">
+            <h2>Innovaciones y actualizaciones recientes</h2>
+            <p>Evolución continua basada en ingeniería financiera, compatibilidad moderna y retroalimentación real.</p>
+        </div>
+        <div class="fx-novedades-grid">%s</div>
+    </div>
+</section>""" % cards
+
+    # Características
     caracteristicas = ""
     if app.get("caracteristicas"):
         tarjetas = "".join("""
@@ -203,14 +333,66 @@ def generar_detalle(app: dict) -> str:
         caracteristicas = """
 <section class="fx-seccion">
     <div class="fx-contenedor">
-        <div class="fx-seccion-cab centrado">
-            <h2>Lo que puedes hacer</h2>
+        <div class="fx-seccion-cab centrado fx-revelar">
+            <h2>Todo lo que puedes lograr con Debts Goodbye</h2>
+            <p>Un conjunto integral de herramientas diseñado para tu tranquilidad y libertad económica.</p>
         </div>
         <div class="fx-caracteristicas">%s</div>
     </div>
 </section>""" % tarjetas
 
-    # La política de privacidad vive en el sitio del producto, no aquí.
+    # Arquitectura e ingeniería
+    arquitectura = """
+<section class="fx-seccion fx-seccion-alt">
+    <div class="fx-contenedor">
+        <div class="fx-seccion-cab centrado fx-revelar">
+            <h2>Arquitectura e integridad técnica</h2>
+            <p>Diseñada con estándares rigurosos de seguridad, velocidad y privacidad para durar en el tiempo.</p>
+        </div>
+        <div class="fx-arquitectura-grid fx-revelar">
+            <div class="fx-arquitectura-card">
+                <h5>FastAPI + Python Backend</h5>
+                <p>Matemática única centralizada en servicios backend con tipado estricto Pydantic y alta velocidad de respuesta.</p>
+            </div>
+            <div class="fx-arquitectura-card">
+                <h5>Flutter Multiplataforma</h5>
+                <p>Experiencia nativa ultra fluida a 60-120 FPS en Android, iOS y Web con una única base de código compartida.</p>
+            </div>
+            <div class="fx-arquitectura-card">
+                <h5>Base de Datos Dual & Pool</h5>
+                <p>Capa de abstracción que soporta SQLite local para desarrollo y PostgreSQL con pool de conexiones en producción.</p>
+            </div>
+            <div class="fx-arquitectura-card">
+                <h5>Android 15+ Edge-to-Edge & R8</h5>
+                <p>Diseño visual nativo borde a borde, optimización DEX, ofuscación R8 y cero identificadores de publicidad.</p>
+            </div>
+        </div>
+    </div>
+</section>"""
+
+    # Banner CTA final
+    cta_banner = """
+<section class="fx-seccion">
+    <div class="fx-contenedor">
+        <div class="fx-cta-banner fx-revelar">
+            <h2>Comienza hoy tu camino hacia la libertad financiera</h2>
+            <p>Toma el control de tus deudas, optimiza tus cuotas y proyecta tu futuro con números reales.</p>
+            <div class="fx-acciones">
+                <a href="%s" target="_blank" rel="noopener noreferrer" class="fx-btn fx-btn-primario">
+                    Abrir Debts Goodbye en la Web ↗
+                </a>
+                <a href="%s" target="_blank" rel="noopener noreferrer" class="fx-btn fx-btn-secundario">
+                    Descargar en Google Play ▶
+                </a>
+            </div>
+        </div>
+    </div>
+</section>""" % (
+        esc(app.get("url_propia", "https://dgb.fynexhq.com")),
+        esc(app.get("tiendas", [{}])[0].get("url", "https://play.google.com/store/apps/details?id=com.debtsgoodbye.free"))
+    )
+
+    # Política de privacidad
     if app.get("url_privacidad"):
         privacidad = ('<a href="%s" target="_blank" rel="noopener noreferrer">'
                       'Política de privacidad</a>' % esc(app["url_privacidad"]))
@@ -223,12 +405,20 @@ def generar_detalle(app: dict) -> str:
         "COLOR": esc(app["color"]),
         "CATEGORIA": esc(app["categoria"]),
         "TAGLINE": esc(app["tagline"]),
+        "VERSION": esc(app.get("version", "1.2.18")),
         "ICONO": icono,
+        "ICONO_URL": esc(app.get("icono", "img/apps/debts-goodbye.png")),
+        "URL_PROPIA": esc(app.get("url_propia", "https://dgb.fynexhq.com")),
         "PLATAFORMAS": "".join('<span class="fx-plataforma">%s</span>' % esc(p)
                                for p in app.get("plataformas", [])),
         "BOTONES": botones(app),
+        "METRICAS": metricas,
+        "SHOWCASE_GALERIA": showcase,
         "DESCRIPCION": descripcion,
+        "NOVEDADES": novedades,
         "CARACTERISTICAS": caracteristicas,
+        "ARQUITECTURA": arquitectura,
+        "CTA_BANNER": cta_banner,
         "FOOTER_APPS": apps_del_pie(),
         "ESTUDIO_DESC": esc(catalogo.ESTUDIO["descripcion"]),
         "PRIVACIDAD": privacidad,

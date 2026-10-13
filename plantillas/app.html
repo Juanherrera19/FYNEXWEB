@@ -5,15 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{{NOMBRE}} — FYNEX</title>
 <meta name="description" content="{{DESC_CORTA}}">
-<meta name="theme-color" content="#07090f">
-<meta property="og:image" content="https://www.fynexhq.com/img/fynex-logo.png">
+<meta name="theme-color" content="#06080e">
+<meta property="og:image" content="https://www.fynexhq.com/{{ICONO_URL}}">
 <link rel="icon" href="/img/fynex-logo-sm.png">
 <meta property="og:title" content="{{NOMBRE}} — FYNEX">
 <meta property="og:description" content="{{DESC_CORTA}}">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/fynex.css">
 </head>
 <body style="--app-color: {{COLOR}};">
@@ -21,49 +21,82 @@
 <header class="fx-header">
     <div class="fx-contenedor fx-header-inner">
         <a href="/" class="fx-marca">
-            <img src="/img/fynex-logo-sm.png" alt="" class="fx-marca-ave" width="30" height="30">
-            FYNEX
+            <img src="/img/fynex-logo-sm.png" alt="FYNEX" class="fx-marca-ave" width="32" height="32">
+            <span>FYNEX</span>
         </a>
         <button class="fx-nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="fxNav">☰</button>
         <nav class="fx-nav" id="fxNav">
             <a href="/#apps">Catálogo</a>
             <a href="/#estudio">Estudio</a>
             <a href="/#contacto">Contacto</a>
+            <a href="{{URL_PROPIA}}" target="_blank" rel="noopener noreferrer" class="fx-nav-cta">Abrir {{NOMBRE}} ↗</a>
         </nav>
     </div>
 </header>
 
 <main>
 
+<!-- ═══════ HERO DE PRODUCTO ═══════ -->
 <section class="fx-app-hero">
     <div class="fx-contenedor">
         <a href="/#apps" class="fx-volver">← Volver al catálogo</a>
         <div class="fx-app-hero-inner">
-            {{ICONO}}
-            <div>
-                <span class="fx-destacada-cat">{{CATEGORIA}}</span>
+            <div class="fx-app-icono-wrap fx-revelar">
+                {{ICONO}}
+            </div>
+            <div class="fx-app-hero-txt fx-revelar">
+                <div class="fx-app-hero-meta">
+                    <span class="fx-app-badge-oficial">✦ Producto Oficial FYNEX</span>
+                    <span class="fx-destacada-cat">{{CATEGORIA}}</span>
+                    <span class="fx-app-version">v{{VERSION}}</span>
+                </div>
                 <h1>{{NOMBRE}}</h1>
                 <p class="fx-tagline">{{TAGLINE}}</p>
                 <div class="fx-plataformas">{{PLATAFORMAS}}</div>
-                <div class="fx-acciones">{{BOTONES}}</div>
+                <div class="fx-acciones" style="justify-content: flex-start;">{{BOTONES}}</div>
             </div>
         </div>
+
+        {{METRICAS}}
     </div>
 </section>
 
+<!-- ═══════ SHOWCASE INTERACTIVO (GALERÍA CON MOCKUP) ═══════ -->
+{{SHOWCASE_GALERIA}}
+
+<!-- ═══════ QUÉ HACE Y PROPUESTA DE VALOR ═══════ -->
 {{DESCRIPCION}}
 
+<!-- ═══════ NOVEDADES E INNOVACIONES RECIENTES ═══════ -->
+{{NOVEDADES}}
+
+<!-- ═══════ CARACTERÍSTICAS DEL PRODUCTO ═══════ -->
 {{CARACTERISTICAS}}
 
+<!-- ═══════ ARQUITECTURA E INTEGRIDAD TÉCNICA ═══════ -->
+{{ARQUITECTURA}}
+
+<!-- ═══════ LLAMADA A LA ACCIÓN FINAL ═══════ -->
+{{CTA_BANNER}}
+
 </main>
+
+<!-- ═══════ LIGHTBOX PARA INSPECCIONAR CAPTURAS ═══════ -->
+<div class="fx-lightbox" id="fxLightbox" role="dialog" aria-modal="true" aria-label="Vista previa de captura">
+    <div class="fx-lightbox-content">
+        <button type="button" class="fx-lightbox-cerrar" id="btnCerrarLightbox" aria-label="Cerrar imagen">✕</button>
+        <img src="" alt="" class="fx-lightbox-img" id="imgLightbox">
+        <div class="fx-lightbox-pie" id="pieLightbox"></div>
+    </div>
+</div>
 
 <footer class="fx-footer">
     <div class="fx-contenedor">
         <div class="fx-footer-grid">
             <div>
                 <div class="fx-marca">
-                    <img src="/img/fynex-logo-sm.png" alt="" class="fx-marca-ave" width="30" height="30">
-                    FYNEX
+                    <img src="/img/fynex-logo-sm.png" alt="FYNEX" class="fx-marca-ave" width="30" height="30">
+                    <span>FYNEX</span>
                 </div>
                 <p class="fx-footer-desc">{{ESTUDIO_DESC}}</p>
             </div>
@@ -76,6 +109,7 @@
                 <ul>
                     <li><a href="/#estudio">Cómo trabajamos</a></li>
                     <li><a href="/#contacto">Contacto</a></li>
+                    <li><a href="/">Inicio</a></li>
                 </ul>
             </div>
         </div>
@@ -89,11 +123,12 @@
 <script>
 document.getElementById('anio').textContent = new Date().getFullYear();
 
+// Menú móvil
 (function () {
     var toggle = document.getElementById('navToggle');
     var nav = document.getElementById('fxNav');
     if (!toggle || !nav) return;
-    function esMovil() { return window.matchMedia('(max-width: 720px)').matches; }
+    function esMovil() { return window.matchMedia('(max-width: 740px)').matches; }
     function sincronizar() { nav.hidden = esMovil(); toggle.setAttribute('aria-expanded', 'false'); }
     sincronizar();
     window.addEventListener('resize', sincronizar);
@@ -104,6 +139,7 @@ document.getElementById('anio').textContent = new Date().getFullYear();
     });
 })();
 
+// Scroll reveal
 (function () {
     var elementos = document.querySelectorAll('.fx-revelar');
     if (!('IntersectionObserver' in window)) {
@@ -114,8 +150,91 @@ document.getElementById('anio').textContent = new Date().getFullYear();
         entradas.forEach(function (e) {
             if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
         });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px' });
+    }, { threshold: 0.1, rootMargin: '0px 0px -30px' });
     elementos.forEach(function (el) { obs.observe(el); });
+})();
+
+// Spotlight en tarjetas
+(function () {
+    var cards = document.querySelectorAll('.fx-metrica-card, .fx-novedad-card, .fx-caracteristica, .fx-showcase');
+    cards.forEach(function (card) {
+        card.addEventListener('mousemove', function (e) {
+            var rect = card.getBoundingClientRect();
+            var x = e.clientX - rect.left;
+            var y = e.clientY - rect.top;
+            card.style.setProperty('--mouse-x', x + 'px');
+            card.style.setProperty('--mouse-y', y + 'px');
+        });
+    });
+})();
+
+// Showcase interactivo (pestañas y cambio de pantalla en el celular)
+(function () {
+    var tabs = document.querySelectorAll('.fx-showcase-tab');
+    var mockupImg = document.getElementById('mockupPantalla');
+    var btnInspeccionar = document.getElementById('btnInspeccionar');
+    if (!tabs.length || !mockupImg) return;
+
+    tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+            tabs.forEach(function (t) { t.classList.remove('activa'); });
+            tab.classList.add('activa');
+
+            var nuevaImg = tab.getAttribute('data-img');
+            var nuevoTitulo = tab.getAttribute('data-titulo');
+
+            mockupImg.classList.add('cambiando');
+            setTimeout(function () {
+                mockupImg.src = nuevaImg;
+                mockupImg.alt = nuevoTitulo;
+                mockupImg.classList.remove('cambiando');
+            }, 180);
+
+            if (btnInspeccionar) {
+                btnInspeccionar.setAttribute('data-img', nuevaImg);
+                btnInspeccionar.setAttribute('data-titulo', nuevoTitulo);
+            }
+        });
+    });
+})();
+
+// Lightbox modal para ver capturas en pantalla completa
+(function () {
+    var lightbox = document.getElementById('fxLightbox');
+    var imgL = document.getElementById('imgLightbox');
+    var pieL = document.getElementById('pieLightbox');
+    var btnCerrar = document.getElementById('btnCerrarLightbox');
+    var btnInspeccionar = document.getElementById('btnInspeccionar');
+    if (!lightbox || !imgL || !btnCerrar) return;
+
+    function abrir(src, titulo) {
+        imgL.src = src;
+        imgL.alt = titulo;
+        pieL.textContent = titulo;
+        lightbox.classList.add('abierto');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function cerrar() {
+        lightbox.classList.remove('abierto');
+        document.body.style.overflow = '';
+    }
+
+    if (btnInspeccionar) {
+        btnInspeccionar.addEventListener('click', function () {
+            var src = btnInspeccionar.getAttribute('data-img');
+            var tit = btnInspeccionar.getAttribute('data-titulo') || 'Captura de pantalla';
+            abrir(src, tit);
+        });
+    }
+
+    btnCerrar.addEventListener('click', cerrar);
+    lightbox.addEventListener('click', function (e) {
+        if (e.target === lightbox) cerrar();
+    });
+    window.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && lightbox.classList.contains('abierto')) cerrar();
+    });
 })();
 </script>
 

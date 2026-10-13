@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FYNEX — Estudio de apps y juegos</title>
 <meta name="description" content="FYNEX diseña y desarrolla aplicaciones y juegos para móvil y web. Conoce nuestro catálogo, empezando por Debts Goodbye.">
-<meta name="theme-color" content="#07090f">
+<meta name="theme-color" content="#06080e">
 <meta property="og:image" content="https://www.fynexhq.com/img/fynex-logo.png">
 <link rel="icon" href="/img/fynex-logo-sm.png">
 <meta property="og:title" content="FYNEX — Estudio de apps y juegos">
@@ -14,7 +14,7 @@
 <meta property="og:url" content="https://www.fynexhq.com">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/fynex.css">
 </head>
 <body>
@@ -22,14 +22,15 @@
 <header class="fx-header">
     <div class="fx-contenedor fx-header-inner">
         <a href="/" class="fx-marca">
-            <img src="/img/fynex-logo-sm.png" alt="" class="fx-marca-ave" width="30" height="30">
-            FYNEX
+            <img src="/img/fynex-logo-sm.png" alt="FYNEX" class="fx-marca-ave" width="32" height="32">
+            <span>FYNEX</span>
         </a>
         <button class="fx-nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="fxNav">☰</button>
         <nav class="fx-nav" id="fxNav">
-            <a href="#apps">Aplicaciones</a>
+            <a href="#apps">Catálogo</a>
             <a href="#estudio">Estudio</a>
             <a href="#contacto">Contacto</a>
+            <a href="/apps/debts-goodbye/" class="fx-nav-cta">✦ Debts Goodbye</a>
         </nav>
     </div>
 </header>
@@ -39,18 +40,22 @@
 <!-- ═══════ HERO ═══════ -->
 <section class="fx-hero">
     <div class="fx-contenedor fx-hero-inner">
-        <span class="fx-etiqueta">✦ Estudio de apps y juegos</span>
-        <h1>
+        <div class="fx-etiqueta fx-revelar">
+            <span class="fx-etiqueta-punto"></span>
+            <span>Estudio de desarrollo independiente</span>
+        </div>
+        <h1 class="fx-revelar">
             Creamos apps y juegos<br>
-            que <span class="fx-degradado">valen la pena abrir</span>
+            que <span class="fx-degradado">transforman tu día a día</span>
         </h1>
-        <p>
-            FYNEX es un estudio de desarrollo. Diseñamos productos móviles y web:
-            herramientas que resuelven algo real y juegos que se disfrutan.
+        <p class="fx-revelar">
+            FYNEX es un estudio enfocado en experiencias digitales de alto impacto:
+            herramientas financieras y de productividad que resuelven problemas reales,
+            y experiencias lúdicas diseñadas con obsesión por el detalle.
         </p>
-        <div class="fx-acciones">
-            <a href="#apps" class="fx-btn fx-btn-primario">Ver el catálogo</a>
-            <a href="#estudio" class="fx-btn fx-btn-secundario">Conocer el estudio</a>
+        <div class="fx-acciones fx-revelar">
+            <a href="#apps" class="fx-btn fx-btn-primario">Explorar el catálogo</a>
+            <a href="/apps/debts-goodbye/" class="fx-btn fx-btn-secundario">Conocer Debts Goodbye ↗</a>
         </div>
     </div>
 </section>
@@ -61,38 +66,48 @@
 <!-- ═══════ CATÁLOGO ═══════ -->
 <section class="fx-seccion fx-seccion-alt" id="apps">
     <div class="fx-contenedor">
-        <div class="fx-seccion-cab centrado">
-            <h2>Nuestro catálogo</h2>
-            <p>Cada producto vive en su propio espacio, con su identidad y su propósito.</p>
+        <div class="fx-seccion-cab centrado fx-revelar">
+            <h2>Nuestro catálogo de proyectos</h2>
+            <p>Cada producto vive en su propio ecosistema, con su identidad visual, su matemática y su propósito.</p>
         </div>
-        <div class="fx-grid">
+
+        <div class="fx-filtros fx-revelar">
+            <button type="button" class="fx-filtro-btn activo" data-filtro="todos">Todos los proyectos</button>
+            <button type="button" class="fx-filtro-btn" data-filtro="app">Aplicaciones</button>
+            <button type="button" class="fx-filtro-btn" data-filtro="juego">Juegos</button>
+        </div>
+
+        <div class="fx-grid" id="catalogoGrid">
             {{TARJETAS}}
         </div>
     </div>
 </section>
 
-<!-- ═══════ ESTUDIO ═══════ -->
+<!-- ═══════ ESTUDIO / VALORES ═══════ -->
 <section class="fx-seccion" id="estudio">
     <div class="fx-contenedor">
-        <div class="fx-seccion-cab centrado">
-            <h2>Cómo trabajamos</h2>
-            <p>Tres cosas que no negociamos en ningún producto que sale de aquí.</p>
+        <div class="fx-seccion-cab centrado fx-revelar">
+            <h2>Principios de ingeniería y diseño</h2>
+            <p>Tres compromisos innegociables presentes en cada línea de código que sale de FYNEX.</p>
         </div>
-        <div class="fx-caracteristicas">
-            <article class="fx-caracteristica fx-revelar">
-                <span class="emoji">🎯</span>
-                <h4>Un propósito, no una lista de funciones</h4>
-                <p>Cada producto nace de algo concreto: un problema que resolver o una experiencia que vale la pena. Lo que no aporte a eso, no entra.</p>
+        <div class="fx-valores-grid">
+            <article class="fx-valor-card fx-revelar">
+                <span class="fx-valor-numero">01</span>
+                <span class="fx-valor-icono">🎯</span>
+                <h4>Propósito real, no relleno</h4>
+                <p>Nuestros productos nacen de necesidades tangibles. No añadimos funciones por inflar números; cada interacción está justificada y pulida.</p>
             </article>
-            <article class="fx-caracteristica fx-revelar">
-                <span class="emoji">🔒</span>
-                <h4>Tus datos son tuyos</h4>
-                <p>No vendemos información personal. Lo que registras en nuestros productos existe para servirte a ti.</p>
+            <article class="fx-valor-card fx-revelar">
+                <span class="fx-valor-numero">02</span>
+                <span class="fx-valor-icono">🔒</span>
+                <h4>Tus datos son sagrados</h4>
+                <p>Cero venta de información personal y cero rastreadores publicitarios invasivos. Lo que registras en nuestras apps existe exclusivamente para ayudarte a ti.</p>
             </article>
-            <article class="fx-caracteristica fx-revelar">
-                <span class="emoji">📱</span>
-                <h4>Donde estés</h4>
-                <p>Nuestros productos funcionan en móvil y en web, con los mismos datos sincronizados.</p>
+            <article class="fx-valor-card fx-revelar">
+                <span class="fx-valor-numero">03</span>
+                <span class="fx-valor-icono">📱</span>
+                <h4>Multiplataforma sin fisuras</h4>
+                <p>Desarrollamos experiencias nativas y web perfectamente sincronizadas sobre las mismas reglas de negocio y con tiempos de respuesta instantáneos.</p>
             </article>
         </div>
     </div>
@@ -101,11 +116,16 @@
 <!-- ═══════ CONTACTO ═══════ -->
 <section class="fx-seccion fx-seccion-alt" id="contacto">
     <div class="fx-contenedor">
-        <div class="fx-seccion-cab centrado">
-            <h2>Hablemos</h2>
-            <p>¿Una idea, una propuesta o algo que reportar sobre alguno de nuestros productos?</p>
-            <div class="fx-acciones" style="margin-top:26px;">
-                <a href="mailto:{{ESTUDIO_EMAIL}}" class="fx-btn fx-btn-primario">{{ESTUDIO_EMAIL}}</a>
+        <div class="fx-contacto-card fx-revelar">
+            <h2>Construyamos el futuro juntos</h2>
+            <p>¿Tienes una propuesta, una consulta técnica o deseas colaborar con nuestro estudio? Nuestra bandeja de entrada está abierta.</p>
+            <div class="fx-contacto-acciones">
+                <a href="mailto:{{ESTUDIO_EMAIL}}" class="fx-btn fx-btn-primario">
+                    <span>Enviar correo a {{ESTUDIO_EMAIL}}</span>
+                </a>
+                <button type="button" class="fx-btn-copiar" id="btnCopiarEmail" data-email="{{ESTUDIO_EMAIL}}">
+                    <span id="icoCopiar">📋</span> <span id="txtCopiar">Copiar dirección</span>
+                </button>
             </div>
         </div>
     </div>
@@ -118,8 +138,8 @@
         <div class="fx-footer-grid">
             <div>
                 <div class="fx-marca">
-                    <img src="/img/fynex-logo-sm.png" alt="" class="fx-marca-ave" width="30" height="30">
-                    FYNEX
+                    <img src="/img/fynex-logo-sm.png" alt="FYNEX" class="fx-marca-ave" width="30" height="30">
+                    <span>FYNEX</span>
                 </div>
                 <p class="fx-footer-desc">{{ESTUDIO_DESC}}</p>
             </div>
@@ -132,12 +152,13 @@
                 <ul>
                     <li><a href="#estudio">Cómo trabajamos</a></li>
                     <li><a href="#contacto">Contacto</a></li>
+                    <li><a href="/apps/debts-goodbye/">Debts Goodbye</a></li>
                 </ul>
             </div>
         </div>
         <div class="fx-footer-legal">
             <span>© <span id="anio">2026</span> FYNEX. Todos los derechos reservados.</span>
-            <span>Hecho con cuidado.</span>
+            <span>Diseñado con pasión y precisión técnica.</span>
         </div>
     </div>
 </footer>
@@ -151,7 +172,7 @@ document.getElementById('anio').textContent = new Date().getFullYear();
     var nav = document.getElementById('fxNav');
     if (!toggle || !nav) return;
 
-    function esMovil() { return window.matchMedia('(max-width: 720px)').matches; }
+    function esMovil() { return window.matchMedia('(max-width: 740px)').matches; }
     function cerrar() { if (esMovil()) { nav.hidden = true; toggle.setAttribute('aria-expanded', 'false'); } }
     function sincronizar() { nav.hidden = esMovil(); toggle.setAttribute('aria-expanded', 'false'); }
 
@@ -168,7 +189,7 @@ document.getElementById('anio').textContent = new Date().getFullYear();
     });
 })();
 
-// Entrada al hacer scroll. Si no hay IntersectionObserver, todo queda visible.
+// Entrada escalonada al hacer scroll
 (function () {
     var elementos = document.querySelectorAll('.fx-revelar');
     if (!('IntersectionObserver' in window)) {
@@ -182,8 +203,73 @@ document.getElementById('anio').textContent = new Date().getFullYear();
                 obs.unobserve(entrada.target);
             }
         });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px' });
+    }, { threshold: 0.1, rootMargin: '0px 0px -30px' });
     elementos.forEach(function (el) { obs.observe(el); });
+})();
+
+// Spotlight dinámico que sigue el cursor en tarjetas
+(function () {
+    var cards = document.querySelectorAll('.fx-card, .fx-destacada, .fx-valor-card');
+    cards.forEach(function (card) {
+        card.addEventListener('mousemove', function (e) {
+            var rect = card.getBoundingClientRect();
+            var x = e.clientX - rect.left;
+            var y = e.clientY - rect.top;
+            card.style.setProperty('--mouse-x', x + 'px');
+            card.style.setProperty('--mouse-y', y + 'px');
+        });
+    });
+})();
+
+// Filtro de proyectos
+(function () {
+    var btns = document.querySelectorAll('.fx-filtro-btn');
+    var cards = document.querySelectorAll('#catalogoGrid .fx-card');
+    if (!btns.length || !cards.length) return;
+
+    btns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            btns.forEach(function (b) { b.classList.remove('activo'); });
+            btn.classList.add('activo');
+            var filtro = btn.getAttribute('data-filtro');
+
+            cards.forEach(function (card) {
+                var tipo = card.getAttribute('data-tipo');
+                if (filtro === 'todos' || tipo === filtro) {
+                    card.style.display = '';
+                    setTimeout(function () { card.classList.add('visible'); }, 50);
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
+})();
+
+// Copiar email con retroalimentación visual
+(function () {
+    var btn = document.getElementById('btnCopiarEmail');
+    var txt = document.getElementById('txtCopiar');
+    var ico = document.getElementById('icoCopiar');
+    if (!btn || !txt || !ico) return;
+
+    btn.addEventListener('click', function () {
+        var email = btn.getAttribute('data-email');
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(email).then(function () {
+                txt.textContent = '¡Copiado al portapapeles!';
+                ico.textContent = '✓';
+                btn.style.borderColor = 'rgba(45, 212, 191, 0.6)';
+                btn.style.color = '#5eead4';
+                setTimeout(function () {
+                    txt.textContent = 'Copiar dirección';
+                    ico.textContent = '📋';
+                    btn.style.borderColor = '';
+                    btn.style.color = '';
+                }, 2400);
+            });
+        }
+    });
 })();
 </script>
 
