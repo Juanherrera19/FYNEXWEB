@@ -56,22 +56,19 @@ def rellenar(plantilla: str, valores: dict) -> str:
 # ── Fragmentos ──
 
 def botones(app: dict, clase_extra: str = "") -> str:
-    """Botón al sitio propio del producto, botones de descarga o botones de tienda."""
+    """Botones para el hero y acciones principales de la página de producto."""
     partes = []
 
-    if app.get("url_propia"):
+    if app.get("url_descargas"):
+        partes.append(
+            '<a href="%s" class="fx-btn fx-btn-primario%s">Descargar %s ⬇</a>'
+            % (esc(app["url_descargas"]), clase_extra, esc(app["nombre"]))
+        )
+    elif app.get("url_propia"):
         clase_btn = "fx-btn-app" if app.get("destacada") else "fx-btn-primario"
         partes.append(
             '<a href="%s" target="_blank" rel="noopener noreferrer" class="fx-btn %s%s">Abrir %s ↗</a>'
             % (esc(app["url_propia"]), clase_btn, clase_extra, esc(app["nombre"]))
-        )
-
-    for descarga in app.get("descargas", []):
-        clase_btn = "fx-btn-primario" if descarga.get("primario") else "fx-btn-secundario"
-        partes.append(
-            '<a href="%s" class="fx-btn %s%s" target="_blank" rel="noopener noreferrer">%s %s</a>'
-            % (esc(descarga["url"]), clase_btn, clase_extra,
-               esc(descarga.get("icono", "💾")), esc(descarga["nombre"]))
         )
 
     for tienda in app.get("tiendas", []):
@@ -96,12 +93,6 @@ def botones_tarjeta(app: dict) -> str:
             '<a href="%s" target="_blank" rel="noopener noreferrer" class="fx-btn fx-btn-primario fx-btn-sm">Abrir %s ↗</a>'
             % (esc(app["url_propia"]), esc(app["nombre"]))
         )
-    elif app.get("descargas"):
-        d = app["descargas"][0]
-        partes.append(
-            '<a href="%s" class="fx-btn fx-btn-primario fx-btn-sm" target="_blank" rel="noopener noreferrer">%s %s</a>'
-            % (esc(d["url"]), esc(d.get("icono", "⬇️")), esc(d["nombre"]))
-        )
     for tienda in app.get("tiendas", []):
         partes.append(
             '<a href="%s" class="fx-btn fx-btn-secundario fx-btn-sm" target="_blank" rel="noopener noreferrer">%s %s</a>'
@@ -125,6 +116,20 @@ def tarjeta(app: dict) -> str:
     if pronto:
         badge_status = '<span class="fx-card-badge-status fx-card-badge-pronto">Próximamente</span>'
         pie = '<span class="fx-insignia-pronto">Muy pronto</span>'
+    elif app.get("url_descargas"):
+        badge_status = '<span class="fx-card-badge-status">Disponible</span>'
+        url_detalles = f"/apps/{esc(app['slug'])}/"
+        url_desc = esc(app["url_descargas"])
+        pie = f"""
+            <div class="fx-card-pie-col">
+                <div style="display:flex; gap:8px; width:100%;">
+                    <a href="{url_detalles}" class="fx-btn fx-btn-secundario fx-btn-sm" style="flex:1;">Ver detalles</a>
+                    <a href="{url_desc}" class="fx-btn fx-btn-primario fx-btn-sm" style="flex:1;">Descargar ⬇</a>
+                </div>
+                <div class="fx-tienda-pronto-pill">
+                    <span>▶</span> <span>Google Play · Pronto disponible</span>
+                </div>
+            </div>"""
     else:
         badge_status = '<span class="fx-card-badge-status">Disponible</span>'
         pie = ('<a href="/apps/%s/" class="fx-btn fx-btn-secundario fx-btn-sm">Ver detalles</a>'
@@ -456,14 +461,12 @@ def generar_detalle(app: dict) -> str:
     desc_cta = app.get("cta_desc") or "Descarga la aplicación o accede directamente desde tu dispositivo."
 
     partes_cta = []
-    if app.get("descargas"):
-        for d in app["descargas"]:
-            clase_d = "fx-btn-primario" if d.get("destacado") else "fx-btn-secundario"
-            partes_cta.append(
-                '<a href="%s" target="_blank" rel="noopener noreferrer" class="fx-btn %s">%s %s</a>'
-                % (esc(d["url"]), clase_d, esc(d.get("icono", "💾")), esc(d["nombre"]))
-            )
-    if app.get("url_propia"):
+    if app.get("url_descargas"):
+        partes_cta.append(
+            '<a href="%s" class="fx-btn fx-btn-primario">Ir a Descargas de %s ⬇</a>'
+            % (esc(app["url_descargas"]), esc(app["nombre"]))
+        )
+    elif app.get("url_propia"):
         partes_cta.append(
             '<a href="%s" target="_blank" rel="noopener noreferrer" class="fx-btn fx-btn-primario">Abrir %s en la Web ↗</a>'
             % (esc(app["url_propia"]), esc(app["nombre"]))
@@ -491,13 +494,12 @@ def generar_detalle(app: dict) -> str:
 </section>""" % (esc(titulo_cta), esc(desc_cta), "".join(partes_cta), aviso_cta)
 
     # Botón de navegación superior (NAV_CTA)
-    if app.get("url_propia"):
+    if app.get("url_descargas"):
+        nav_cta = ('<a href="%s" class="fx-nav-cta">Descargar %s ⬇</a>'
+                   % (esc(app["url_descargas"]), esc(app["nombre"])))
+    elif app.get("url_propia"):
         nav_cta = ('<a href="%s" target="_blank" rel="noopener noreferrer" class="fx-nav-cta">Abrir %s ↗</a>'
                    % (esc(app["url_propia"]), esc(app["nombre"])))
-    elif app.get("descargas"):
-        d_nav = app["descargas"][0]
-        nav_cta = ('<a href="%s" target="_blank" rel="noopener noreferrer" class="fx-nav-cta">%s %s</a>'
-                   % (esc(d_nav["url"]), esc(d_nav.get("icono", "⬇️")), esc(d_nav["nombre"])))
     else:
         nav_cta = ""
 
@@ -531,6 +533,63 @@ def generar_detalle(app: dict) -> str:
         "FOOTER_APPS": apps_del_pie(),
         "ESTUDIO_DESC": esc(catalogo.ESTUDIO["descripcion"]),
         "PRIVACIDAD": privacidad,
+    })
+
+
+def generar_descargas(app: dict) -> str:
+    plantilla = (PLANTILLAS / "descargas.html").read_text(encoding="utf-8")
+
+    if app.get("icono"):
+        icono = ('<img src="/%s" alt="%s" class="fx-app-icono" width="136" height="136">'
+                 % (esc(app["icono"]), esc(app["nombre"])))
+    else:
+        icono = '<div class="fx-app-icono fx-card-icono-vacio">✦</div>'
+
+    tarjetas = []
+    for d in app.get("descargas", []):
+        es_destacada = " destacada" if d.get("destacado") else ""
+        badge_tipo = d.get("badge_tipo", "rec")
+        
+        puntos_html = "".join(
+            '<div class="fx-descarga-punto"><span class="ico">✓</span><span>%s</span></div>' % esc(pt)
+            for pt in d.get("puntos", [])
+        )
+        
+        if d.get("pronto"):
+            btn_html = '<div class="fx-descarga-btn-pronto"><span>▶</span> <span>Google Play · Pronto disponible</span></div>'
+        else:
+            clase_btn = "fx-btn-primario" if d.get("primario") else "fx-btn-secundario"
+            btn_html = (
+                '<a href="%s" target="_blank" rel="noopener noreferrer" class="fx-btn %s">%s %s</a>'
+                % (esc(d["url"]), clase_btn, esc(d.get("icono", "💾")), esc(d["nombre"]))
+            )
+
+        tarjetas.append("""
+            <article class="fx-descarga-card%s">
+                <span class="fx-descarga-badge %s">%s</span>
+                <div class="fx-descarga-card-icono">%s</div>
+                <h3>%s</h3>
+                <div class="fx-descarga-sub"><span>💻</span> <span>%s</span></div>
+                <p class="fx-descarga-desc">%s</p>
+                <div class="fx-descarga-puntos">%s</div>
+                %s
+            </article>""" % (
+            es_destacada, badge_tipo, esc(d.get("badge", "Disponible")),
+            esc(d.get("icono", "💾")), esc(d["nombre"]), esc(d.get("sub", "")),
+            esc(d.get("desc", "")), puntos_html, btn_html
+        ))
+
+    return rellenar(plantilla, {
+        "NOMBRE": esc(app["nombre"]),
+        "SLUG": esc(app["slug"]),
+        "VERSION": esc(app.get("version", "1.0.0")),
+        "COLOR": esc(app["color"]),
+        "CATEGORIA": esc(app["categoria"]),
+        "ICONO": icono,
+        "ICONO_URL": esc(app.get("icono", "img/apps/audiout/audiout-logo.png")),
+        "TARJETAS_DESCARGA": "".join(tarjetas),
+        "FOOTER_APPS": apps_del_pie(),
+        "ESTUDIO_DESC": esc(catalogo.ESTUDIO["descripcion"]),
     })
 
 
@@ -580,6 +639,12 @@ def construir() -> int:
         (carpeta / "index.html").write_text(generar_detalle(app), encoding="utf-8")
         paginas += 1
 
+        if app.get("url_descargas"):
+            carpeta_desc = carpeta / "descargas"
+            carpeta_desc.mkdir(parents=True, exist_ok=True)
+            (carpeta_desc / "index.html").write_text(generar_descargas(app), encoding="utf-8")
+            paginas += 1
+
     (SALIDA / "404.html").write_text(generar_404(), encoding="utf-8")
     paginas += 1
 
@@ -588,9 +653,12 @@ def construir() -> int:
     (SALIDA / "robots.txt").write_text(
         "User-agent: *\nAllow: /\n\nSitemap: %s/sitemap.xml\n" % base, encoding="utf-8")
 
-    urls = ["%s/" % base] + [
-        "%s/apps/%s/" % (base, a["slug"]) for a in catalogo.publicadas()
-    ]
+    urls = ["%s/" % base]
+    for a in catalogo.publicadas():
+        urls.append("%s/apps/%s/" % (base, a["slug"]))
+        if a.get("url_descargas"):
+            urls.append("%s/apps/%s/descargas/" % (base, a["slug"]))
+
     sitemap = ('<?xml version="1.0" encoding="UTF-8"?>\n'
                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
                + "".join("  <url><loc>%s</loc></url>\n" % u for u in urls)

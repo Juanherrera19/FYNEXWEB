@@ -254,6 +254,7 @@ APPS: List[dict] = [
         "slug": "audiout",
         "nombre": "AUDIOUT",
         "url_propia": None,
+        "url_descargas": "/apps/audiout/descargas/",
         "estado": "publicada",
         "destacada": False,
         "tipo": "app",
@@ -299,49 +300,79 @@ APPS: List[dict] = [
         ],
         "descargas": [
             {
+                "id": "setup",
                 "nombre": "Instalador Oficial Windows (.exe)",
+                "sub": "Windows 10 / Windows 11 (64-bit)",
+                "badge": "✦ Recomendado",
+                "badge_tipo": "rec",
+                "icono": "💿",
                 "url": "https://drive.google.com/drive/folders/1BzHp_vREEDwLDs0Da5LQYO0hL3LB_vkk?usp=sharing",
-                "icono": "⬇️",
+                "archivo": "AUDIOUT_Setup.exe",
                 "primario": True,
                 "destacado": True,
+                "pronto": False,
+                "desc": "Asistente de instalación oficial guiado. Crea accesos directos en Escritorio y Menú Inicio, opción de auto-inicio con Windows y desinstalador formal.",
+                "puntos": [
+                    "Instalación limpia y asistente visual",
+                    "Accesos directos con logotipo oficial",
+                    "Registro en Configuración de Windows para desinstalar en 1 clic",
+                ],
             },
             {
-                "nombre": "Versión Portable USB (.exe)",
-                "url": "https://drive.google.com/file/d/1YDPI7CLVR6s9NkTyFppCLN3LuaNW1PUf/view?usp=sharing",
+                "id": "portable",
+                "nombre": "Versión Portable (.exe)",
+                "sub": "Windows 10 / Windows 11 (64-bit)",
+                "badge": "⚡ Sin Instalación",
+                "badge_tipo": "portable",
                 "icono": "📦",
+                "url": "https://drive.google.com/file/d/1YDPI7CLVR6s9NkTyFppCLN3LuaNW1PUf/view?usp=sharing",
+                "archivo": "AUDIOUT.exe",
                 "primario": False,
                 "destacado": False,
+                "pronto": False,
+                "desc": "Ejecutable directo autosuficiente sin necesidad de instalación. Ideal para llevar en memoria USB o ejecutar directamente en cualquier PC.",
+                "puntos": [
+                    "No requiere instalación ni permisos de administrador",
+                    "Listo para llevar en USB y ejecutar al instante",
+                    "Cero archivos residuales en el sistema",
+                ],
+            },
+            {
+                "id": "android",
+                "nombre": "AUDIOUT para Android",
+                "sub": "Android 10+ (Smartphones y Tablets)",
+                "badge": "🤖 En Desarrollo",
+                "badge_tipo": "pronto",
+                "icono": "📱",
+                "url": None,
+                "archivo": "Google Play",
+                "primario": False,
+                "destacado": False,
+                "pronto": True,
+                "desc": "Sincronización y duplicación remota de audio para smartphones y tablets Android. Próximamente disponible de forma oficial en Google Play Store.",
+                "puntos": [
+                    "Control inalámbrico de latencia desde tu móvil",
+                    "Widgets interactivos para pantalla de inicio",
+                    "Pronto disponible en Google Play Store",
+                ],
             },
         ],
-        "plataformas": ["Windows 10 / 11", "Android (Próximamente)"],
+        "plataformas": ["Windows 10 / 11", "Android (Pronto)"],
         "aviso_plataforma": "La versión de AUDIOUT para Android estará disponible muy pronto.",
         "showcase": [
             {
                 "id": "unisono",
                 "badge": "Modo Unísono Perfecto",
-                "nombre_corto": "Modo Unísono",
-                "icono_corto": "🎯",
-                "titulo": "Sincronización Acústica al Unísono",
+                "nombre_corto": "Multi-Salida",
+                "icono_corto": "📢",
+                "titulo": "Multi-Salida y Sincronización al Unísono",
                 "subtitulo": "Bluetooth y Monitor HDMI sonando al mismo milisegundo exacto",
                 "desc": (
-                    "Alinea altavoces con retardos físicos dispares aplicando un retardo milimétrico "
-                    "de +165 ms al dispositivo más rápido (HDMI/Altavoces), haciendo que la onda de sonido "
-                    "llegue al oído al mismo instante sin eco ni desfase."
+                    "Captura real de AUDIOUT: panel principal con selección de parlante Bluetooth Maestro, "
+                    "salida secundaria (HDMI/Altavoces), ajuste milimétrico de retardo (165 ms), "
+                    "medidores VU estéreo en vivo y botón de sincronización al unísono con un clic."
                 ),
-                "captura": "img/apps/audiout/showcase/01_unisono_sincronizacion.png",
-            },
-            {
-                "id": "fifo",
-                "badge": "Motor LockedDelayFIFO",
-                "nombre_corto": "Auto-Sync",
-                "icono_corto": "🔒",
-                "titulo": "Auto-Sincronización Continua",
-                "subtitulo": "YouTube, Netflix y Spotify siempre bloqueados al unísono",
-                "desc": (
-                    "Drena de inmediato cualquier paquete retenido en colas entre hilos y aplica micro-slips "
-                    "elásticos en el búfer de muestras, impidiendo que pausar o cambiar de video genere retrasos parásitos."
-                ),
-                "captura": "img/apps/audiout/showcase/02_locked_delay_fifo.png",
+                "captura": "img/apps/audiout/capturas_reales/01_multi_salida_real.png",
             },
             {
                 "id": "enrutador",
@@ -351,23 +382,36 @@ APPS: List[dict] = [
                 "titulo": "Enrutador por Programa Independiente",
                 "subtitulo": "Asigna salidas dedicadas y controla volúmenes por aplicación",
                 "desc": (
-                    "Música de Spotify en el parlante Bluetooth, videojuegos o streaming en el monitor HDMI y "
-                    "videollamadas en los audífonos, todo controlado desde un solo panel con buscador en vivo y mute."
+                    "Captura real de AUDIOUT: lista interactiva de aplicaciones activas en Windows con buscador en vivo. "
+                    "Asigna una salida exclusiva a Spotify, videojuegos o Chrome con controles individuales de volumen y silencio."
                 ),
-                "captura": "img/apps/audiout/showcase/03_enrutador_por_programa.png",
+                "captura": "img/apps/audiout/capturas_reales/02_enrutador_programa_real.png",
             },
             {
-                "id": "calibracion",
-                "badge": "Ajuste Fino 1ms",
-                "nombre_corto": "Calibración",
-                "icono_corto": "🔬",
-                "titulo": "Pulso Acústico y Micro-Calibración",
-                "subtitulo": "Verificación sonora en vivo y controles milimétricos",
+                "id": "pestanas",
+                "badge": "División de Navegador",
+                "nombre_corto": "Pestañas Web",
+                "icono_corto": "🌐",
+                "titulo": "Separar Audio de Pestañas de Navegador",
+                "subtitulo": "Enruta pestañas individuales de Chrome, Edge y Brave",
                 "desc": (
-                    "Emite un clic sincronizado cada 0.8s para comprobar el unísono absoluto y permite afinar "
-                    "el retardo milisegundo a milisegundo con botones [-20, -5, -1, +1, +5, +20] según tu espacio."
+                    "Captura real de AUDIOUT: guía integrada para enviar pestañas específicas (YouTube, Netflix o llamadas) "
+                    "a diferentes salidas físicas de audio utilizando extensiones de navegador ligeras y gratuitas."
                 ),
-                "captura": "img/apps/audiout/showcase/04_calibracion_pulso.png",
+                "captura": "img/apps/audiout/capturas_reales/03_pestanas_navegador_real.png",
+            },
+            {
+                "id": "ajustes",
+                "badge": "Vidrio Esmerilado Acrylic",
+                "nombre_corto": "Ajustes & Logos",
+                "icono_corto": "⚙️",
+                "titulo": "Personalización Visual & Bandeja del Sistema",
+                "subtitulo": "Efecto acrílico DWM translúcido y minimizado en segundo plano",
+                "desc": (
+                    "Captura real de AUDIOUT: activación de fondo difuminado (Frosted Glass Acrylic), regulación de opacidad, "
+                    "soporte para fondos de pantalla personalizados y opciones para minimizar a la bandeja del sistema (System Tray)."
+                ),
+                "captura": "img/apps/audiout/capturas_reales/04_ajustes_logos_real.png",
             },
         ],
         "novedades": [

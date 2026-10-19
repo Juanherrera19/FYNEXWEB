@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Descargar {{NOMBRE}} — FYNEX</title>
+<meta name="description" content="Descargas oficiales de {{NOMBRE}}: Instalador con asistente para Windows 10 y 11, versión 100% portable para USB y próxima versión para Android.">
+<meta name="theme-color" content="#06080e">
+<meta property="og:image" content="https://www.fynexhq.com/{{ICONO_URL}}">
+<link rel="icon" href="/img/fynex-logo-sm.png">
+<meta property="og:title" content="Descargar {{NOMBRE}} — FYNEX">
+<meta property="og:description" content="Descargas oficiales de {{NOMBRE}}: Instalador oficial, versión portable y próxima versión para Android.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/fynex.css">
+</head>
+<body style="--app-color: {{COLOR}};">
+
+<header class="fx-header">
+    <div class="fx-contenedor fx-header-inner">
+        <a href="/" class="fx-marca">
+            <img src="/img/fynex-logo-sm.png" alt="FYNEX" class="fx-marca-ave" width="32" height="32">
+            <span>FYNEX</span>
+        </a>
+        <button class="fx-nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="fxNav">☰</button>
+        <nav class="fx-nav" id="fxNav">
+            <a href="/#apps">Catálogo</a>
+            <a href="/apps/{{SLUG}}/">Detalles de {{NOMBRE}}</a>
+            <a href="/#estudio">Estudio</a>
+            <a href="/#contacto">Contacto</a>
+            <a href="/apps/{{SLUG}}/" class="fx-nav-cta">← Volver a {{NOMBRE}}</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+
+<!-- ═══════ HERO DE DESCARGAS ═══════ -->
+<section class="fx-descargas-hero">
+    <div class="fx-contenedor">
+        <a href="/apps/{{SLUG}}/" class="fx-volver">← Volver a la presentación de {{NOMBRE}}</a>
+        <div class="fx-descargas-hero-inner fx-revelar">
+            <div class="fx-app-icono-wrap" style="margin: 0 auto 20px;">
+                {{ICONO}}
+            </div>
+            <div class="fx-app-hero-meta" style="justify-content: center; margin-bottom: 12px;">
+                <span class="fx-app-badge-oficial">✦ Centro Oficial de Descargas</span>
+                <span class="fx-destacada-cat">{{CATEGORIA}}</span>
+                <span class="fx-app-version">v{{VERSION}}</span>
+            </div>
+            <h1>Descargar {{NOMBRE}}</h1>
+            <p>
+                Elige la edición de {{NOMBRE}} adecuada para tu entorno de trabajo.
+                Ambas versiones para Windows incluyen el motor DSP completo y compatibilidad
+                total con Windows 10 y Windows 11 (64-bit).
+            </p>
+        </div>
+
+        <!-- ═══════ CUADRÍCULA DE VERSIONES ═══════ -->
+        <div class="fx-descargas-grid fx-revelar">
+            {{TARJETAS_DESCARGA}}
+        </div>
+
+        <!-- ═══════ INSTRUCCIONES RÁPIDAS Y REQUISITOS ═══════ -->
+        <div class="fx-seccion-cab centrado fx-revelar" style="margin-top: 50px;">
+            <h2>Instrucciones y requisitos del sistema</h2>
+            <p>Todo lo que necesitas saber para comenzar a duplicar y sincronizar tu audio al instante.</p>
+        </div>
+
+        <div class="fx-descargas-info-grid fx-revelar">
+            <div class="fx-descargas-info-card">
+                <h4>💿 Instalador Oficial (`AUDIOUT_Setup.exe`)</h4>
+                <ol>
+                    <li>Descarga el archivo <strong>AUDIOUT_Setup.exe</strong> desde el enlace de Google Drive.</li>
+                    <li>Ejecuta el asistente y selecciona tus preferencias (crear accesos directos e inicio con Windows).</li>
+                    <li>Haz clic en <strong>Instalar Ahora</strong> y luego en <strong>Finalizar</strong>.</li>
+                    <li>AUDIOUT quedará listo en tu Escritorio, Menú Inicio y en la lista de programas de Windows para desinstalar cuando quieras con un clic.</li>
+                </ol>
+            </div>
+
+            <div class="fx-descargas-info-card">
+                <h4>📦 Versión Portable (`AUDIOUT.exe`)</h4>
+                <ul>
+                    <li><strong>Sin instalación previa:</strong> Descarga <strong>AUDIOUT.exe</strong> y ejecútalo directamente desde cualquier carpeta o memoria USB.</li>
+                    <li><strong>Cero dependencias:</strong> No requiere instalar Python, librerías adicionales ni privilegios de administrador.</li>
+                    <li><strong>100% limpio:</strong> No modifica el registro del sistema y mantiene tu configuración local en su propia carpeta.</li>
+                    <li><strong>Unísono con un clic:</strong> Conecta tu parlante Bluetooth, pulsa <em>SINCRONIZAR AL UNÍSONO</em> y disfruta de cero eco inmediato.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+</main>
+
+<footer class="fx-footer">
+    <div class="fx-contenedor">
+        <div class="fx-footer-grid">
+            <div>
+                <div class="fx-marca">
+                    <img src="/img/fynex-logo-sm.png" alt="FYNEX" class="fx-marca-ave" width="30" height="30">
+                    <span>FYNEX</span>
+                </div>
+                <p class="fx-footer-desc">{{ESTUDIO_DESC}}</p>
+            </div>
+            <div>
+                <h5>Catálogo</h5>
+                <ul>{{FOOTER_APPS}}</ul>
+            </div>
+            <div>
+                <h5>Estudio</h5>
+                <ul>
+                    <li><a href="/#estudio">Cómo trabajamos</a></li>
+                    <li><a href="/#contacto">Contacto</a></li>
+                    <li><a href="/apps/{{SLUG}}/">{{NOMBRE}}</a></li>
+                    <li><a href="/">Inicio</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="fx-footer-legal">
+            <span>© <span id="anio">2026</span> FYNEX. Todos los derechos reservados.</span>
+            <span>Distribución de software oficial y libre de publicidad invasiva.</span>
+        </div>
+    </div>
+</footer>
+
+<script>
+document.getElementById('anio').textContent = new Date().getFullYear();
+
+// Menú móvil
+(function () {
+    var toggle = document.getElementById('navToggle');
+    var nav = document.getElementById('fxNav');
+    if (!toggle || !nav) return;
+    function esMovil() { return window.matchMedia('(max-width: 740px)').matches; }
+    function sincronizar() { nav.hidden = esMovil(); toggle.setAttribute('aria-expanded', 'false'); }
+    sincronizar();
+    window.addEventListener('resize', sincronizar);
+    toggle.addEventListener('click', function () {
+        var abierto = !nav.hidden;
+        nav.hidden = abierto;
+        toggle.setAttribute('aria-expanded', String(!abierto));
+    });
+})();
+
+// Scroll reveal
+(function () {
+    var elementos = document.querySelectorAll('.fx-revelar');
+    if (!('IntersectionObserver' in window)) {
+        elementos.forEach(function (el) { el.classList.add('visible'); });
+        return;
+    }
+    var obs = new IntersectionObserver(function (entradas) {
+        entradas.forEach(function (e) {
+            if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+        });
+    }, { threshold: 0.05, rootMargin: '0px 0px -10px' });
+    elementos.forEach(function (el) { obs.observe(el); });
+})();
+</script>
+
+</body>
+</html>

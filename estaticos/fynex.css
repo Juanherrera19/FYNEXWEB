@@ -692,6 +692,40 @@ button { font-family: inherit; }
     padding-top: 18px;
 }
 
+.fx-card-pie-col {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+.fx-card-pie-col .fx-btn {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+}
+.fx-tienda-pronto-pill {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    width: 100%;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px dashed rgba(255, 255, 255, 0.16);
+    color: var(--fx-txt-3);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    user-select: none;
+    transition: all 0.2s ease;
+}
+.fx-tienda-pronto-pill:hover {
+    background: rgba(255, 255, 255, 0.07);
+    color: var(--fx-txt-2);
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
 .fx-card-pronto {
     opacity: 0.72;
 }
@@ -1555,7 +1589,199 @@ button { font-family: inherit; }
 
 .fx-revelar:nth-child(2) { transition-delay: 0.08s; }
 .fx-revelar:nth-child(3) { transition-delay: 0.16s; }
-.fx-revelar:nth-child(4) { transition-delay: 0.24s; }
+/* ═══════════════════════════════════════════════════════════════
+   PÁGINA DE DESCARGAS OFICIALES
+   ═══════════════════════════════════════════════════════════════ */
+.fx-descargas-hero {
+    padding: 70px 0 35px;
+    text-align: center;
+}
+.fx-descargas-hero-inner {
+    max-width: 800px;
+    margin: 0 auto;
+}
+.fx-descargas-hero h1 {
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    font-weight: 850;
+    letter-spacing: -0.035em;
+    margin: 14px 0 16px;
+    color: #f8fafc;
+}
+.fx-descargas-hero p {
+    font-size: 1.12rem;
+    color: var(--fx-txt-2);
+    line-height: 1.62;
+    max-width: 680px;
+    margin: 0 auto;
+}
+.fx-descargas-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 40px;
+    margin-bottom: 50px;
+}
+.fx-descarga-card {
+    background: var(--fx-surface-glass);
+    border: 1px solid var(--fx-border);
+    border-radius: var(--fx-radio);
+    padding: 34px 26px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(16px);
+    transition: transform 0.28s var(--fx-trans-suave), border-color 0.28s ease, box-shadow 0.28s ease;
+}
+.fx-descarga-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(255, 255, 255, 0.26);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65), 0 0 40px var(--app-glow);
+}
+.fx-descarga-card.destacada {
+    border-color: rgba(2, 132, 199, 0.55);
+    background: linear-gradient(180deg, rgba(2, 132, 199, 0.1) 0%, rgba(13, 18, 29, 0.9) 100%);
+    box-shadow: 0 20px 55px rgba(0, 0, 0, 0.6), 0 0 35px rgba(2, 132, 199, 0.2);
+}
+.fx-descarga-card::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--card-accent, var(--app-color, var(--fx-acento))), transparent);
+}
+.fx-descarga-badge {
+    align-self: flex-start;
+    padding: 5px 13px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 750;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+}
+.fx-descarga-badge.rec {
+    background: rgba(2, 132, 199, 0.22);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+}
+.fx-descarga-badge.portable {
+    background: rgba(34, 197, 94, 0.16);
+    color: #4ade80;
+    border: 1px solid rgba(74, 222, 128, 0.35);
+}
+.fx-descarga-badge.pronto {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--fx-txt-3);
+    border: 1px dashed rgba(255, 255, 255, 0.22);
+}
+.fx-descarga-card-icono {
+    font-size: 2.6rem;
+    margin-bottom: 14px;
+}
+.fx-descarga-card h3 {
+    font-size: 1.4rem;
+    font-weight: 750;
+    margin-bottom: 6px;
+    letter-spacing: -0.025em;
+    color: #f8fafc;
+}
+.fx-descarga-sub {
+    font-size: 0.82rem;
+    color: var(--fx-txt-3);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 550;
+}
+.fx-descarga-desc {
+    font-size: 0.92rem;
+    color: var(--fx-txt-2);
+    line-height: 1.56;
+    margin-bottom: 24px;
+    flex: 1;
+}
+.fx-descarga-puntos {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 28px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+.fx-descarga-punto {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.84rem;
+    color: var(--fx-txt-2);
+    line-height: 1.42;
+}
+.fx-descarga-punto .ico {
+    color: #38bdf8;
+    flex-shrink: 0;
+    font-size: 0.95rem;
+}
+.fx-descarga-card .fx-btn {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+    padding: 13px 20px;
+    font-size: 0.95rem;
+}
+.fx-descarga-btn-pronto {
+    width: 100%;
+    padding: 13px 20px;
+    border-radius: var(--fx-radio-btn);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    color: var(--fx-txt-3);
+    font-size: 0.92rem;
+    font-weight: 650;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    user-select: none;
+}
+
+/* Sección de instrucciones / requisitos en descargas */
+.fx-descargas-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 24px;
+}
+.fx-descargas-info-card {
+    background: rgba(14, 19, 31, 0.7);
+    border: 1px solid var(--fx-border);
+    border-radius: 18px;
+    padding: 26px 24px;
+    backdrop-filter: blur(14px);
+}
+.fx-descargas-info-card h4 {
+    font-size: 1.1rem;
+    font-weight: 750;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #f1f5f9;
+}
+.fx-descargas-info-card ol, .fx-descargas-info-card ul {
+    margin: 0;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.fx-descargas-info-card li {
+    font-size: 0.88rem;
+    color: var(--fx-txt-2);
+    line-height: 1.5;
+}
 
 /* ═══════════════════════════════════════════════════════════════
    RESPONSIVIDAD Y EXPERIENCIA MÓVIL PERFECCIONADA (<860px)
@@ -1944,6 +2170,19 @@ button { font-family: inherit; }
     .fx-footer-grid {
         grid-template-columns: 1fr;
         gap: 28px;
+    }
+
+    /* ── Página de Descargas en Móvil ── */
+    .fx-descargas-hero {
+        padding: 50px 0 25px;
+    }
+    .fx-descargas-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+    .fx-descargas-info-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
     }
 }
 
