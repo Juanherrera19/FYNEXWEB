@@ -72,6 +72,8 @@ def botones(app: dict, clase_extra: str = "") -> str:
         )
 
     for tienda in app.get("tiendas", []):
+        if tienda.get("pronto") or not tienda.get("url"):
+            continue
         partes.append(
             '<a href="%s" class="fx-btn fx-btn-secundario%s" target="_blank" '
             'rel="noopener noreferrer">%s %s</a>'
@@ -86,23 +88,30 @@ def botones(app: dict, clase_extra: str = "") -> str:
 
 
 def botones_tarjeta(app: dict) -> str:
-    """Botones para la tarjeta del catálogo en la portada."""
+    """Botones para la tarjeta del catálogo en la portada (uno debajo de otro)."""
     partes = []
     if app.get("url_propia"):
         partes.append(
-            '<a href="%s" target="_blank" rel="noopener noreferrer" class="fx-btn fx-btn-primario fx-btn-sm">Abrir %s ↗</a>'
+            '<a href="%s" target="_blank" rel="noopener noreferrer" class="fx-btn fx-btn-primario fx-btn-sm fx-btn-bloque">Abrir %s ↗</a>'
             % (esc(app["url_propia"]), esc(app["nombre"]))
         )
     elif app.get("url_descargas"):
         partes.append(
-            '<a href="%s" class="fx-btn fx-btn-primario fx-btn-sm">Descargar ⬇</a>'
+            '<a href="%s" class="fx-btn fx-btn-primario fx-btn-sm fx-btn-bloque">Descargar ⬇</a>'
             % esc(app["url_descargas"])
         )
     for tienda in app.get("tiendas", []):
-        partes.append(
-            '<a href="%s" class="fx-btn fx-btn-secundario fx-btn-sm" target="_blank" rel="noopener noreferrer">%s %s</a>'
-            % (esc(tienda["url"]), esc(tienda.get("icono", "▶")), esc(tienda["nombre"]))
-        )
+        if tienda.get("pronto") or not tienda.get("url"):
+            partes.append(
+                '<div class="fx-btn fx-btn-gris fx-btn-sm fx-btn-bloque" title="Próximamente disponible en Google Play">'
+                '<span>%s</span> <span>%s · Pronto disponible</span>'
+                '</div>' % (esc(tienda.get("icono", "▶")), esc(tienda["nombre"]))
+            )
+        else:
+            partes.append(
+                '<a href="%s" class="fx-btn fx-btn-secundario fx-btn-sm fx-btn-bloque" target="_blank" rel="noopener noreferrer">%s %s</a>'
+                % (esc(tienda["url"]), esc(tienda.get("icono", "▶")), esc(tienda["nombre"]))
+            )
     return "".join(partes)
 
 
@@ -120,10 +129,10 @@ def tarjeta(app: dict) -> str:
 
     if pronto:
         badge_status = '<span class="fx-card-badge-status fx-card-badge-pronto">Próximamente</span>'
-        pie = '<span class="fx-insignia-pronto">Muy pronto</span>'
+        pie = '<div class="fx-card-pie-pronto"><span class="fx-insignia-pronto">Muy pronto</span></div>'
     else:
         badge_status = '<span class="fx-card-badge-status">Disponible</span>'
-        btn_detalles = ('<a href="/apps/%s/" class="fx-btn fx-btn-secundario fx-btn-sm">Ver detalles</a>'
+        btn_detalles = ('<a href="/apps/%s/" class="fx-btn fx-btn-secundario fx-btn-sm fx-btn-bloque">Ver detalles</a>'
                         % esc(app["slug"]))
         pie = btn_detalles + botones_tarjeta(app)
 

@@ -78,15 +78,28 @@
                 <button type="button" class="fx-filtro-btn" data-filtro="juego">Juegos</button>
             </div>
             <div class="fx-slider-nav" aria-label="Navegación del catálogo">
-                <button type="button" class="fx-slider-btn" id="catPrev" aria-label="Anterior proyecto" title="Anterior">←</button>
-                <button type="button" class="fx-slider-btn" id="catNext" aria-label="Siguiente proyecto" title="Siguiente">→</button>
+                <button type="button" class="fx-slider-btn" id="catPrevTop" aria-label="Anterior proyecto" title="Anterior">←</button>
+                <button type="button" class="fx-slider-btn" id="catNextTop" aria-label="Siguiente proyecto" title="Siguiente">→</button>
             </div>
         </div>
 
         <div class="fx-slider-contenedor">
+            <button type="button" class="fx-slider-arrow fx-arrow-prev" id="catPrev" aria-label="Anterior proyecto" title="Anterior">‹</button>
+            
             <div class="fx-catalogo-slider" id="catalogoGrid">
                 {{TARJETAS}}
             </div>
+
+            <button type="button" class="fx-slider-arrow fx-arrow-next" id="catNext" aria-label="Siguiente proyecto" title="Siguiente">›</button>
+        </div>
+
+        <!-- Barra de desplazamiento lateral interactiva y mejorada -->
+        <div class="fx-slider-progreso-wrap fx-revelar">
+            <button type="button" class="fx-progreso-flecha" id="btnProgresoPrev" aria-label="Deslizar hacia la izquierda" title="Izquierda">◀</button>
+            <div class="fx-slider-progreso-pista" id="catPista" role="scrollbar" aria-label="Barra de desplazamiento lateral del catálogo" tabindex="0">
+                <div class="fx-slider-progreso-barra" id="catBarra"></div>
+            </div>
+            <button type="button" class="fx-progreso-flecha" id="btnProgresoNext" aria-label="Deslizar hacia la derecha" title="Derecha">▶</button>
         </div>
     </div>
 </section>
@@ -230,42 +243,95 @@ document.getElementById('anio').textContent = new Date().getFullYear();
     });
 })();
 
-// Slider horizontal y navegación de proyectos
+// Slider horizontal y barra de desplazamiento lateral mejorada
 (function () {
     var slider = document.getElementById('catalogoGrid');
     var prevBtn = document.getElementById('catPrev');
     var nextBtn = document.getElementById('catNext');
+    var prevTopBtn = document.getElementById('catPrevTop');
+    var nextTopBtn = document.getElementById('catNextTop');
+    var progPrev = document.getElementById('btnProgresoPrev');
+    var progNext = document.getElementById('btnProgresoNext');
+    var pista = document.getElementById('catPista');
+    var barra = document.getElementById('catBarra');
     var btns = document.querySelectorAll('.fx-filtro-btn');
     var cards = document.querySelectorAll('#catalogoGrid .fx-card');
     if (!slider) return;
 
-    function actualizarBotones() {
-        if (!prevBtn || !nextBtn) return;
-        var tol = 8;
+    function actualizarControles() {
+        var tol = 10;
         var maxScroll = slider.scrollWidth - slider.clientWidth;
-        prevBtn.disabled = slider.scrollLeft <= tol;
-        nextBtn.disabled = slider.scrollLeft >= (maxScroll - tol) || maxScroll <= tol;
+        var atStart = slider.scrollLeft <= tol;
+        var atEnd = slider.scrollLeft >= (maxScroll - tol) || maxScroll <= tol;
+
+        [prevBtn, prevTopBtn, progPrev].forEach(function (b) { if (b) b.disabled = atStart; });
+        [nextBtn, nextTopBtn, progNext].forEach(function (b) { if (b) b.disabled = atEnd; });
+
+        if (barra && maxScroll > 0) {
+            var visibleRatio = slider.clientWidth / slider.scrollWidth;
+            var thumbWidth = Math.max(18, Math.min(100, visibleRatio * 100));
+            var scrollRatio = slider.scrollLeft / maxScroll;
+            var maxLeft = 100 - thumbWidth;
+            barra.style.width = thumbWidth + '%';
+            barra.style.left = (scrollRatio * maxLeft) + '%';
+        } else if (barra) {
+            barra.style.width = '100%';
+            barra.style.left = '0%';
+        }
     }
 
     function scrollPaso(direccion) {
-        var visibleCard = slider.querySelector('.fx-card:not([style*="display: none"])');
-        var paso = visibleCard ? (visibleCard.offsetWidth + 24) : 360;
+        var visibleCards = 3;
+        if (window.innerWidth <= 680) visibleCards = 1;
+        else if (window.innerWidth <= 1080) visibleCards = 2;
+
+        var card = slider.querySelector('.fx-card:not([style*="display: none"])');
+        var paso = card ? ((card.offsetWidth + 24) * visibleCards) : (slider.clientWidth * 0.85);
         slider.scrollBy({ left: direccion * paso, behavior: 'smooth' });
     }
 
-    if (prevBtn) prevBtn.addEventListener('click', function () { scrollPaso(-1); });
-    if (nextBtn) nextBtn.addEventListener('click', function () { scrollPaso(1); });
-    slider.addEventListener('scroll', actualizarBotones, { passive: true });
-    window.addEventListener('resize', actualizarBotones);
-    setTimeout(actualizarBotones, 150);
+    [prevBtn, prevTopBtn, progPrev].forEach(function (b) {
+        if (b) b.addEventListener('click', function () { scrollPaso(-1); });
+    });
+    [nextBtn, nextTopBtn, progNext].forEach(function (b) {
+        if (b) b.addEventListener('click', function () { scrollPaso(1); });
+    });
 
-    // Arrastre con mouse (drag to scroll)
+    slider.addEventListener('scroll', actualizarControles, { passive: true });
+    window.addEventListener('resize', actualizarControles);
+    setTimeout(actualizarControles, 150);
+
+    // Clic directo en la pista de progreso para saltar
+    if (pista) {
+        pista.addEventListener('click', function (e) {
+            var rect = pista.getBoundingClientRect();
+            var clickX = e.clientX - rect.left;
+            var ratio = Math.max(0, Math.min(1, clickX / rect.width));
+            var maxScroll = slider.scrollWidth - slider.clientWidth;
+            slider.scrollTo({ left: ratio * maxScroll, behavior: 'smooth' });
+        });
+    }
+
+    // Desplazamiento horizontal con la rueda del ratón
+    slider.addEventListener('wheel', function (e) {
+        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+            var maxScroll = slider.scrollWidth - slider.clientWidth;
+            var atStart = slider.scrollLeft <= 0 && e.deltaY < 0;
+            var atEnd = slider.scrollLeft >= maxScroll && e.deltaY > 0;
+            if (!atStart && !atEnd && maxScroll > 0) {
+                e.preventDefault();
+                slider.scrollBy({ left: e.deltaY * 1.35, behavior: 'auto' });
+            }
+        }
+    }, { passive: false });
+
+    // Arrastre con mouse (drag to scroll) con umbral de seguridad para no anular clics
     var isDown = false;
-    var startX, startScroll;
+    var startX, startScroll, hasDragged = false;
     slider.addEventListener('mousedown', function (e) {
-        if (e.target.closest('a, button')) return;
+        if (e.target.closest('a, button, input')) return;
         isDown = true;
-        slider.classList.add('arrastrando');
+        hasDragged = false;
         startX = e.pageX - slider.offsetLeft;
         startScroll = slider.scrollLeft;
     });
@@ -273,7 +339,7 @@ document.getElementById('anio').textContent = new Date().getFullYear();
         if (!isDown) return;
         isDown = false;
         slider.classList.remove('arrastrando');
-        actualizarBotones();
+        actualizarControles();
     });
     slider.addEventListener('mouseleave', function () {
         if (isDown) {
@@ -283,13 +349,17 @@ document.getElementById('anio').textContent = new Date().getFullYear();
     });
     slider.addEventListener('mousemove', function (e) {
         if (!isDown) return;
-        e.preventDefault();
         var x = e.pageX - slider.offsetLeft;
-        var walk = (x - startX) * 1.35;
-        slider.scrollLeft = startScroll - walk;
+        var walk = (x - startX);
+        if (Math.abs(walk) > 4) {
+            hasDragged = true;
+            slider.classList.add('arrastrando');
+            e.preventDefault();
+            slider.scrollLeft = startScroll - walk * 1.3;
+        }
     });
 
-    // Filtros
+    // Filtros de proyectos
     if (btns.length && cards.length) {
         btns.forEach(function (btn) {
             btn.addEventListener('click', function () {
@@ -307,7 +377,7 @@ document.getElementById('anio').textContent = new Date().getFullYear();
                     }
                 });
                 slider.scrollTo({ left: 0, behavior: 'smooth' });
-                setTimeout(actualizarBotones, 200);
+                setTimeout(actualizarControles, 200);
             });
         });
     }

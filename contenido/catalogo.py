@@ -507,8 +507,14 @@ APPS: List[dict] = [
             },
         ],
         "cta_titulo": "Experimenta el sonido al unísono definitivo en Windows",
-        "cta_desc": "Descarga Audiout de forma gratuita para Windows 10 y 11. Disponible en instalador oficial con accesos directos o versión portable lista para USB.",
-        "tiendas": [],
+        "tiendas": [
+            {
+                "nombre": "Google Play",
+                "url": None,
+                "icono": "▶",
+                "pronto": True,
+            },
+        ],
         "url_privacidad": None,
     },
     {
