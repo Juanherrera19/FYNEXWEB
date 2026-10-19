@@ -56,7 +56,7 @@ def rellenar(plantilla: str, valores: dict) -> str:
 # ── Fragmentos ──
 
 def botones(app: dict, clase_extra: str = "") -> str:
-    """Botón al sitio propio del producto y botones de tienda."""
+    """Botón al sitio propio del producto, botones de descarga o botones de tienda."""
     partes = []
 
     if app.get("url_propia"):
@@ -64,6 +64,14 @@ def botones(app: dict, clase_extra: str = "") -> str:
         partes.append(
             '<a href="%s" target="_blank" rel="noopener noreferrer" class="fx-btn %s%s">Abrir %s ↗</a>'
             % (esc(app["url_propia"]), clase_btn, clase_extra, esc(app["nombre"]))
+        )
+
+    for descarga in app.get("descargas", []):
+        clase_btn = "fx-btn-primario" if descarga.get("primario") else "fx-btn-secundario"
+        partes.append(
+            '<a href="%s" class="fx-btn %s%s" target="_blank" rel="noopener noreferrer">%s %s</a>'
+            % (esc(descarga["url"]), clase_btn, clase_extra,
+               esc(descarga.get("icono", "💾")), esc(descarga["nombre"]))
         )
 
     for tienda in app.get("tiendas", []):
@@ -77,6 +85,28 @@ def botones(app: dict, clase_extra: str = "") -> str:
     if not partes:
         partes.append('<span class="fx-insignia-pronto">En desarrollo</span>')
 
+    return "".join(partes)
+
+
+def botones_tarjeta(app: dict) -> str:
+    """Botones para la tarjeta del catálogo en la portada."""
+    partes = []
+    if app.get("url_propia"):
+        partes.append(
+            '<a href="%s" target="_blank" rel="noopener noreferrer" class="fx-btn fx-btn-primario fx-btn-sm">Abrir %s ↗</a>'
+            % (esc(app["url_propia"]), esc(app["nombre"]))
+        )
+    elif app.get("descargas"):
+        d = app["descargas"][0]
+        partes.append(
+            '<a href="%s" class="fx-btn fx-btn-primario fx-btn-sm" target="_blank" rel="noopener noreferrer">%s %s</a>'
+            % (esc(d["url"]), esc(d.get("icono", "⬇️")), esc(d["nombre"]))
+        )
+    for tienda in app.get("tiendas", []):
+        partes.append(
+            '<a href="%s" class="fx-btn fx-btn-secundario fx-btn-sm" target="_blank" rel="noopener noreferrer">%s %s</a>'
+            % (esc(tienda["url"]), esc(tienda.get("icono", "▶")), esc(tienda["nombre"]))
+        )
     return "".join(partes)
 
 
@@ -98,7 +128,7 @@ def tarjeta(app: dict) -> str:
     else:
         badge_status = '<span class="fx-card-badge-status">Disponible</span>'
         pie = ('<a href="/apps/%s/" class="fx-btn fx-btn-secundario fx-btn-sm">Ver detalles</a>'
-               % esc(app["slug"])) + botones(app, " fx-btn-sm")
+               % esc(app["slug"])) + botones_tarjeta(app)
 
     chips_plataforma = "".join(
         '<span class="fx-plataforma" style="font-size:0.75rem; padding:3px 8px;">%s</span>' % esc(p)
@@ -238,7 +268,7 @@ def generar_detalle(app: dict) -> str:
             for m in app["metas"])
         metricas = '<div class="fx-metricas-grid fx-revelar">%s</div>' % items
 
-    # Showcase interactivo (Galería de pantallas con mockup)
+    # Showcase interactivo (Galería de pantallas con mockup adaptable móvil / desktop)
     showcase = ""
     if app.get("showcase"):
         primero = app["showcase"][0]
@@ -264,6 +294,36 @@ def generar_detalle(app: dict) -> str:
             esc(s.get("icono_corto", "✦")), esc(s.get("nombre_corto", s["titulo"]))
         ) for i, s in enumerate(app["showcase"]))
 
+        tipo_disp = app.get("tipo_dispositivo", "movil")
+        if tipo_disp == "desktop":
+            marco_mockup = """
+                <div class="fx-desktop-frame">
+                    <div class="fx-desktop-titlebar">
+                        <div class="fx-desktop-dots">
+                            <span class="fx-desktop-dot red"></span>
+                            <span class="fx-desktop-dot yellow"></span>
+                            <span class="fx-desktop-dot green"></span>
+                        </div>
+                        <span class="fx-desktop-title">%s v%s — developed by fynexhq</span>
+                        <div class="fx-desktop-controls">
+                            <span>─</span>
+                            <span>▢</span>
+                            <span>✕</span>
+                        </div>
+                    </div>
+                    <div class="fx-desktop-pantalla">
+                        <img src="/%s" alt="%s" class="fx-desktop-img" id="mockupPantalla">
+                    </div>
+                </div>""" % (esc(app["nombre"]), esc(app.get("version", "1.0.0")), esc(primero["captura"]), esc(primero["titulo"]))
+        else:
+            marco_mockup = """
+                <div class="fx-celular-frame">
+                    <div class="fx-celular-speaker"></div>
+                    <div class="fx-celular-pantalla">
+                        <img src="/%s" alt="%s" class="fx-celular-img" id="mockupPantalla">
+                    </div>
+                </div>""" % (esc(primero["captura"]), esc(primero["titulo"]))
+
         showcase = """
 <section class="fx-seccion fx-seccion-alt" id="showcase">
     <div class="fx-contenedor">
@@ -282,12 +342,7 @@ def generar_detalle(app: dict) -> str:
                 %s
             </div>
             <div class="fx-showcase-display">
-                <div class="fx-celular-frame">
-                    <div class="fx-celular-speaker"></div>
-                    <div class="fx-celular-pantalla">
-                        <img src="/%s" alt="%s" class="fx-celular-img" id="mockupPantalla">
-                    </div>
-                </div>
+                %s
 
                 <div class="fx-showcase-info-active" id="infoShowcaseActiva">
                     <span class="fx-showcase-tab-badge" id="infoShowcaseBadge">%s</span>
@@ -304,7 +359,7 @@ def generar_detalle(app: dict) -> str:
 </section>""" % (
             chips_movil,
             tabs,
-            esc(primero["captura"]), esc(primero["titulo"]),
+            marco_mockup,
             esc(primero["badge"]), esc(primero["titulo"]), esc(primero["desc"]),
             esc(primero["captura"]), esc(primero["titulo"]),
         )
@@ -312,15 +367,19 @@ def generar_detalle(app: dict) -> str:
     # Descripción larga
     descripcion = ""
     if app.get("descripcion_larga"):
+        tit_desc = app.get("titulo_descripcion") or (
+            "Control financiero con rigor matemático" if app["slug"] == "debts-goodbye"
+            else "Ingeniería de audio de alto rendimiento"
+        )
         descripcion = """
 <section class="fx-seccion">
     <div class="fx-contenedor">
         <div class="fx-seccion-cab fx-revelar" style="max-width:820px; margin-left:auto; margin-right:auto; text-align:center;">
-            <h2>Control financiero con rigor matemático</h2>
+            <h2>%s</h2>
             <p style="font-size:1.1rem; line-height:1.7;">%s</p>
         </div>
     </div>
-</section>""" % esc(app["descripcion_larga"])
+</section>""" % (esc(tit_desc), esc(app["descripcion_larga"]))
 
     # Novedades recientes del README
     novedades = ""
@@ -334,16 +393,18 @@ def generar_detalle(app: dict) -> str:
                 <p>%s</p>
             </article>""" % (esc(n["icono"]), esc(n["titulo"]), esc(n["desc"]))
             for n in app["novedades"])
+        tit_nov = app.get("titulo_novedades") or "Innovaciones y actualizaciones recientes"
+        sub_nov = app.get("subtitulo_novedades") or "Evolución continua basada en ingeniería de precisión, compatibilidad moderna y rendimiento."
         novedades = """
 <section class="fx-seccion fx-seccion-alt">
     <div class="fx-contenedor">
         <div class="fx-seccion-cab centrado fx-revelar">
-            <h2>Innovaciones y actualizaciones recientes</h2>
-            <p>Evolución continua basada en ingeniería financiera, compatibilidad moderna y retroalimentación real.</p>
+            <h2>%s</h2>
+            <p>%s</p>
         </div>
         <div class="fx-novedades-grid">%s</div>
     </div>
-</section>""" % cards
+</section>""" % (esc(tit_nov), esc(sub_nov), cards)
 
     # Características
     caracteristicas = ""
@@ -355,67 +416,90 @@ def generar_detalle(app: dict) -> str:
                 <p>%s</p>
             </article>""" % (esc(c["emoji"]), esc(c["titulo"]), esc(c["texto"]))
             for c in app["caracteristicas"])
+        tit_car = app.get("titulo_caracteristicas") or ("Todo lo que puedes lograr con %s" % esc(app["nombre"]))
+        sub_car = app.get("subtitulo_caracteristicas") or "Un conjunto integral de herramientas diseñado para durar con los más altos estándares."
         caracteristicas = """
 <section class="fx-seccion">
     <div class="fx-contenedor">
         <div class="fx-seccion-cab centrado fx-revelar">
-            <h2>Todo lo que puedes lograr con Debts Goodbye</h2>
-            <p>Un conjunto integral de herramientas diseñado para tu tranquilidad y libertad económica.</p>
+            <h2>%s</h2>
+            <p>%s</p>
         </div>
         <div class="fx-caracteristicas">%s</div>
     </div>
-</section>""" % tarjetas
+</section>""" % (esc(tit_car), esc(sub_car), tarjetas)
 
     # Arquitectura e ingeniería
-    arquitectura = """
+    arquitectura = ""
+    if app.get("arquitectura"):
+        cards_arq = "".join("""
+            <div class="fx-arquitectura-card">
+                <h5>%s</h5>
+                <p>%s</p>
+            </div>""" % (esc(a["titulo"]), esc(a["desc"]))
+            for a in app["arquitectura"])
+        tit_arq = app.get("titulo_arquitectura") or "Arquitectura e integridad técnica"
+        sub_arq = app.get("subtitulo_arquitectura") or "Diseñada con estándares rigurosos de estabilidad, velocidad y rendimiento para durar en el tiempo."
+        arquitectura = """
 <section class="fx-seccion fx-seccion-alt">
     <div class="fx-contenedor">
         <div class="fx-seccion-cab centrado fx-revelar">
-            <h2>Arquitectura e integridad técnica</h2>
-            <p>Diseñada con estándares rigurosos de seguridad, velocidad y privacidad para durar en el tiempo.</p>
+            <h2>%s</h2>
+            <p>%s</p>
         </div>
-        <div class="fx-arquitectura-grid fx-revelar">
-            <div class="fx-arquitectura-card">
-                <h5>FastAPI + Python Backend</h5>
-                <p>Matemática única centralizada en servicios backend con tipado estricto Pydantic y alta velocidad de respuesta.</p>
-            </div>
-            <div class="fx-arquitectura-card">
-                <h5>Flutter Multiplataforma</h5>
-                <p>Experiencia nativa ultra fluida a 60-120 FPS en Android, iOS y Web con una única base de código compartida.</p>
-            </div>
-            <div class="fx-arquitectura-card">
-                <h5>Base de Datos Dual & Pool</h5>
-                <p>Capa de abstracción que soporta SQLite local para desarrollo y PostgreSQL con pool de conexiones en producción.</p>
-            </div>
-            <div class="fx-arquitectura-card">
-                <h5>Android 15+ Edge-to-Edge & R8</h5>
-                <p>Diseño visual nativo borde a borde, optimización DEX, ofuscación R8 y cero identificadores de publicidad.</p>
-            </div>
-        </div>
+        <div class="fx-arquitectura-grid fx-revelar">%s</div>
     </div>
-</section>"""
+</section>""" % (esc(tit_arq), esc(sub_arq), cards_arq)
 
     # Banner CTA final
+    titulo_cta = app.get("cta_titulo") or "Comienza hoy tu camino hacia una mejor experiencia"
+    desc_cta = app.get("cta_desc") or "Descarga la aplicación o accede directamente desde tu dispositivo."
+
+    partes_cta = []
+    if app.get("descargas"):
+        for d in app["descargas"]:
+            clase_d = "fx-btn-primario" if d.get("destacado") else "fx-btn-secundario"
+            partes_cta.append(
+                '<a href="%s" target="_blank" rel="noopener noreferrer" class="fx-btn %s">%s %s</a>'
+                % (esc(d["url"]), clase_d, esc(d.get("icono", "💾")), esc(d["nombre"]))
+            )
+    if app.get("url_propia"):
+        partes_cta.append(
+            '<a href="%s" target="_blank" rel="noopener noreferrer" class="fx-btn fx-btn-primario">Abrir %s en la Web ↗</a>'
+            % (esc(app["url_propia"]), esc(app["nombre"]))
+        )
+    for t in app.get("tiendas", []):
+        partes_cta.append(
+            '<a href="%s" target="_blank" rel="noopener noreferrer" class="fx-btn fx-btn-secundario">%s %s</a>'
+            % (esc(t["url"]), esc(t.get("icono", "▶")), esc(t["nombre"]))
+        )
+
+    aviso_cta = ""
+    if app.get("aviso_plataforma"):
+        aviso_cta = '<div class="fx-cta-aviso"><span class="ico">🤖</span> <span>%s</span></div>' % esc(app["aviso_plataforma"])
+
     cta_banner = """
 <section class="fx-seccion">
     <div class="fx-contenedor">
         <div class="fx-cta-banner fx-revelar">
-            <h2>Comienza hoy tu camino hacia la libertad financiera</h2>
-            <p>Toma el control de tus deudas, optimiza tus cuotas y proyecta tu futuro con números reales.</p>
-            <div class="fx-acciones">
-                <a href="%s" target="_blank" rel="noopener noreferrer" class="fx-btn fx-btn-primario">
-                    Abrir Debts Goodbye en la Web ↗
-                </a>
-                <a href="%s" target="_blank" rel="noopener noreferrer" class="fx-btn fx-btn-secundario">
-                    Descargar en Google Play ▶
-                </a>
-            </div>
+            <h2>%s</h2>
+            <p>%s</p>
+            <div class="fx-acciones">%s</div>
+            %s
         </div>
     </div>
-</section>""" % (
-        esc(app.get("url_propia", "https://dgb.fynexhq.com")),
-        esc(app.get("tiendas", [{}])[0].get("url", "https://play.google.com/store/apps/details?id=com.debtsgoodbye.free"))
-    )
+</section>""" % (esc(titulo_cta), esc(desc_cta), "".join(partes_cta), aviso_cta)
+
+    # Botón de navegación superior (NAV_CTA)
+    if app.get("url_propia"):
+        nav_cta = ('<a href="%s" target="_blank" rel="noopener noreferrer" class="fx-nav-cta">Abrir %s ↗</a>'
+                   % (esc(app["url_propia"]), esc(app["nombre"])))
+    elif app.get("descargas"):
+        d_nav = app["descargas"][0]
+        nav_cta = ('<a href="%s" target="_blank" rel="noopener noreferrer" class="fx-nav-cta">%s %s</a>'
+                   % (esc(d_nav["url"]), esc(d_nav.get("icono", "⬇️")), esc(d_nav["nombre"])))
+    else:
+        nav_cta = ""
 
     # Política de privacidad
     if app.get("url_privacidad"):
@@ -430,10 +514,10 @@ def generar_detalle(app: dict) -> str:
         "COLOR": esc(app["color"]),
         "CATEGORIA": esc(app["categoria"]),
         "TAGLINE": esc(app["tagline"]),
-        "VERSION": esc(app.get("version", "1.2.18")),
+        "VERSION": esc(app.get("version", "1.0.0")),
         "ICONO": icono,
         "ICONO_URL": esc(app.get("icono", "img/apps/debts-goodbye.png")),
-        "URL_PROPIA": esc(app.get("url_propia", "https://dgb.fynexhq.com")),
+        "NAV_CTA": nav_cta,
         "PLATAFORMAS": "".join('<span class="fx-plataforma">%s</span>' % esc(p)
                                for p in app.get("plataformas", [])),
         "BOTONES": botones(app),

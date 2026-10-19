@@ -221,6 +221,24 @@ APPS: List[dict] = [
                 "texto": "Tus finanzas son estrictamente tuyas. Sin anuncios invasivos, sin venta de datos a terceros y con total transparencia.",
             },
         ],
+        "arquitectura": [
+            {
+                "titulo": "FastAPI + Python Backend",
+                "desc": "Matemática única centralizada en servicios backend con tipado estricto Pydantic y alta velocidad de respuesta.",
+            },
+            {
+                "titulo": "Flutter Multiplataforma",
+                "desc": "Experiencia nativa ultra fluida a 60-120 FPS en Android, iOS y Web con una única base de código compartida.",
+            },
+            {
+                "titulo": "Base de Datos Dual & Pool",
+                "desc": "Capa de abstracción que soporta SQLite local para desarrollo y PostgreSQL con pool de conexiones en producción.",
+            },
+            {
+                "titulo": "Android 15+ Edge-to-Edge & R8",
+                "desc": "Diseño visual nativo borde a borde, optimización DEX, ofuscación R8 y cero identificadores de publicidad.",
+            },
+        ],
         "tiendas": [
             {
                 "nombre": "Google Play",
@@ -229,7 +247,225 @@ APPS: List[dict] = [
             },
         ],
         "plataformas": ["Android 15+", "Web App", "Multiplataforma"],
+        "tipo_dispositivo": "movil",
         "url_privacidad": "https://dgb.fynexhq.com/privacy-policy",
+    },
+    {
+        "slug": "audiout",
+        "nombre": "AUDIOUT",
+        "url_propia": None,
+        "estado": "publicada",
+        "destacada": False,
+        "tipo": "app",
+        "tipo_dispositivo": "desktop",
+        "categoria": "Audio & Utilidades",
+        "version": "1.0.0",
+        "tagline": "Enrutador y duplicador de audio con sincronización acústica al unísono.",
+        "descripcion_corta": (
+            "Duplica y enruta audio en Windows 10 y 11 hacia múltiples parlantes (Bluetooth, HDMI, Altavoces) "
+            "con sincronización milimétrica al unísono, cero eco, motor LockedDelayFIFO y división por aplicaciones."
+        ),
+        "descripcion_larga": (
+            "AUDIOUT v1.0 es una solución profesional, ligera y de alto rendimiento desarrollada por FYNEX "
+            "para resolver la duplicación y el enrutamiento simultáneo de audio en Windows 10 y Windows 11. "
+            "Gracias a su innovador motor DSP LockedDelayFIFO, elimina por completo el desfase acumulado y el sonido "
+            "robótico por filtrado peine entre dispositivos con diferentes latencias de transporte (como parlantes "
+            "Bluetooth A2DP frente a monitores HDMI o altavoces integrados), garantizando una emisión de ondas al mismo "
+            "milisegundo exacto tanto en streaming continuo como en cambios o pausas de video en YouTube, Netflix o Spotify."
+        ),
+        "icono": "img/apps/audiout/audiout-logo.png",
+        "color": "#0284c7",
+        "metas": [
+            {
+                "valor": "165 ms",
+                "etiqueta": "Compensación de latencia Bluetooth unísono",
+                "icono": "⚡",
+            },
+            {
+                "valor": "Cero Eco",
+                "etiqueta": "Eliminación de filtrado peine acústico",
+                "icono": "🎧",
+            },
+            {
+                "valor": "WASAPI Float",
+                "etiqueta": "32-bit a 48,000 Hz estéreo en tiempo real",
+                "icono": "🎛️",
+            },
+            {
+                "valor": "<1.5% CPU",
+                "etiqueta": "Bajo consumo y ~30 MB de memoria",
+                "icono": "💻",
+            },
+        ],
+        "descargas": [
+            {
+                "nombre": "Instalador Oficial Windows (.exe)",
+                "url": "https://drive.google.com/drive/folders/1BzHp_vREEDwLDs0Da5LQYO0hL3LB_vkk?usp=sharing",
+                "icono": "⬇️",
+                "primario": True,
+                "destacado": True,
+            },
+            {
+                "nombre": "Versión Portable USB (.exe)",
+                "url": "https://drive.google.com/file/d/1YDPI7CLVR6s9NkTyFppCLN3LuaNW1PUf/view?usp=sharing",
+                "icono": "📦",
+                "primario": False,
+                "destacado": False,
+            },
+        ],
+        "plataformas": ["Windows 10 / 11", "Android (Próximamente)"],
+        "aviso_plataforma": "La versión de AUDIOUT para Android estará disponible muy pronto.",
+        "showcase": [
+            {
+                "id": "unisono",
+                "badge": "Modo Unísono Perfecto",
+                "nombre_corto": "Modo Unísono",
+                "icono_corto": "🎯",
+                "titulo": "Sincronización Acústica al Unísono",
+                "subtitulo": "Bluetooth y Monitor HDMI sonando al mismo milisegundo exacto",
+                "desc": (
+                    "Alinea altavoces con retardos físicos dispares aplicando un retardo milimétrico "
+                    "de +165 ms al dispositivo más rápido (HDMI/Altavoces), haciendo que la onda de sonido "
+                    "llegue al oído al mismo instante sin eco ni desfase."
+                ),
+                "captura": "img/apps/audiout/showcase/01_unisono_sincronizacion.png",
+            },
+            {
+                "id": "fifo",
+                "badge": "Motor LockedDelayFIFO",
+                "nombre_corto": "Auto-Sync",
+                "icono_corto": "🔒",
+                "titulo": "Auto-Sincronización Continua",
+                "subtitulo": "YouTube, Netflix y Spotify siempre bloqueados al unísono",
+                "desc": (
+                    "Drena de inmediato cualquier paquete retenido en colas entre hilos y aplica micro-slips "
+                    "elásticos en el búfer de muestras, impidiendo que pausar o cambiar de video genere retrasos parásitos."
+                ),
+                "captura": "img/apps/audiout/showcase/02_locked_delay_fifo.png",
+            },
+            {
+                "id": "enrutador",
+                "badge": "WinRT AudioPolicy",
+                "nombre_corto": "Por Programa",
+                "icono_corto": "🔀",
+                "titulo": "Enrutador por Programa Independiente",
+                "subtitulo": "Asigna salidas dedicadas y controla volúmenes por aplicación",
+                "desc": (
+                    "Música de Spotify en el parlante Bluetooth, videojuegos o streaming en el monitor HDMI y "
+                    "videollamadas en los audífonos, todo controlado desde un solo panel con buscador en vivo y mute."
+                ),
+                "captura": "img/apps/audiout/showcase/03_enrutador_por_programa.png",
+            },
+            {
+                "id": "calibracion",
+                "badge": "Ajuste Fino 1ms",
+                "nombre_corto": "Calibración",
+                "icono_corto": "🔬",
+                "titulo": "Pulso Acústico y Micro-Calibración",
+                "subtitulo": "Verificación sonora en vivo y controles milimétricos",
+                "desc": (
+                    "Emite un clic sincronizado cada 0.8s para comprobar el unísono absoluto y permite afinar "
+                    "el retardo milisegundo a milisegundo con botones [-20, -5, -1, +1, +5, +20] según tu espacio."
+                ),
+                "captura": "img/apps/audiout/showcase/04_calibracion_pulso.png",
+            },
+        ],
+        "novedades": [
+            {
+                "titulo": "Auto-Sincronización Continua e Inteligente",
+                "desc": "El motor LockedDelayFIFO drena colas parásitas y converge permanentemente en 165 ms exactos, manteniendo el unísono bloqueado entre pausas o cambios de video.",
+                "icono": "🔒",
+            },
+            {
+                "titulo": "Modo Unísono Perfecto (Compensación BT)",
+                "desc": "Anulación de la latencia A2DP de radiofrecuencia de parlantes Bluetooth frente a HDMI o altavoces integrados, logrando cero eco en 1 clic.",
+                "icono": "🎯",
+            },
+            {
+                "titulo": "Eliminación del Sonido Robótico (Comb Filtering)",
+                "desc": "Supresión total de cancelaciones de fase acústicas destructivas y activación del reloj de 1 ms en Windows (timeBeginPeriod) para evitar buffer underruns.",
+                "icono": "🎵",
+            },
+            {
+                "titulo": "Enrutador por Programa (WinRT AudioPolicy)",
+                "desc": "División de audio por procesos activos: envía Spotify al parlante, Discord a auriculares y Chrome a la pantalla con controles individuales.",
+                "icono": "🔀",
+            },
+            {
+                "titulo": "Fondo Difuminado (Frosted Glass Acrylic DWM)",
+                "desc": "Efecto acrílico translúcido nativo sobre el escritorio de Windows con soporte para fondos de pantalla personalizados y regulación de opacidad.",
+                "icono": "🪟",
+            },
+            {
+                "titulo": "Minimizar a la Bandeja del Sistema (Tray)",
+                "desc": "El audio continúa duplicándose en segundo plano sin ocupar espacio en la barra de tareas, con menú contextual rápido junto al reloj.",
+                "icono": "🔽",
+            },
+        ],
+        "caracteristicas": [
+            {
+                "emoji": "🎧",
+                "titulo": "Unísono acústico entre Bluetooth y HDMI",
+                "texto": "Alinea altavoces con retardos físicos dispares para lograr una experiencia estéreo envolvente sin eco ni desincronización.",
+            },
+            {
+                "emoji": "⚡",
+                "titulo": "Motor LockedDelayFIFO anti-desfase",
+                "texto": "Búfer elástico que ajusta dinámicamente las muestras por segundo, impidiendo acumulaciones de retardo al cambiar de video.",
+            },
+            {
+                "emoji": "🎛️",
+                "titulo": "Enrutamiento selectivo por aplicación",
+                "texto": "Elige qué programa suena por qué dispositivo físico mediante integración directa con el subsistema de audio de Windows.",
+            },
+            {
+                "emoji": "🔬",
+                "titulo": "Calibración con pulso sonoro",
+                "texto": "Comprueba el unísono mediante un clic sincronizado cada 0.8s y afina con botones de micro-ajuste milisegundo a milisegundo.",
+            },
+            {
+                "emoji": "🪟",
+                "titulo": "Estética moderna translúcida",
+                "texto": "Efecto de vidrio esmerilado acrílico DWM, fondos personalizados y controles visuales nítidos de alta legibilidad.",
+            },
+            {
+                "emoji": "📦",
+                "titulo": "Instalador y Versión Portable",
+                "texto": "Disponible con instalador oficial que añade accesos directos o versión 100% portable lista para llevar en tu memoria USB.",
+            },
+            {
+                "emoji": "🚀",
+                "titulo": "Consumo ultraligero de recursos",
+                "texto": "Motor en punto flotante WASAPI que consume apenas un 1% de CPU y ~30 MB de RAM, ideal para estar siempre activo.",
+            },
+            {
+                "emoji": "🤖",
+                "titulo": "Ecosistema móvil en camino",
+                "texto": "La versión para dispositivos Android está en desarrollo activo y estará disponible muy pronto.",
+            },
+        ],
+        "arquitectura": [
+            {
+                "titulo": "Motor DSP LockedDelayFIFO",
+                "desc": "Búfer elástico en tiempo real que drena colas inter-hilo al instante y absorbe derivas de reloj oscilador sin alterar el tono musical.",
+            },
+            {
+                "titulo": "WASAPI Loopback Estéreo 32-bit Float",
+                "desc": "Captura y renderizado de audio digital a 48,000 Hz con latencia nativa mínima y temporizador de alta precisión de 1.0 ms (timeBeginPeriod).",
+            },
+            {
+                "titulo": "IPolicyConfig COM & WinRT AudioPolicy",
+                "desc": "Alternancia atómica en memoria del dispositivo maestro del sistema operativo y asignación de endpoints por PID sin reiniciar procesos.",
+            },
+            {
+                "titulo": "Threading Aislado STA (sys.coinit_flags = 2)",
+                "desc": "Aislamiento estricto de hilos COM de Windows para convivencia limpia y concurrente entre la interfaz gráfica, el tray y el DSP de audio.",
+            },
+        ],
+        "cta_titulo": "Experimenta el sonido al unísono definitivo en Windows",
+        "cta_desc": "Descarga AUDIOUT de forma gratuita para Windows 10 y 11. Disponible en instalador oficial con accesos directos o versión portable lista para USB.",
+        "tiendas": [],
+        "url_privacidad": None,
     },
     {
         "slug": "proximamente-app",
