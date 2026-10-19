@@ -252,7 +252,7 @@ APPS: List[dict] = [
     },
     {
         "slug": "audiout",
-        "nombre": "AUDIOUT",
+        "nombre": "Audiout",
         "url_propia": None,
         "url_descargas": "/apps/audiout/descargas/",
         "estado": "publicada",
@@ -267,7 +267,7 @@ APPS: List[dict] = [
             "con sincronización milimétrica al unísono, cero eco, motor LockedDelayFIFO y división por aplicaciones."
         ),
         "descripcion_larga": (
-            "AUDIOUT v1.0 es una solución profesional, ligera y de alto rendimiento desarrollada por FYNEX "
+            "Audiout v1.0 es una solución profesional, ligera y de alto rendimiento desarrollada por FYNEX "
             "para resolver la duplicación y el enrutamiento simultáneo de audio en Windows 10 y Windows 11. "
             "Gracias a su innovador motor DSP LockedDelayFIFO, elimina por completo el desfase acumulado y el sonido "
             "robótico por filtrado peine entre dispositivos con diferentes latencias de transporte (como parlantes "
@@ -358,7 +358,7 @@ APPS: List[dict] = [
             },
         ],
         "plataformas": ["Windows 10 / 11", "Android (Pronto)"],
-        "aviso_plataforma": "La versión de AUDIOUT para Android estará disponible muy pronto.",
+        "aviso_plataforma": "La versión de Audiout para Android estará disponible muy pronto.",
         "showcase": [
             {
                 "id": "unisono",
@@ -368,7 +368,7 @@ APPS: List[dict] = [
                 "titulo": "Multi-Salida y Sincronización al Unísono",
                 "subtitulo": "Bluetooth y Monitor HDMI sonando al mismo milisegundo exacto",
                 "desc": (
-                    "Captura real de AUDIOUT: panel principal con selección de parlante Bluetooth Maestro, "
+                    "Captura real de Audiout: panel principal con selección de parlante Bluetooth Maestro, "
                     "salida secundaria (HDMI/Altavoces), ajuste milimétrico de retardo (165 ms), "
                     "medidores VU estéreo en vivo y botón de sincronización al unísono con un clic."
                 ),
@@ -382,7 +382,7 @@ APPS: List[dict] = [
                 "titulo": "Enrutador por Programa Independiente",
                 "subtitulo": "Asigna salidas dedicadas y controla volúmenes por aplicación",
                 "desc": (
-                    "Captura real de AUDIOUT: lista interactiva de aplicaciones activas en Windows con buscador en vivo. "
+                    "Captura real de Audiout: lista interactiva de aplicaciones activas en Windows con buscador en vivo. "
                     "Asigna una salida exclusiva a Spotify, videojuegos o Chrome con controles individuales de volumen y silencio."
                 ),
                 "captura": "img/apps/audiout/capturas_reales/02_enrutador_programa_real.png",
@@ -395,7 +395,7 @@ APPS: List[dict] = [
                 "titulo": "Separar Audio de Pestañas de Navegador",
                 "subtitulo": "Enruta pestañas individuales de Chrome, Edge y Brave",
                 "desc": (
-                    "Captura real de AUDIOUT: guía integrada para enviar pestañas específicas (YouTube, Netflix o llamadas) "
+                    "Captura real de Audiout: guía integrada para enviar pestañas específicas (YouTube, Netflix o llamadas) "
                     "a diferentes salidas físicas de audio utilizando extensiones de navegador ligeras y gratuitas."
                 ),
                 "captura": "img/apps/audiout/capturas_reales/03_pestanas_navegador_real.png",
@@ -408,7 +408,7 @@ APPS: List[dict] = [
                 "titulo": "Personalización Visual & Bandeja del Sistema",
                 "subtitulo": "Efecto acrílico DWM translúcido y minimizado en segundo plano",
                 "desc": (
-                    "Captura real de AUDIOUT: activación de fondo difuminado (Frosted Glass Acrylic), regulación de opacidad, "
+                    "Captura real de Audiout: activación de fondo difuminado (Frosted Glass Acrylic), regulación de opacidad, "
                     "soporte para fondos de pantalla personalizados y opciones para minimizar a la bandeja del sistema (System Tray)."
                 ),
                 "captura": "img/apps/audiout/capturas_reales/04_ajustes_logos_real.png",
@@ -507,7 +507,7 @@ APPS: List[dict] = [
             },
         ],
         "cta_titulo": "Experimenta el sonido al unísono definitivo en Windows",
-        "cta_desc": "Descarga AUDIOUT de forma gratuita para Windows 10 y 11. Disponible en instalador oficial con accesos directos o versión portable lista para USB.",
+        "cta_desc": "Descarga Audiout de forma gratuita para Windows 10 y 11. Disponible en instalador oficial con accesos directos o versión portable lista para USB.",
         "tiendas": [],
         "url_privacidad": None,
     },
@@ -559,7 +559,7 @@ APPS: List[dict] = [
 ESTUDIO = {
     "nombre": "FYNEX",
     "descripcion": "Estudio de diseño y desarrollo de apps y juegos móviles y web de alto impacto.",
-    "email": "contacto@fynexhq.com",
+    "email": "jh9007168@gmail.com",
     "url": "https://www.fynexhq.com",
 }
 

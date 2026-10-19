@@ -71,14 +71,22 @@
             <p>Cada producto vive en su propio ecosistema, con su identidad visual, su matemática y su propósito.</p>
         </div>
 
-        <div class="fx-filtros fx-revelar">
-            <button type="button" class="fx-filtro-btn activo" data-filtro="todos">Todos los proyectos</button>
-            <button type="button" class="fx-filtro-btn" data-filtro="app">Aplicaciones</button>
-            <button type="button" class="fx-filtro-btn" data-filtro="juego">Juegos</button>
+        <div class="fx-catalogo-topbar fx-revelar">
+            <div class="fx-filtros">
+                <button type="button" class="fx-filtro-btn activo" data-filtro="todos">Todos los proyectos</button>
+                <button type="button" class="fx-filtro-btn" data-filtro="app">Aplicaciones</button>
+                <button type="button" class="fx-filtro-btn" data-filtro="juego">Juegos</button>
+            </div>
+            <div class="fx-slider-nav" aria-label="Navegación del catálogo">
+                <button type="button" class="fx-slider-btn" id="catPrev" aria-label="Anterior proyecto" title="Anterior">←</button>
+                <button type="button" class="fx-slider-btn" id="catNext" aria-label="Siguiente proyecto" title="Siguiente">→</button>
+            </div>
         </div>
 
-        <div class="fx-grid" id="catalogoGrid">
-            {{TARJETAS}}
+        <div class="fx-slider-contenedor">
+            <div class="fx-catalogo-slider" id="catalogoGrid">
+                {{TARJETAS}}
+            </div>
         </div>
     </div>
 </section>
@@ -153,7 +161,7 @@
                     <li><a href="#estudio">Cómo trabajamos</a></li>
                     <li><a href="#contacto">Contacto</a></li>
                     <li><a href="/apps/debts-goodbye/">Debts Goodbye</a></li>
-                    <li><a href="/apps/audiout/">AUDIOUT</a></li>
+                    <li><a href="/apps/audiout/">Audiout</a></li>
                 </ul>
             </div>
         </div>
@@ -222,33 +230,87 @@ document.getElementById('anio').textContent = new Date().getFullYear();
     });
 })();
 
-// Filtro de proyectos
+// Slider horizontal y navegación de proyectos
 (function () {
+    var slider = document.getElementById('catalogoGrid');
+    var prevBtn = document.getElementById('catPrev');
+    var nextBtn = document.getElementById('catNext');
     var btns = document.querySelectorAll('.fx-filtro-btn');
     var cards = document.querySelectorAll('#catalogoGrid .fx-card');
-    var catalogoGrid = document.getElementById('catalogoGrid');
-    if (!btns.length || !cards.length) return;
+    if (!slider) return;
 
-    btns.forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            btns.forEach(function (b) { b.classList.remove('activo'); });
-            btn.classList.add('activo');
-            var filtro = btn.getAttribute('data-filtro');
+    function actualizarBotones() {
+        if (!prevBtn || !nextBtn) return;
+        var tol = 8;
+        var maxScroll = slider.scrollWidth - slider.clientWidth;
+        prevBtn.disabled = slider.scrollLeft <= tol;
+        nextBtn.disabled = slider.scrollLeft >= (maxScroll - tol) || maxScroll <= tol;
+    }
 
-            cards.forEach(function (card) {
-                var tipo = card.getAttribute('data-tipo');
-                if (filtro === 'todos' || tipo === filtro) {
-                    card.style.display = '';
-                    setTimeout(function () { card.classList.add('visible'); }, 50);
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-            if (catalogoGrid) {
-                catalogoGrid.scrollTo({ left: 0, behavior: 'smooth' });
-            }
-        });
+    function scrollPaso(direccion) {
+        var visibleCard = slider.querySelector('.fx-card:not([style*="display: none"])');
+        var paso = visibleCard ? (visibleCard.offsetWidth + 24) : 360;
+        slider.scrollBy({ left: direccion * paso, behavior: 'smooth' });
+    }
+
+    if (prevBtn) prevBtn.addEventListener('click', function () { scrollPaso(-1); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { scrollPaso(1); });
+    slider.addEventListener('scroll', actualizarBotones, { passive: true });
+    window.addEventListener('resize', actualizarBotones);
+    setTimeout(actualizarBotones, 150);
+
+    // Arrastre con mouse (drag to scroll)
+    var isDown = false;
+    var startX, startScroll;
+    slider.addEventListener('mousedown', function (e) {
+        if (e.target.closest('a, button')) return;
+        isDown = true;
+        slider.classList.add('arrastrando');
+        startX = e.pageX - slider.offsetLeft;
+        startScroll = slider.scrollLeft;
     });
+    window.addEventListener('mouseup', function () {
+        if (!isDown) return;
+        isDown = false;
+        slider.classList.remove('arrastrando');
+        actualizarBotones();
+    });
+    slider.addEventListener('mouseleave', function () {
+        if (isDown) {
+            isDown = false;
+            slider.classList.remove('arrastrando');
+        }
+    });
+    slider.addEventListener('mousemove', function (e) {
+        if (!isDown) return;
+        e.preventDefault();
+        var x = e.pageX - slider.offsetLeft;
+        var walk = (x - startX) * 1.35;
+        slider.scrollLeft = startScroll - walk;
+    });
+
+    // Filtros
+    if (btns.length && cards.length) {
+        btns.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                btns.forEach(function (b) { b.classList.remove('activo'); });
+                btn.classList.add('activo');
+                var filtro = btn.getAttribute('data-filtro');
+
+                cards.forEach(function (card) {
+                    var tipo = card.getAttribute('data-tipo');
+                    if (filtro === 'todos' || tipo === filtro) {
+                        card.style.display = '';
+                        setTimeout(function () { card.classList.add('visible'); }, 50);
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                slider.scrollTo({ left: 0, behavior: 'smooth' });
+                setTimeout(actualizarBotones, 200);
+            });
+        });
+    }
 })();
 
 // Copiar email con retroalimentación visual

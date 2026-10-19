@@ -93,6 +93,11 @@ def botones_tarjeta(app: dict) -> str:
             '<a href="%s" target="_blank" rel="noopener noreferrer" class="fx-btn fx-btn-primario fx-btn-sm">Abrir %s ↗</a>'
             % (esc(app["url_propia"]), esc(app["nombre"]))
         )
+    elif app.get("url_descargas"):
+        partes.append(
+            '<a href="%s" class="fx-btn fx-btn-primario fx-btn-sm">Descargar ⬇</a>'
+            % esc(app["url_descargas"])
+        )
     for tienda in app.get("tiendas", []):
         partes.append(
             '<a href="%s" class="fx-btn fx-btn-secundario fx-btn-sm" target="_blank" rel="noopener noreferrer">%s %s</a>'
@@ -116,24 +121,11 @@ def tarjeta(app: dict) -> str:
     if pronto:
         badge_status = '<span class="fx-card-badge-status fx-card-badge-pronto">Próximamente</span>'
         pie = '<span class="fx-insignia-pronto">Muy pronto</span>'
-    elif app.get("url_descargas"):
-        badge_status = '<span class="fx-card-badge-status">Disponible</span>'
-        url_detalles = f"/apps/{esc(app['slug'])}/"
-        url_desc = esc(app["url_descargas"])
-        pie = f"""
-            <div class="fx-card-pie-col">
-                <div style="display:flex; gap:8px; width:100%;">
-                    <a href="{url_detalles}" class="fx-btn fx-btn-secundario fx-btn-sm" style="flex:1;">Ver detalles</a>
-                    <a href="{url_desc}" class="fx-btn fx-btn-primario fx-btn-sm" style="flex:1;">Descargar ⬇</a>
-                </div>
-                <div class="fx-tienda-pronto-pill">
-                    <span>▶</span> <span>Google Play · Pronto disponible</span>
-                </div>
-            </div>"""
     else:
         badge_status = '<span class="fx-card-badge-status">Disponible</span>'
-        pie = ('<a href="/apps/%s/" class="fx-btn fx-btn-secundario fx-btn-sm">Ver detalles</a>'
-               % esc(app["slug"])) + botones_tarjeta(app)
+        btn_detalles = ('<a href="/apps/%s/" class="fx-btn fx-btn-secundario fx-btn-sm">Ver detalles</a>'
+                        % esc(app["slug"]))
+        pie = btn_detalles + botones_tarjeta(app)
 
     chips_plataforma = "".join(
         '<span class="fx-plataforma" style="font-size:0.75rem; padding:3px 8px;">%s</span>' % esc(p)
@@ -303,23 +295,10 @@ def generar_detalle(app: dict) -> str:
         if tipo_disp == "desktop":
             marco_mockup = """
                 <div class="fx-desktop-frame">
-                    <div class="fx-desktop-titlebar">
-                        <div class="fx-desktop-dots">
-                            <span class="fx-desktop-dot red"></span>
-                            <span class="fx-desktop-dot yellow"></span>
-                            <span class="fx-desktop-dot green"></span>
-                        </div>
-                        <span class="fx-desktop-title">%s v%s — developed by fynexhq</span>
-                        <div class="fx-desktop-controls">
-                            <span>─</span>
-                            <span>▢</span>
-                            <span>✕</span>
-                        </div>
-                    </div>
                     <div class="fx-desktop-pantalla">
                         <img src="/%s" alt="%s" class="fx-desktop-img" id="mockupPantalla">
                     </div>
-                </div>""" % (esc(app["nombre"]), esc(app.get("version", "1.0.0")), esc(primero["captura"]), esc(primero["titulo"]))
+                </div>""" % (esc(primero["captura"]), esc(primero["titulo"]))
         else:
             marco_mockup = """
                 <div class="fx-celular-frame">
@@ -328,6 +307,8 @@ def generar_detalle(app: dict) -> str:
                         <img src="/%s" alt="%s" class="fx-celular-img" id="mockupPantalla">
                     </div>
                 </div>""" % (esc(primero["captura"]), esc(primero["titulo"]))
+
+        clase_showcase = "fx-showcase fx-revelar" + (" fx-showcase-desktop" if tipo_disp == "desktop" else "")
 
         showcase = """
 <section class="fx-seccion fx-seccion-alt" id="showcase">
@@ -342,7 +323,7 @@ def generar_detalle(app: dict) -> str:
             %s
         </div>
 
-        <div class="fx-showcase fx-revelar">
+        <div class="%s">
             <div class="fx-showcase-tabs">
                 %s
             </div>
@@ -363,6 +344,7 @@ def generar_detalle(app: dict) -> str:
     </div>
 </section>""" % (
             chips_movil,
+            clase_showcase,
             tabs,
             marco_mockup,
             esc(primero["badge"]), esc(primero["titulo"]), esc(primero["desc"]),
