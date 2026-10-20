@@ -402,14 +402,15 @@ APPS: List[dict] = [
             },
             {
                 "id": "ajustes",
-                "badge": "Vidrio Esmerilado Acrylic",
-                "nombre_corto": "Ajustes & Logos",
-                "icono_corto": "⚙️",
-                "titulo": "Personalización Visual & Bandeja del Sistema",
-                "subtitulo": "Efecto acrílico DWM translúcido y minimizado en segundo plano",
+                "badge": "Fuego Fynex & Blur DWM",
+                "nombre_corto": "Personalización",
+                "icono_corto": "🎨",
+                "titulo": "Ajustes & Personalización Visual",
+                "subtitulo": "Modo Oscuro/Claro, paleta Fuego Fynex y Blur DWM Frosted Glass",
                 "desc": (
-                    "Captura real de Audiout: activación de fondo difuminado (Frosted Glass Acrylic), regulación de opacidad, "
-                    "soporte para fondos de pantalla personalizados y opciones para minimizar a la bandeja del sistema (System Tray)."
+                    "Captura real de Audiout: panel de personalización con selección de tema (Oscuro, Claro, Sistema), "
+                    "bordes personalizables (Fuego Fynex Naranja), grosor de bordes, transparencia, fondo difuminado "
+                    "translúcido Blur DWM y soporte de fondos de pantalla personalizados."
                 ),
                 "captura": "img/apps/audiout/capturas_reales/04_ajustes_logos_real.png",
             },
