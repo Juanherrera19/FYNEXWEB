@@ -271,6 +271,73 @@ button { font-family: inherit; }
     pointer-events: none;
     filter: blur(40px);
 }
+/* ── Estelas Naranjosas de Fuego (Fondo del Hero) ── */
+.fx-hero-estelas-wrap {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+}
+.fx-hero-estelas-svg {
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 540px;
+    object-fit: cover;
+    pointer-events: none;
+}
+.fx-estela-aura {
+    filter: blur(32px);
+    mix-blend-mode: screen;
+    animation: fxEstelaPulso 5.5s infinite ease-in-out alternate;
+}
+.fx-estela-cinta {
+    mix-blend-mode: screen;
+    filter: drop-shadow(0 0 16px rgba(255, 122, 24, 0.9)) drop-shadow(0 0 35px rgba(255, 70, 0, 0.6));
+}
+.fx-estela-anim-1 {
+    animation: fxEstelaFluir1 8s infinite ease-in-out alternate;
+}
+.fx-estela-anim-2 {
+    animation: fxEstelaFluir2 10s infinite ease-in-out alternate;
+}
+.fx-estela-nucleo {
+    mix-blend-mode: screen;
+    filter: drop-shadow(0 0 8px rgba(255, 235, 59, 1)) drop-shadow(0 0 22px rgba(255, 122, 24, 0.95));
+    animation: fxEstelaFluir1 8s infinite ease-in-out alternate;
+}
+
+@keyframes fxEstelaPulso {
+    0% { opacity: 0.45; transform: scaleY(0.96); }
+    100% { opacity: 0.8; transform: scaleY(1.04); }
+}
+@keyframes fxEstelaFluir1 {
+    0% { transform: translateY(0px) scaleY(1); opacity: 0.85; }
+    50% { transform: translateY(-7px) scaleY(1.03); opacity: 1; }
+    100% { transform: translateY(5px) scaleY(0.97); opacity: 0.8; }
+}
+@keyframes fxEstelaFluir2 {
+    0% { transform: translateY(0px) scaleY(1); opacity: 0.7; }
+    50% { transform: translateY(9px) scaleY(0.96); opacity: 0.95; }
+    100% { transform: translateY(-6px) scaleY(1.04); opacity: 0.75; }
+}
+
+/* ── Canvas de Cenizas y Chispas de Fuego Flotantes (Hero) ── */
+.fx-hero-cenizas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+    mix-blend-mode: screen;
+}
+
 .fx-hero-grid {
     display: grid;
     grid-template-columns: 1.12fr 0.88fr;
@@ -278,7 +345,7 @@ button { font-family: inherit; }
     gap: 40px;
     min-height: calc(80vh - 72px);
     position: relative;
-    z-index: 2;
+    z-index: 3;
 }
 
 /* Columna de Texto desplazada hacia la izquierda */
