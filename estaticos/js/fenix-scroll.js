@@ -2,9 +2,9 @@
  * FYNEX — Experiencia Cinematográfica de Vuelo del Fénix al Scroll
  * 
  * Vincula la secuencia de 112 fotogramas fotorrealistas del Fénix 3D
- * con GSAP ScrollTrigger, adaptando trayectoria, escala, profundidad y
- * partículas incandescentes mientras vuela tras las ventanas translúcidas
- * de la página hasta alinearse con la barra inferior del pie de página.
+ * con scroll en tiempo real (avance y rebobinado hacia atrás), adaptando
+ * trayectoria, escala, profundidad y partículas incandescentes mientras
+ * vuela tras las ventanas translúcidas hasta alinearse con el pie de página.
  */
 (function () {
     'use strict';
@@ -13,9 +13,9 @@
     var BASE_W = 1280;
     var BASE_H = 720;
 
-    // Metadatos de cada fotograma: [centro_x, centro_y, ancho_ave, alto_ave]
+    // Metadatos precisos de cada fotograma limpio: [centro_x, centro_y, ancho_ave, alto_ave]
     var FRAMES_META = [
-        [618.1, 366.3, 439, 569], [617.8, 366.0, 439, 567], [619.2, 366.0, 439, 568], [620.2, 365.8, 439, 569],
+        [618.4, 366.4, 439, 569], [617.8, 366.0, 439, 567], [619.2, 366.0, 439, 568], [620.2, 365.8, 439, 569],
         [621.7, 365.4, 439, 569], [622.8, 363.9, 437, 569], [627.1, 362.7, 439, 569], [630.6, 361.6, 441, 569],
         [632.0, 359.8, 443, 573], [632.4, 359.2, 447, 573], [632.9, 358.2, 449, 581], [632.8, 357.2, 461, 583],
         [632.4, 356.7, 461, 585], [633.4, 358.9, 469, 589], [632.9, 365.7, 483, 593], [630.8, 376.3, 507, 601],
@@ -42,7 +42,7 @@
         [1102.7, 373.5, 453, 592], [1126.1, 435.7, 335, 569], [1126.1, 436.0, 335, 569], [1132.7, 471.5, 381, 549],
         [1127.5, 525.1, 443, 495], [1111.8, 569.8, 459, 404], [1112.0, 569.8, 460, 404], [1105.9, 580.2, 447, 353],
         [1096.9, 588.6, 424, 259], [1084.5, 578.7, 443, 228], [1084.4, 578.6, 443, 228], [1089.5, 570.3, 413, 246],
-        [1089.1, 567.0, 400, 270], [1090.8, 565.6, 383, 285], [1090.6, 565.5, 382, 286], [1091.1, 565.7, 381, 286]
+        [1089.1, 567.0, 400, 270], [1090.8, 565.6, 383, 285], [1090.6, 565.5, 382, 286], [1092.4, 558.1, 381, 286]
     ];
 
     var canvas = document.getElementById('fenixScrollCanvas');
@@ -50,27 +50,39 @@
     var ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    // Detectar ruta base automáticamente para compatibilidad con localhost, file:// y subdirectorios de GitHub Pages
+    var baseAssetPath = (function () {
+        var baseEl = document.querySelector('base[href]');
+        if (baseEl && baseEl.href) return baseEl.href.replace(/\/$/, '') + '/';
+
+        var scripts = document.getElementsByTagName('script');
+        for (var i = 0; i < scripts.length; i++) {
+            var src = scripts[i].src || '';
+            if (src.indexOf('fenix-scroll.js') !== -1) {
+                return src.substring(0, src.lastIndexOf('/js/fenix-scroll.js') + 1);
+            }
+        }
+        var path = window.location.pathname || '';
+        if (path.endsWith('.html') || path.endsWith('.htm')) {
+            path = path.substring(0, path.lastIndexOf('/') + 1);
+        }
+        return (window.location.origin || '') + (path.endsWith('/') ? path : path + '/');
+    })();
+
     // Reducir movimiento si el usuario lo prefiere
     var prefiereReducido = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // Estado de la animación
+    // Estado de la animación y fotogramas
     var images = new Array(TOTAL_FRAMES);
     var imagesLoaded = new Array(TOTAL_FRAMES).fill(false);
-    var lastRenderedFrame = 0;
     var currentProgress = 0;
     var targetProgress = 0;
-    var currentFrameIndex = 0;
     var isCanvasReady = false;
 
     // Dimensiones en pantalla y densidad de píxeles
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
     var viewW = window.innerWidth;
     var viewH = window.innerHeight;
-
-    // Elementos DOM para coordinación de posición
-    var heroVisual = document.querySelector('.fx-hero-visual');
-    var heroLogoImg = document.querySelector('.fx-hero-logo-img');
-    var footerEl = document.querySelector('.fx-footer');
 
     // ── Sistema de Partículas (Cenizas y Chispas de Vuelo) ──
     var particulas = [];
@@ -85,7 +97,7 @@
             vy: -(0.5 + Math.random() * 1.2),
             size: 1.2 + Math.random() * 2.8,
             alpha: 0.2 + Math.random() * 0.65,
-            hue: 24 + Math.random() * 26, // Rango naranja a oro cálido (24 - 50)
+            hue: 24 + Math.random() * 26,
             tiempo: Math.random() * 100,
             oscilacion: 0.8 + Math.random() * 1.4
         };
@@ -118,53 +130,48 @@
         }
     }
 
-    // ── Pre-carga Inteligente de Fotogramas ──
+    // ── Pre-carga de Fotogramas ──
     function obtenerUrlFrame(idx) {
         var num = String(idx + 1).padStart(3, '0');
-        return '/img/fenix_scroll/f_' + num + '.webp';
+        return baseAssetPath + 'img/fenix_scroll/f_' + num + '.webp';
     }
 
     function precargarSecuencia() {
-        // Carga inmediata del primer fotograma para que aparezca al instante
+        // Carga inmediata del primer fotograma
         var f0 = new Image();
         f0.onload = function () {
             images[0] = f0;
             imagesLoaded[0] = true;
             isCanvasReady = true;
             document.body.classList.add('fx-canvas-activo');
-            renderizar(0, 0);
+            renderizar(currentProgress, 0);
 
-            // Cargar en cascada prioritaria: primero hitos clave (cada 8 frames), luego el resto
-            var hitos = [];
-            for (var i = 1; i < TOTAL_FRAMES; i += 8) hitos.push(i);
-            hitos.push(TOTAL_FRAMES - 1);
-
-            var indiceHito = 0;
-            function cargarSiguienteHito() {
-                if (indiceHito >= hitos.length) {
-                    cargarRestoFrames();
-                    return;
-                }
-                var idx = hitos[indiceHito++];
-                var img = new Image();
-                img.onload = function () {
-                    images[idx] = img;
-                    imagesLoaded[idx] = true;
-                    cargarSiguienteHito();
-                };
-                img.onerror = cargarSiguienteHito;
-                img.src = obtenerUrlFrame(idx);
-            }
-            cargarSiguienteHito();
+            // Cargar en cascada prioritaria
+            cargarRestoFrames();
+        };
+        f0.onerror = function () {
+            console.warn('[FYNEX Fénix] Reintentando carga de f_001 desde fallback...');
+            f0.src = '/img/fenix_scroll/f_001.webp';
         };
         f0.src = obtenerUrlFrame(0);
     }
 
     function cargarRestoFrames() {
+        // Primero cargar fotogramas clave de navegación
+        var hitos = [10, 25, 45, 60, 75, 90, 100, TOTAL_FRAMES - 1];
+        hitos.forEach(function (h) {
+            if (!imagesLoaded[h]) {
+                var img = new Image();
+                img.onload = function () { images[h] = img; imagesLoaded[h] = true; };
+                img.src = obtenerUrlFrame(h);
+            }
+        });
+
+        // Luego cargar todos los restantes en lotes continuos
         var idx = 1;
         function lote() {
             var cargadosEnLote = 0;
-            while (idx < TOTAL_FRAMES && cargadosEnLote < 4) {
+            while (idx < TOTAL_FRAMES && cargadosEnLote < 6) {
                 if (!imagesLoaded[idx]) {
                     (function (i) {
                         var img = new Image();
@@ -179,20 +186,15 @@
                 idx++;
             }
             if (idx < TOTAL_FRAMES) {
-                if ('requestIdleCallback' in window) {
-                    window.requestIdleCallback(lote, { timeout: 250 });
-                } else {
-                    setTimeout(lote, 30);
-                }
+                setTimeout(lote, 25);
             }
         }
         lote();
     }
 
-    // Obtener el fotograma más cercano disponible si el actual aún se está decodificando
+    // Obtener la mejor imagen disponible (rebobina o avanza sin dejar huecos negros)
     function obtenerMejorImagen(idx) {
         if (imagesLoaded[idx] && images[idx]) return images[idx];
-        // Búsqueda en espiral hacia atrás y adelante
         for (var offset = 1; offset < TOTAL_FRAMES; offset++) {
             var anterior = idx - offset;
             if (anterior >= 0 && imagesLoaded[anterior] && images[anterior]) return images[anterior];
@@ -224,80 +226,50 @@
         var metaCy = meta[1];
 
         var esMovil = viewW < 992;
-        var ratioPantalla = viewW / viewH;
-
         var drawW, drawH, drawX, drawY;
 
         if (!esMovil) {
-            // ESCRITORIO / PANTALLA ANCHA
+            // ESCRITORIO
             var baseScale = Math.max(viewW / BASE_W, viewH / BASE_H);
             drawW = BASE_W * baseScale;
             drawH = BASE_H * baseScale;
             
-            // Centrado de la cámara base
             var cxDef = (viewW - drawW) * 0.5;
             var cyDef = (viewH - drawH) * 0.5;
 
-            // En el Hero (progreso de 0.0 a 0.20): anclar armónicamente con la columna derecha
-            var heroPeso = Math.max(0, 1 - (progreso / 0.18));
-            var heroShiftX = 0;
-            var heroShiftY = 0;
+            // En el Hero (progreso de 0.0 a 0.22): desplazar hacia la columna visual derecha
+            // Al hacer scroll hacia abajo avanza hacia el centro; al rebobinar hacia arriba vuelve a la derecha
+            var heroPeso = Math.max(0, 1 - (progreso / 0.22));
+            var heroShiftX = (viewW * 0.21) * heroPeso;
 
-            if (heroVisual && heroPeso > 0.001) {
-                var heroRect = heroVisual.getBoundingClientRect();
-                var targetHeroCx = heroRect.left + heroRect.width * 0.5;
-                var targetHeroCy = heroRect.top + heroRect.height * 0.5;
-
-                // Dónde caería el ave en el fotograma 0 con la cámara base
-                var birdBaseX = cxDef + metaCx * baseScale;
-                var birdBaseY = cyDef + metaCy * baseScale;
-
-                heroShiftX = (targetHeroCx - birdBaseX) * heroPeso;
-                heroShiftY = (targetHeroCy - birdBaseY) * heroPeso;
-            }
-
-            // En el Footer (progreso de 0.85 a 1.0): fijar y coordinar suavemente con la barra inferior
+            // En el Footer (progreso de 0.85 a 1.0): ajustar suavemente sobre la barra inferior
             var footerPeso = Math.max(0, (progreso - 0.85) / 0.15);
-            var footerShiftX = 0;
-            var footerShiftY = 0;
+            var footerShiftY = (viewH * 0.06) * footerPeso;
 
-            if (footerPeso > 0.001) {
-                // El ave en el frame final descansa en la esquina inferior derecha
-                // Aseguramos que la base del ave se alinee justo sobre la barra legal
-                var birdFinalY = cyDef + metaCy * baseScale;
-                var targetBottomY = viewH - 180; // Zona de confort visual sobre la barra legal
-                footerShiftY = (targetBottomY - birdFinalY) * footerPeso * 0.65;
-            }
-
-            drawX = cxDef + heroShiftX + footerShiftX;
-            drawY = cyDef + heroShiftY + footerShiftY;
+            drawX = cxDef + heroShiftX;
+            drawY = cyDef + footerShiftY;
 
         } else {
             // MÓVIL / PANTALLA VERTICAL
-            // Ajustamos escala para que las alas nunca se salgan del ancho del dispositivo
-            var maxBirdW = 1000;
-            var mobileScale = Math.min((viewW * 0.94) / maxBirdW, (viewH * 0.5) / BASE_H);
+            var mobileScale = Math.min((viewW * 0.95) / 950, (viewH * 0.52) / BASE_H);
             drawW = BASE_W * mobileScale;
             drawH = BASE_H * mobileScale;
 
-            // En móvil, centrar horizontalmente respecto al centro focal del ave en cada frame
             var birdScreenX = metaCx * mobileScale;
             drawX = (viewW * 0.5) - birdScreenX;
 
-            // Verticalmente: en Hero empieza arriba, en catálogo y estudio acompaña el tercio medio,
-            // y en footer reposa en la parte inferior sobre el copyright
-            var startY = (viewH * 0.28) - (metaCy * mobileScale);
-            var midY = (viewH * 0.42) - (metaCy * mobileScale);
-            var endY = (viewH * 0.72) - (metaCy * mobileScale);
+            var startY = (viewH * 0.26) - (metaCy * mobileScale);
+            var midY = (viewH * 0.40) - (metaCy * mobileScale);
+            var endY = (viewH * 0.70) - (metaCy * mobileScale);
 
             var currY;
-            if (progreso < 0.3) {
-                var p = progreso / 0.3;
+            if (progreso < 0.25) {
+                var p = progreso / 0.25;
                 currY = startY + (midY - startY) * p;
-            } else if (progreso < 0.8) {
+            } else if (progreso < 0.80) {
                 currY = midY;
             } else {
-                var p2 = (progreso - 0.8) / 0.2;
+                var p2 = (progreso - 0.80) / 0.20;
                 currY = midY + (endY - midY) * p2;
             }
             drawY = currY;
@@ -314,33 +286,30 @@
     }
 
     // ── Motor de Renderizado Principal ──
-    var ultimoFrameRenderizado = -1;
     var ultimaPosAve = { x: viewW * 0.5, y: viewH * 0.5 };
 
     function renderizar(progreso, velScroll) {
         if (!isCanvasReady) return;
 
-        // Limpiar lienzo
         ctx.clearRect(0, 0, viewW, viewH);
 
-        // Fotograma actual según progreso del scroll
-        var frameIndex = Math.min(TOTAL_FRAMES - 1, Math.max(0, Math.floor(progreso * (TOTAL_FRAMES - 1))));
+        // Fotograma actual según progreso del scroll (avanza hacia adelante o rebobina hacia atrás)
+        var frameIndex = Math.min(TOTAL_FRAMES - 1, Math.max(0, Math.round(progreso * (TOTAL_FRAMES - 1))));
         var img = obtenerMejorImagen(frameIndex);
 
-        // Calcular trayectoria y coordenadas del ave
         var t = calcularTransformacionAve(progreso, frameIndex);
 
-        // Detectar movimiento del ave para emitir estela de chispas ardientes
+        // Detectar movimiento para estela de chispas
         var deltaX = t.birdScreenX - ultimaPosAve.x;
         var deltaY = t.birdScreenY - ultimaPosAve.y;
         var dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-        if (dist > 3 || Math.abs(velScroll) > 0.005) {
-            emitirChispasEstela(t.birdScreenX, t.birdScreenY, Math.min(dist / 12, 1.5));
+        if (dist > 3 || Math.abs(velScroll) > 0.004) {
+            emitirChispasEstela(t.birdScreenX, t.birdScreenY, Math.min(dist / 10, 1.6));
         }
         ultimaPosAve.x = t.birdScreenX;
         ultimaPosAve.y = t.birdScreenY;
 
-        // 1. Dibujar el Ave Fénix con nitidez fotorrealista y suavizado óptico
+        // 1. Dibujar el Fénix en su pose actual
         if (img) {
             ctx.save();
             ctx.imageSmoothingEnabled = true;
@@ -349,7 +318,7 @@
             ctx.restore();
         }
 
-        // 2. Dibujar Chispas de la Estela del Vuelo (Detrás y alrededor)
+        // 2. Chispas de la estela de vuelo
         if (chispasEstela.length > 0) {
             ctx.save();
             ctx.shadowBlur = 10;
@@ -358,7 +327,7 @@
                 p.x += p.vx;
                 p.y += p.vy;
                 p.vx *= 0.96;
-                p.vy += 0.04; // Leve flotación
+                p.vy += 0.04;
                 p.vida -= p.degradacion;
 
                 if (p.vida <= 0) {
@@ -376,7 +345,7 @@
             ctx.restore();
         }
 
-        // 3. Dibujar Cenizas e Igniciones Flotantes del Ambiente
+        // 3. Cenizas incandescentes de fondo
         ctx.save();
         ctx.shadowBlur = 6;
         for (var i = 0; i < particulas.length; i++) {
@@ -385,7 +354,6 @@
             part.x += part.vx + Math.sin(part.tiempo * part.oscilacion) * 0.45;
             part.y += part.vy;
 
-            // Reaparecer al cruzar los límites
             if (part.y < -20) {
                 part.y = viewH + 20;
                 part.x = Math.random() * viewW;
@@ -403,11 +371,9 @@
             ctx.fill();
         }
         ctx.restore();
-
-        ultimoFrameRenderizado = frameIndex;
     }
 
-    // ── Bucle de Animación Continuo para Partículas ──
+    // ── Bucle de Animación Continuo con Rebobinado Suave ──
     var animando = true;
     var ultimoTiempo = performance.now();
     var velocidadScrollSuave = 0;
@@ -417,52 +383,68 @@
         var dt = Math.min(32, ahora - ultimoTiempo);
         ultimoTiempo = ahora;
 
-        // Suavizado inercial del progreso (lerp de alta precisión)
+        // Suavizado inercial bidireccional (avanza al bajar, rebobina al subir)
         var dif = targetProgress - currentProgress;
-        currentProgress += dif * 0.14;
+        currentProgress += dif * 0.20;
         velocidadScrollSuave = Math.abs(dif);
 
         renderizar(currentProgress, velocidadScrollSuave);
         requestAnimationFrame(bucleAnimacion);
     }
 
-    // ── Integración con GSAP ScrollTrigger ──
-    function iniciarScrollTrigger() {
+    // ── Cálculo Preciso de Progreso de Scroll en Cualquier Navegador ──
+    function calcularProgresoScroll() {
+        var doc = document.documentElement;
+        var body = document.body;
+        var maxScroll = Math.max(
+            1,
+            (doc.scrollHeight || 0) - window.innerHeight,
+            (body.scrollHeight || 0) - window.innerHeight
+        );
+        var scrollTop = window.pageYOffset || doc.scrollTop || body.scrollTop || 0;
+        return Math.min(1, Math.max(0, scrollTop / maxScroll));
+    }
+
+    function actualizarScroll() {
+        targetProgress = calcularProgresoScroll();
+    }
+
+    // ── Integración Dual: Scroll Nativo + GSAP ScrollTrigger ──
+    function iniciarControladoresScroll() {
+        // 1. Escucha nativa permanente: garantiza respuesta instantánea y rebobinado reversible
+        window.addEventListener('scroll', actualizarScroll, { passive: true });
+        window.addEventListener('wheel', actualizarScroll, { passive: true });
+        window.addEventListener('touchmove', actualizarScroll, { passive: true });
+
+        // 2. Si GSAP ScrollTrigger está disponible, vincularlo también
         if (window.gsap && window.ScrollTrigger) {
             window.gsap.registerPlugin(window.ScrollTrigger);
 
             window.ScrollTrigger.create({
-                trigger: document.body,
-                start: "top top",
-                end: "bottom bottom",
-                scrub: 0.55, // Respuesta fluida y elástica al scroll
+                start: 0,
+                end: "max",
                 onUpdate: function (self) {
                     targetProgress = self.progress;
                 }
             });
-            window.ScrollTrigger.refresh();
-        } else {
-            // Mecanismo de contingencia nativo si la librería externa tarda en cargar
-            window.addEventListener('scroll', function () {
-                var maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-                var actual = window.pageYOffset || document.documentElement.scrollTop;
-                targetProgress = Math.min(1, Math.max(0, actual / maxScroll));
-            }, { passive: true });
         }
+
+        actualizarScroll();
     }
 
-    // ── Eventos y Ciclo de Vida ──
+    // ── Eventos de Redimensionamiento ──
     window.addEventListener('resize', function () {
         redimensionar();
+        actualizarScroll();
         if (window.ScrollTrigger) window.ScrollTrigger.refresh();
         renderizar(currentProgress, 0);
     });
 
-    // Iniciar
+    // Iniciar sistema
     redimensionar();
     inicializarParticulas();
     precargarSecuencia();
-    iniciarScrollTrigger();
+    iniciarControladoresScroll();
     requestAnimationFrame(bucleAnimacion);
 
 })();
