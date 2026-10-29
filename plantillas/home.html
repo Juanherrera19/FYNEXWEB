@@ -16,8 +16,13 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/fynex.css">
+<link rel="preload" href="/img/fenix_scroll/f_001.webp" as="image" type="image/webp">
+<link rel="preload" href="/img/fenix_scroll/f_002.webp" as="image" type="image/webp">
 </head>
 <body>
+
+<!-- Lienzo Cinematográfico de Vuelo del Fénix al Scroll -->
+<canvas id="fenixScrollCanvas" class="fx-fenix-canvas" aria-hidden="true"></canvas>
 
 <header class="fx-header">
     <div class="fx-contenedor fx-header-inner">
@@ -799,6 +804,11 @@ document.getElementById('anio').textContent = new Date().getFullYear();
     });
 })();
 </script>
+
+<!-- Motor de Scroll Cinematográfico GSAP & Fénix 3D -->
+<script src="/vendor/gsap.min.js"></script>
+<script src="/vendor/ScrollTrigger.min.js"></script>
+<script src="/js/fenix-scroll.js"></script>
 
 </body>
 </html>
