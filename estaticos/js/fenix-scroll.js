@@ -15,34 +15,34 @@
 
     // Metadatos precisos de cada fotograma limpio: [centro_x, centro_y, ancho_ave, alto_ave]
     var FRAMES_META = [
-        [618.4, 366.4, 439, 569], [617.8, 366.0, 439, 567], [619.2, 366.0, 439, 568], [620.2, 365.8, 439, 569],
-        [621.7, 365.4, 439, 569], [622.8, 363.9, 437, 569], [627.1, 362.7, 439, 569], [630.6, 361.6, 441, 569],
-        [632.0, 359.8, 443, 573], [632.4, 359.2, 447, 573], [632.9, 358.2, 449, 581], [632.8, 357.2, 461, 583],
-        [632.4, 356.7, 461, 585], [633.4, 358.9, 469, 589], [632.9, 365.7, 483, 593], [630.8, 376.3, 507, 601],
-        [624.5, 386.6, 537, 611], [617.8, 394.6, 569, 631], [614.3, 405.2, 595, 659], [610.0, 410.5, 607, 663],
-        [604.2, 413.4, 575, 663], [610.4, 406.9, 503, 663], [612.6, 397.5, 499, 659], [634.3, 379.3, 535, 651],
-        [634.3, 379.1, 535, 651], [643.9, 370.4, 605, 649], [676.1, 370.6, 545, 664], [707.1, 360.3, 524, 653],
-        [744.2, 345.8, 581, 649], [744.2, 345.8, 581, 649], [748.9, 338.9, 634, 655], [750.9, 333.2, 663, 661],
-        [749.2, 333.9, 660, 669], [749.1, 333.9, 661, 669], [747.2, 333.1, 664, 671], [742.4, 329.2, 659, 683],
-        [729.1, 314.8, 648, 719], [729.0, 314.6, 648, 719], [719.6, 316.1, 627, 719], [707.7, 317.2, 627, 719],
-        [691.9, 308.9, 674, 719], [691.7, 309.0, 674, 719], [687.1, 308.7, 700, 719], [677.5, 313.2, 734, 719],
-        [646.0, 331.1, 832, 719], [646.0, 331.0, 832, 719], [632.2, 339.0, 876, 695], [599.0, 351.1, 944, 664],
-        [564.5, 345.7, 974, 633], [564.4, 345.8, 974, 633], [549.6, 340.9, 990, 602], [530.0, 334.0, 1011, 505],
-        [473.9, 338.0, 1037, 471], [474.0, 338.0, 1037, 472], [454.1, 343.3, 1017, 502], [429.8, 348.7, 987, 528],
-        [383.9, 374.0, 933, 541], [383.4, 374.0, 933, 541], [375.1, 385.6, 923, 558], [374.7, 390.9, 873, 574],
-        [397.3, 404.2, 821, 571], [397.3, 404.2, 823, 571], [419.4, 415.4, 815, 568], [440.5, 430.1, 817, 565],
-        [481.4, 453.4, 915, 573], [481.5, 453.7, 914, 571], [491.1, 471.9, 941, 569], [508.0, 510.0, 957, 575],
-        [627.0, 519.5, 1027, 571], [627.4, 519.6, 1027, 571], [687.2, 513.7, 1161, 565], [715.6, 509.3, 1139, 567],
-        [781.4, 469.7, 1099, 624], [781.9, 469.5, 1099, 623], [799.2, 447.7, 1058, 640], [830.5, 408.1, 1027, 657],
-        [860.6, 363.4, 1025, 689], [860.7, 363.4, 1025, 689], [876.3, 345.2, 1023, 683], [889.0, 320.5, 1021, 689],
-        [893.5, 267.0, 1031, 701], [893.6, 266.9, 1031, 701], [889.5, 253.3, 1033, 699], [882.9, 221.0, 1019, 699],
-        [880.6, 220.7, 859, 655], [880.7, 220.6, 860, 655], [874.1, 222.0, 858, 649], [873.8, 234.5, 495, 629],
-        [917.3, 254.7, 517, 379], [917.5, 254.7, 517, 379], [937.3, 265.7, 562, 412], [1002.2, 277.8, 591, 599],
-        [1055.9, 311.8, 587, 574], [1056.0, 312.0, 587, 574], [1055.9, 313.4, 587, 597], [1072.0, 335.2, 569, 600],
-        [1102.7, 373.5, 453, 592], [1126.1, 435.7, 335, 569], [1126.1, 436.0, 335, 569], [1132.7, 471.5, 381, 549],
-        [1127.5, 525.1, 443, 495], [1111.8, 569.8, 459, 404], [1112.0, 569.8, 460, 404], [1105.9, 580.2, 447, 353],
-        [1096.9, 588.6, 424, 259], [1084.5, 578.7, 443, 228], [1084.4, 578.6, 443, 228], [1089.5, 570.3, 413, 246],
-        [1089.1, 567.0, 400, 270], [1090.8, 565.6, 383, 285], [1090.6, 565.5, 382, 286], [1092.4, 558.1, 381, 286]
+        [618.8, 366.3, 439, 569], [618.5, 366.0, 439, 571], [620.2, 366.0, 439, 571], [621.7, 365.2, 439, 571],
+        [624.0, 363.2, 439, 571], [627.0, 360.9, 439, 571], [630.6, 361.6, 443, 571], [632.4, 361.8, 447, 573],
+        [632.7, 359.7, 451, 573], [633.0, 358.7, 453, 579], [633.5, 357.3, 459, 583], [632.9, 356.5, 471, 589],
+        [632.4, 355.9, 471, 589], [633.3, 357.8, 479, 595], [633.3, 363.6, 489, 599], [632.6, 374.1, 515, 607],
+        [625.9, 385.1, 545, 617], [620.3, 394.6, 577, 639], [616.3, 404.7, 605, 656], [611.7, 410.4, 617, 660],
+        [604.1, 412.1, 583, 660], [612.7, 404.9, 517, 658], [613.7, 393.8, 509, 660], [634.2, 375.7, 535, 650],
+        [634.2, 375.3, 539, 650], [644.2, 367.6, 609, 656], [675.5, 369.2, 547, 659], [706.8, 358.9, 525, 647],
+        [744.4, 344.2, 585, 646], [744.6, 344.1, 585, 646], [749.3, 337.0, 637, 650], [751.4, 331.3, 665, 656],
+        [749.8, 331.7, 663, 664], [749.8, 331.6, 663, 664], [747.7, 330.8, 665, 668], [743.0, 326.7, 661, 680],
+        [728.7, 313.8, 648, 709], [728.7, 313.7, 648, 709], [718.5, 316.1, 627, 709], [707.1, 317.8, 627, 709],
+        [691.7, 309.7, 674, 709], [691.7, 309.7, 674, 709], [687.0, 309.4, 699, 709], [677.6, 313.3, 734, 709],
+        [646.4, 330.0, 834, 709], [646.3, 329.9, 834, 709], [633.2, 338.3, 877, 690], [599.0, 350.3, 945, 658],
+        [566.5, 345.8, 977, 627], [566.2, 345.9, 977, 628], [551.2, 340.9, 991, 602], [531.9, 334.2, 1011, 504],
+        [478.0, 337.5, 1032, 471], [478.0, 337.5, 1032, 471], [458.5, 342.3, 1012, 505], [434.4, 347.3, 982, 531],
+        [390.7, 370.8, 930, 543], [390.2, 370.9, 930, 543], [379.8, 381.7, 918, 561], [379.1, 388.3, 873, 573],
+        [400.8, 400.7, 823, 573], [400.8, 400.7, 823, 573], [420.2, 412.8, 815, 573], [439.9, 427.7, 816, 571],
+        [479.5, 452.2, 915, 581], [479.5, 452.2, 914, 577], [489.4, 470.5, 939, 575], [505.7, 506.8, 963, 571],
+        [618.1, 516.5, 1029, 568], [617.9, 516.4, 1031, 568], [677.2, 512.2, 1158, 564], [702.9, 508.1, 1140, 564],
+        [770.0, 472.4, 1105, 617], [770.8, 472.3, 1105, 617], [791.6, 451.5, 1062, 634], [823.8, 414.1, 1033, 654],
+        [855.7, 368.7, 1031, 688], [855.8, 368.7, 1031, 687], [871.5, 350.2, 1025, 689], [885.1, 325.0, 1023, 695],
+        [894.0, 272.9, 1031, 698], [893.8, 272.9, 1031, 698], [890.2, 257.3, 1035, 696], [883.6, 223.2, 1021, 696],
+        [882.5, 220.3, 861, 667], [882.5, 220.2, 861, 667], [876.2, 221.7, 859, 651], [874.2, 234.2, 567, 493],
+        [916.6, 254.4, 519, 380], [916.7, 254.4, 519, 380], [936.3, 265.2, 565, 413], [1001.2, 277.6, 591, 511],
+        [1054.3, 311.2, 589, 573], [1054.6, 311.4, 589, 573], [1054.6, 311.2, 586, 575], [1070.7, 329.0, 571, 594],
+        [1102.3, 367.9, 457, 591], [1126.6, 427.3, 330, 569], [1126.6, 427.3, 330, 568], [1133.3, 463.0, 378, 549],
+        [1127.9, 517.3, 438, 495], [1111.3, 562.6, 454, 405], [1111.2, 562.6, 454, 405], [1104.9, 574.7, 442, 353],
+        [1095.4, 583.8, 418, 257], [1084.0, 572.9, 436, 229], [1084.0, 572.9, 437, 229], [1088.9, 563.6, 407, 245],
+        [1088.3, 559.4, 395, 270], [1089.7, 557.3, 378, 286], [1089.8, 557.2, 378, 287], [1090.4, 557.5, 376, 287]
     ];
 
     var canvas = document.getElementById('fenixScrollCanvas');
@@ -219,6 +219,44 @@
         ctx.scale(dpr, dpr);
     }
 
+    // ── Detección de Geometría del Logo del Hero para Alineación Perfecta ──
+    function obtenerGeometriaHero(esMovil) {
+        var el = document.querySelector('.fx-hero-logo-img') || document.querySelector('.fx-hero-logo-frame');
+        if (el) {
+            var r = el.getBoundingClientRect();
+            if (r.width > 20 && r.height > 20) {
+                var scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
+                var absCx = r.left + r.width * 0.462;
+                var absCy = (r.top + scrollTop) + r.height * 0.498;
+                var birdH = r.height * 0.982;
+                var scale = birdH / 569;
+                return {
+                    x: absCx,
+                    y: absCy - scrollTop,
+                    scale: scale,
+                    valido: true
+                };
+            }
+        }
+        if (!esMovil) {
+            var fScale = Math.min((viewW * 0.92) / 1050, (viewH * 0.88) / BASE_H);
+            return {
+                x: Math.min(viewW - 220, viewW * 0.5 + Math.min(viewW, 1200) * 0.24),
+                y: Math.min(viewH * 0.50, 420),
+                scale: fScale,
+                valido: false
+            };
+        } else {
+            var mScale = Math.min((viewW * 0.95) / 950, (viewH * 0.52) / BASE_H);
+            return {
+                x: viewW * 0.5,
+                y: viewH * 0.26,
+                scale: mScale,
+                valido: false
+            };
+        }
+    }
+
     // ── Cálculo Cinemático de Posición, Escala y Trayectoria ──
     function calcularTransformacionAve(progreso, frameIdx) {
         var meta = FRAMES_META[frameIdx] || [640, 360, 500, 500];
@@ -226,74 +264,82 @@
         var metaCy = meta[1];
 
         var esMovil = viewW < 860;
-        var drawW, drawH, drawX, drawY, birdScreenX, birdScreenY;
+        var heroGeo = obtenerGeometriaHero(esMovil);
+
+        var drawW, drawH, drawX, drawY, birdScreenX, birdScreenY, currentScale;
 
         if (!esMovil) {
             // ESCRITORIO — Trayectoria Cinematográfica Visible y Coordinada
             var desktopScale = Math.min((viewW * 0.92) / 1050, (viewH * 0.88) / BASE_H);
-            drawW = BASE_W * desktopScale;
-            drawH = BASE_H * desktopScale;
 
-            // Hitos clave de trayectoria en pantalla (X, Y del centro del ave)
-            // 1. Hero: columna visual derecha
-            var heroTargetX = Math.min(viewW - 220, viewW * 0.5 + Math.min(viewW, 1200) * 0.24);
-            var heroTargetY = Math.min(viewH * 0.50, 420);
+            var heroTargetX = heroGeo.x;
+            var heroTargetY = heroGeo.y;
+            var heroScale = heroGeo.scale;
 
-            // 2. Catálogo: desciende y cruza hacia el centro-izquierda tras las tarjetas
             var catTargetX = viewW * 0.44;
             var catTargetY = viewH * 0.52;
 
-            // 3. Estudio: asciende y vira hacia el cuadrante superior derecho
             var estTargetX = viewW * 0.62;
             var estTargetY = viewH * 0.42;
 
-            // 4. Pie de página: desciende hacia la esquina inferior derecha sobre la barra legal
             var footTargetX = viewW - Math.min(320, viewW * 0.22);
             var footTargetY = viewH - 170;
+            var footScale = Math.min(desktopScale * 1.05, (viewH * 0.55) / 569);
 
             if (progreso < 0.25) {
                 var p = progreso / 0.25;
                 birdScreenX = heroTargetX + (catTargetX - heroTargetX) * p;
                 birdScreenY = heroTargetY + (catTargetY - heroTargetY) * p;
-            } else if (progreso < 0.75) {
-                var p2 = (progreso - 0.25) / 0.50;
+                currentScale = heroScale + (desktopScale - heroScale) * p;
+            } else if (progreso < 0.65) {
+                var p2 = (progreso - 0.25) / 0.40;
                 birdScreenX = catTargetX + (estTargetX - catTargetX) * p2;
                 birdScreenY = catTargetY + (estTargetY - catTargetY) * p2;
+                currentScale = desktopScale;
             } else {
-                var p3 = (progreso - 0.75) / 0.25;
+                var p3 = (progreso - 0.65) / 0.35;
                 birdScreenX = estTargetX + (footTargetX - estTargetX) * p3;
                 birdScreenY = estTargetY + (footTargetY - estTargetY) * p3;
+                currentScale = desktopScale + (footScale - desktopScale) * p3;
             }
 
-            drawX = birdScreenX - metaCx * desktopScale;
-            drawY = birdScreenY - metaCy * desktopScale;
+            drawW = BASE_W * currentScale;
+            drawH = BASE_H * currentScale;
+            drawX = birdScreenX - metaCx * currentScale;
+            drawY = birdScreenY - metaCy * currentScale;
 
         } else {
             // MÓVIL / PANTALLA VERTICAL
             var mobileScale = Math.min((viewW * 0.95) / 950, (viewH * 0.52) / BASE_H);
-            drawW = BASE_W * mobileScale;
-            drawH = BASE_H * mobileScale;
+            var mHeroScale = heroGeo.scale || mobileScale;
 
-            birdScreenX = metaCx * mobileScale;
-            drawX = (viewW * 0.5) - birdScreenX;
+            var startX = heroGeo.x;
+            var startY = heroGeo.y;
+            var midX = viewW * 0.5;
+            var midY = (viewH * 0.40);
+            var endX = viewW * 0.5;
+            var endY = (viewH * 0.70);
 
-            var startY = (viewH * 0.26) - (metaCy * mobileScale);
-            var midY = (viewH * 0.40) - (metaCy * mobileScale);
-            var endY = (viewH * 0.70) - (metaCy * mobileScale);
-
-            var currY;
             if (progreso < 0.25) {
                 var pm = progreso / 0.25;
-                currY = startY + (midY - startY) * pm;
+                birdScreenX = startX + (midX - startX) * pm;
+                birdScreenY = startY + (midY - startY) * pm;
+                currentScale = mHeroScale + (mobileScale - mHeroScale) * pm;
             } else if (progreso < 0.80) {
-                currY = midY;
+                birdScreenX = midX;
+                birdScreenY = midY;
+                currentScale = mobileScale;
             } else {
                 var pm2 = (progreso - 0.80) / 0.20;
-                currY = midY + (endY - midY) * pm2;
+                birdScreenX = midX + (endX - midX) * pm2;
+                birdScreenY = midY + (endY - midY) * pm2;
+                currentScale = mobileScale;
             }
-            drawY = currY;
-            birdScreenX = viewW * 0.5;
-            birdScreenY = currY + metaCy * mobileScale;
+
+            drawW = BASE_W * currentScale;
+            drawH = BASE_H * currentScale;
+            drawX = birdScreenX - metaCx * currentScale;
+            drawY = birdScreenY - metaCy * currentScale;
         }
 
         return {
@@ -314,6 +360,24 @@
 
         ctx.clearRect(0, 0, viewW, viewH);
 
+        // Control dinámico de crossfade entre el logo animado del Hero y el lienzo de scroll
+        var heroPicture = document.querySelector('.fx-hero-logo-frame picture') || document.querySelector('.fx-hero-logo-img');
+        var birdAlpha = 1.0;
+
+        if (heroPicture) {
+            if (progreso <= 0.02) {
+                heroPicture.style.opacity = '1';
+                birdAlpha = 0; // Al inicio en el Hero se mantiene la animación estática aleteando
+            } else if (progreso < 0.10) {
+                var cross = (progreso - 0.02) / (0.10 - 0.02);
+                heroPicture.style.opacity = (1 - cross).toFixed(3);
+                birdAlpha = cross;
+            } else {
+                heroPicture.style.opacity = '0';
+                birdAlpha = 1.0;
+            }
+        }
+
         // Fotograma actual según progreso del scroll (avanza hacia adelante o rebobina hacia atrás)
         var frameIndex = Math.min(TOTAL_FRAMES - 1, Math.max(0, Math.round(progreso * (TOTAL_FRAMES - 1))));
         var img = obtenerMejorImagen(frameIndex);
@@ -331,8 +395,9 @@
         ultimaPosAve.y = t.birdScreenY;
 
         // 1. Dibujar el Fénix en su pose actual
-        if (img) {
+        if (img && birdAlpha > 0.005) {
             ctx.save();
+            ctx.globalAlpha = birdAlpha;
             ctx.imageSmoothingEnabled = true;
             ctx.imageSmoothingQuality = 'high';
             ctx.drawImage(img, t.x, t.y, t.w, t.h);
@@ -407,6 +472,13 @@
         // Suavizado inercial bidireccional (avanza al bajar, rebobina al subir)
         var dif = targetProgress - currentProgress;
         currentProgress += dif * 0.20;
+        if (targetProgress === 0 && currentProgress < 0.02) {
+            currentProgress = 0;
+        } else if (targetProgress === 1 && currentProgress > 0.98) {
+            currentProgress = 1;
+        } else if (Math.abs(dif) < 0.001) {
+            currentProgress = targetProgress;
+        }
         velocidadScrollSuave = Math.abs(dif);
 
         renderizar(currentProgress, velocidadScrollSuave);
