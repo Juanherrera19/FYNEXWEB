@@ -163,68 +163,8 @@ def tarjeta(app: dict) -> str:
 
 
 def seccion_destacada(app) -> str:
-    if not app:
-        return ""
-
-    visual = ""
-    if app.get("icono"):
-        visual = """
-        <div class="fx-destacada-visual">
-            <div class="fx-destacada-mockup-wrap">
-                <div class="fx-flotante-badge pos-arriba">
-                    <span>✨</span> <span>Fynex IA Activa</span>
-                </div>
-                <img src="/%s" alt="%s" class="fx-app-preview" width="250" height="250">
-                <div class="fx-flotante-badge pos-abajo">
-                    <span>📊</span> <span>Avalancha & Nieve</span>
-                </div>
-            </div>
-        </div>""" % (esc(app["icono"]), esc(app["nombre"]))
-
-    version = esc(app.get("version", "1.2.18"))
-
-    return """
-<section class="fx-seccion">
-    <div class="fx-contenedor">
-        <div class="fx-destacada fx-revelar" style="--app-color: %s;">
-            <div class="fx-destacada-txt">
-                <div class="fx-destacada-badges">
-                    <span class="fx-destacada-cat">✦ Proyecto Destacado · %s</span>
-                    <span class="fx-destacada-pill">v%s</span>
-                    <span class="fx-destacada-pill">100%% Gratis</span>
-                </div>
-                <h3>%s</h3>
-                <p class="fx-tagline">%s</p>
-                <p class="fx-desc">%s</p>
-
-                <div class="fx-destacada-puntos">
-                    <div class="fx-destacada-punto">
-                        <span class="ico">🛡️</span> <span>Sin anuncios ni paywalls</span>
-                    </div>
-                    <div class="fx-destacada-punto">
-                        <span class="ico">✨</span> <span>Asesor Fynex IA diario</span>
-                    </div>
-                    <div class="fx-destacada-punto">
-                        <span class="ico">🧮</span> <span>Simulador de amortización</span>
-                    </div>
-                    <div class="fx-destacada-punto">
-                        <span class="ico">📱</span> <span>Widgets nativos Android</span>
-                    </div>
-                </div>
-
-                <div class="fx-acciones" style="justify-content:flex-start;">
-                    <a href="/apps/%s/" class="fx-btn fx-btn-primario">Explorar Debts Goodbye</a>
-                    %s
-                </div>
-            </div>
-            %s
-        </div>
-    </div>
-</section>""" % (
-        esc(app["color"]), esc(app["categoria"]), version, esc(app["nombre"]),
-        esc(app["tagline"]), esc(app["descripcion_corta"]), esc(app["slug"]),
-        botones(app), visual,
-    )
+    """Sección de proyecto destacado (eliminada a petición)."""
+    return ""
 
 
 def apps_del_pie() -> str:

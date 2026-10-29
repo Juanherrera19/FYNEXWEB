@@ -143,7 +143,6 @@
     </div>
 </section>
 
-<!-- ═══════ APP DESTACADA ═══════ -->
 {{DESTACADA}}
 
 <!-- ═══════ CATÁLOGO ═══════ -->
@@ -622,7 +621,7 @@ document.getElementById('anio').textContent = new Date().getFullYear();
 
 // Spotlight dinámico que sigue el cursor en tarjetas
 (function () {
-    var cards = document.querySelectorAll('.fx-card, .fx-destacada, .fx-valor-card');
+    var cards = document.querySelectorAll('.fx-card, .fx-valor-card');
     cards.forEach(function (card) {
         card.addEventListener('mousemove', function (e) {
             var rect = card.getBoundingClientRect();
