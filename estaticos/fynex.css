@@ -2270,55 +2270,72 @@ button { font-family: inherit; }
         margin-top: 6px;
     }
 
-    /* ── Hero Portada Móvil ── */
+    /* ── Hero Portada Móvil: Texto a la Izquierda y Logo a la Derecha (Coherente con Escritorio) ── */
     .fx-hero {
-        padding: calc(66px + 24px) 0 48px;
+        padding: calc(66px + 14px) 0 32px;
     }
     .fx-hero-grid {
-        grid-template-columns: 1fr;
-        gap: 22px;
+        grid-template-columns: minmax(0, 1.15fr) minmax(130px, 0.85fr);
+        align-items: center;
+        gap: 16px;
         min-height: auto;
-        padding: 10px 0 20px;
-        text-align: center;
+        padding: 6px 0 16px;
+        text-align: left;
     }
     .fx-hero-visual {
-        order: 1;
-        margin-bottom: 8px;
+        order: 2;
+        margin-bottom: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: auto;
     }
     .fx-hero-logo-frame {
-        max-width: 250px;
+        max-width: 200px;
+        width: 100%;
     }
     .fx-hero-logo-img {
-        max-height: 270px;
+        max-height: 240px;
+        width: 100%;
+        object-fit: contain;
     }
     .fx-hero-txt {
-        order: 2;
-        text-align: center;
+        order: 1;
+        text-align: left;
         max-width: 100%;
     }
     .fx-hero-txt .fx-etiqueta {
-        margin-bottom: 18px;
+        margin-bottom: 12px;
+        font-size: clamp(0.70rem, 2.5vw, 0.80rem);
     }
     .fx-hero-txt h1 {
-        font-size: clamp(2rem, 7.8vw, 2.9rem);
+        font-size: clamp(1.40rem, 5.0vw, 2.30rem);
         line-height: 1.12;
-        margin-bottom: 18px;
+        margin-bottom: 12px;
+        letter-spacing: -0.03em;
     }
     .fx-hero-txt p {
-        font-size: 1.02rem;
-        margin: 0 auto 28px;
-        max-width: 540px;
+        font-size: clamp(0.84rem, 2.8vw, 1.00rem);
+        line-height: 1.48;
+        margin: 0 0 16px 0;
+        max-width: 100%;
     }
     .fx-hero-txt .fx-acciones {
         flex-direction: column;
         width: 100%;
-        gap: 12px;
-        justify-content: center;
+        gap: 8px;
+        justify-content: flex-start;
+        align-items: flex-start;
+    }
+    .fx-hero-txt .fx-acciones .fx-btn {
+        width: auto;
+        max-width: 100%;
+        padding: 9px 16px;
+        font-size: 0.86rem;
     }
     .fx-btn {
-        width: 100%;
-        padding: 14px 22px;
-        font-size: 0.96rem;
+        padding: 12px 20px;
+        font-size: 0.92rem;
     }
 
     /* ── Bloque Destacado de Portada Acomodado ── */
@@ -2750,44 +2767,46 @@ button { font-family: inherit; }
     background: transparent !important;
 }
 .fx-seccion-alt {
-    background: linear-gradient(180deg, rgba(6, 8, 14, 0.52) 0%, rgba(10, 14, 24, 0.32) 50%, rgba(6, 8, 14, 0.52) 100%) !important;
-    border-top: 1px solid rgba(255, 122, 24, 0.14) !important;
-    border-bottom: 1px solid rgba(255, 122, 24, 0.14) !important;
+    background: linear-gradient(180deg, rgba(6, 8, 14, 0.88) 0%, rgba(8, 11, 20, 0.74) 50%, rgba(6, 8, 14, 0.88) 100%) !important;
+    border-top: 1px solid rgba(255, 122, 24, 0.16) !important;
+    border-bottom: 1px solid rgba(255, 122, 24, 0.16) !important;
 }
 
-/* Ventanas Oscuras y Translúcidas con Efecto Vidrio, Desenfoque y Reflejos de Fuego */
+/* Ventanas Oscuras y Menos Translúcidas con Efecto Vidrio Premium y Reflejos de Fuego */
 .fx-card {
-    background: rgba(11, 15, 26, 0.68) !important;
+    background: rgba(8, 11, 20, 0.90) !important;
     backdrop-filter: blur(24px) saturate(160%) !important;
     -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
-    border: 1px solid rgba(255, 122, 24, 0.16) !important;
-    box-shadow: 0 16px 45px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 25px rgba(255, 90, 0, 0.05) !important;
+    border: 1px solid rgba(255, 122, 24, 0.18) !important;
+    box-shadow: 0 16px 45px rgba(0, 0, 0, 0.72), inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 25px rgba(255, 90, 0, 0.06) !important;
     position: relative;
 }
 .fx-card:hover {
-    border-color: rgba(255, 140, 40, 0.42) !important;
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7), 0 0 35px rgba(255, 122, 24, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+    background: rgba(10, 14, 25, 0.94) !important;
+    border-color: rgba(255, 140, 40, 0.45) !important;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.82), 0 0 35px rgba(255, 122, 24, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
 }
 
 .fx-valor-card {
-    background: rgba(11, 15, 26, 0.68) !important;
+    background: rgba(8, 11, 20, 0.90) !important;
     backdrop-filter: blur(22px) saturate(150%) !important;
     -webkit-backdrop-filter: blur(22px) saturate(150%) !important;
-    border: 1px solid rgba(255, 122, 24, 0.15) !important;
-    box-shadow: 0 16px 42px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.07) !important;
+    border: 1px solid rgba(255, 122, 24, 0.17) !important;
+    box-shadow: 0 16px 42px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.07) !important;
     position: relative;
 }
 .fx-valor-card:hover {
-    border-color: rgba(255, 140, 40, 0.38) !important;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 28px rgba(255, 122, 24, 0.16) !important;
+    background: rgba(10, 14, 25, 0.94) !important;
+    border-color: rgba(255, 140, 40, 0.40) !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75), 0 0 28px rgba(255, 122, 24, 0.18) !important;
 }
 
 .fx-contacto-card {
-    background: linear-gradient(135deg, rgba(20, 26, 42, 0.72) 0%, rgba(10, 14, 24, 0.82) 100%) !important;
+    background: linear-gradient(135deg, rgba(14, 18, 30, 0.92) 0%, rgba(7, 9, 16, 0.96) 100%) !important;
     backdrop-filter: blur(28px) saturate(160%) !important;
     -webkit-backdrop-filter: blur(28px) saturate(160%) !important;
-    border: 1px solid rgba(255, 122, 24, 0.22) !important;
-    box-shadow: 0 25px 65px rgba(0, 0, 0, 0.6), 0 0 40px rgba(255, 110, 20, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+    border: 1px solid rgba(255, 122, 24, 0.24) !important;
+    box-shadow: 0 25px 65px rgba(0, 0, 0, 0.72), 0 0 40px rgba(255, 110, 20, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
     position: relative;
 }
 
@@ -2801,6 +2820,32 @@ button { font-family: inherit; }
 
 @media (max-width: 860px) {
     .fx-canvas-activo .fx-hero-visual {
-        min-height: 280px;
+        min-height: auto;
+    }
+}
+@media (max-width: 480px) {
+    .fx-hero-grid {
+        grid-template-columns: minmax(0, 1.12fr) minmax(115px, 0.88fr);
+        gap: 10px;
+        padding: 4px 0 12px;
+    }
+    .fx-hero-txt h1 {
+        font-size: clamp(1.25rem, 5.4vw, 1.65rem);
+        margin-bottom: 8px;
+    }
+    .fx-hero-txt p {
+        font-size: 0.80rem;
+        line-height: 1.40;
+        margin-bottom: 12px;
+    }
+    .fx-hero-logo-frame {
+        max-width: 155px;
+    }
+    .fx-hero-logo-img {
+        max-height: 195px;
+    }
+    .fx-hero-txt .fx-acciones .fx-btn {
+        padding: 8px 13px;
+        font-size: 0.80rem;
     }
 }
