@@ -225,29 +225,48 @@
         var metaCx = meta[0];
         var metaCy = meta[1];
 
-        var esMovil = viewW < 992;
-        var drawW, drawH, drawX, drawY;
+        var esMovil = viewW < 860;
+        var drawW, drawH, drawX, drawY, birdScreenX, birdScreenY;
 
         if (!esMovil) {
-            // ESCRITORIO
-            var baseScale = Math.max(viewW / BASE_W, viewH / BASE_H);
-            drawW = BASE_W * baseScale;
-            drawH = BASE_H * baseScale;
-            
-            var cxDef = (viewW - drawW) * 0.5;
-            var cyDef = (viewH - drawH) * 0.5;
+            // ESCRITORIO — Trayectoria Cinematográfica Visible y Coordinada
+            var desktopScale = Math.min((viewW * 0.92) / 1050, (viewH * 0.88) / BASE_H);
+            drawW = BASE_W * desktopScale;
+            drawH = BASE_H * desktopScale;
 
-            // En el Hero (progreso de 0.0 a 0.22): desplazar hacia la columna visual derecha
-            // Al hacer scroll hacia abajo avanza hacia el centro; al rebobinar hacia arriba vuelve a la derecha
-            var heroPeso = Math.max(0, 1 - (progreso / 0.22));
-            var heroShiftX = (viewW * 0.21) * heroPeso;
+            // Hitos clave de trayectoria en pantalla (X, Y del centro del ave)
+            // 1. Hero: columna visual derecha
+            var heroTargetX = Math.min(viewW - 220, viewW * 0.5 + Math.min(viewW, 1200) * 0.24);
+            var heroTargetY = Math.min(viewH * 0.50, 420);
 
-            // En el Footer (progreso de 0.85 a 1.0): ajustar suavemente sobre la barra inferior
-            var footerPeso = Math.max(0, (progreso - 0.85) / 0.15);
-            var footerShiftY = (viewH * 0.06) * footerPeso;
+            // 2. Catálogo: desciende y cruza hacia el centro-izquierda tras las tarjetas
+            var catTargetX = viewW * 0.44;
+            var catTargetY = viewH * 0.52;
 
-            drawX = cxDef + heroShiftX;
-            drawY = cyDef + footerShiftY;
+            // 3. Estudio: asciende y vira hacia el cuadrante superior derecho
+            var estTargetX = viewW * 0.62;
+            var estTargetY = viewH * 0.42;
+
+            // 4. Pie de página: desciende hacia la esquina inferior derecha sobre la barra legal
+            var footTargetX = viewW - Math.min(320, viewW * 0.22);
+            var footTargetY = viewH - 170;
+
+            if (progreso < 0.25) {
+                var p = progreso / 0.25;
+                birdScreenX = heroTargetX + (catTargetX - heroTargetX) * p;
+                birdScreenY = heroTargetY + (catTargetY - heroTargetY) * p;
+            } else if (progreso < 0.75) {
+                var p2 = (progreso - 0.25) / 0.50;
+                birdScreenX = catTargetX + (estTargetX - catTargetX) * p2;
+                birdScreenY = catTargetY + (estTargetY - catTargetY) * p2;
+            } else {
+                var p3 = (progreso - 0.75) / 0.25;
+                birdScreenX = estTargetX + (footTargetX - estTargetX) * p3;
+                birdScreenY = estTargetY + (footTargetY - estTargetY) * p3;
+            }
+
+            drawX = birdScreenX - metaCx * desktopScale;
+            drawY = birdScreenY - metaCy * desktopScale;
 
         } else {
             // MÓVIL / PANTALLA VERTICAL
@@ -255,7 +274,7 @@
             drawW = BASE_W * mobileScale;
             drawH = BASE_H * mobileScale;
 
-            var birdScreenX = metaCx * mobileScale;
+            birdScreenX = metaCx * mobileScale;
             drawX = (viewW * 0.5) - birdScreenX;
 
             var startY = (viewH * 0.26) - (metaCy * mobileScale);
@@ -264,15 +283,17 @@
 
             var currY;
             if (progreso < 0.25) {
-                var p = progreso / 0.25;
-                currY = startY + (midY - startY) * p;
+                var pm = progreso / 0.25;
+                currY = startY + (midY - startY) * pm;
             } else if (progreso < 0.80) {
                 currY = midY;
             } else {
-                var p2 = (progreso - 0.80) / 0.20;
-                currY = midY + (endY - midY) * p2;
+                var pm2 = (progreso - 0.80) / 0.20;
+                currY = midY + (endY - midY) * pm2;
             }
             drawY = currY;
+            birdScreenX = viewW * 0.5;
+            birdScreenY = currY + metaCy * mobileScale;
         }
 
         return {
@@ -280,8 +301,8 @@
             y: drawY,
             w: drawW,
             h: drawH,
-            birdScreenX: drawX + metaCx * (drawW / BASE_W),
-            birdScreenY: drawY + metaCy * (drawH / BASE_H)
+            birdScreenX: birdScreenX,
+            birdScreenY: birdScreenY
         };
     }
 
