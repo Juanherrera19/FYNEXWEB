@@ -26,11 +26,16 @@
         </a>
         <button class="fx-nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="fxNav">☰</button>
         <nav class="fx-nav" id="fxNav">
-            <a href="/#apps">Catálogo</a>
-            <a href="/#estudio">Estudio</a>
-            <a href="/#contacto">Contacto</a>
-            {{NAV_CTA}}
+            <a href="/#apps" class="fx-nav-enlace">Catálogo</a>
+            <a href="/#estudio" class="fx-nav-enlace">Estudio</a>
+            <a href="/#contacto" class="fx-nav-enlace">Contacto</a>
+            <div class="fx-nav-cta-movil">
+                {{NAV_CTA}}
+            </div>
         </nav>
+        <div class="fx-header-cta">
+            {{NAV_CTA}}
+        </div>
     </div>
 </header>
 
@@ -123,12 +128,25 @@
 <script>
 document.getElementById('anio').textContent = new Date().getFullYear();
 
+// Header translúcido con scroll
+(function () {
+    var header = document.querySelector('.fx-header');
+    if (!header) return;
+    function actualizar() {
+        if (window.pageYOffset > 15) header.classList.add('con-scroll');
+        else header.classList.remove('con-scroll');
+    }
+    window.addEventListener('scroll', actualizar, { passive: true });
+    actualizar();
+})();
+
 // Menú móvil
 (function () {
     var toggle = document.getElementById('navToggle');
     var nav = document.getElementById('fxNav');
     if (!toggle || !nav) return;
-    function esMovil() { return window.matchMedia('(max-width: 740px)').matches; }
+    function esMovil() { return window.matchMedia('(max-width: 860px)').matches; }
+    function cerrar() { if (esMovil()) { nav.hidden = true; toggle.setAttribute('aria-expanded', 'false'); } }
     function sincronizar() { nav.hidden = esMovil(); toggle.setAttribute('aria-expanded', 'false'); }
     sincronizar();
     window.addEventListener('resize', sincronizar);
@@ -136,6 +154,9 @@ document.getElementById('anio').textContent = new Date().getFullYear();
         var abierto = !nav.hidden;
         nav.hidden = abierto;
         toggle.setAttribute('aria-expanded', String(!abierto));
+    });
+    nav.addEventListener('click', function (e) {
+        if (e.target.tagName === 'A' || e.target.closest('a')) cerrar();
     });
 })();
 

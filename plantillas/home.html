@@ -27,11 +27,16 @@
         </a>
         <button class="fx-nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="fxNav">☰</button>
         <nav class="fx-nav" id="fxNav">
-            <a href="#apps">Catálogo</a>
-            <a href="#estudio">Estudio</a>
-            <a href="#contacto">Contacto</a>
-            <a href="/apps/debts-goodbye/" class="fx-nav-cta">✦ Debts Goodbye</a>
+            <a href="#apps" class="fx-nav-enlace" data-seccion="apps">Catálogo</a>
+            <a href="#estudio" class="fx-nav-enlace" data-seccion="estudio">Estudio</a>
+            <a href="#contacto" class="fx-nav-enlace" data-seccion="contacto">Contacto</a>
+            <div class="fx-nav-cta-movil">
+                <a href="/apps/debts-goodbye/" class="fx-nav-cta">✦ Debts Goodbye</a>
+            </div>
         </nav>
+        <div class="fx-header-cta">
+            <a href="/apps/debts-goodbye/" class="fx-nav-cta">✦ Debts Goodbye</a>
+        </div>
     </div>
 </header>
 
@@ -39,23 +44,43 @@
 
 <!-- ═══════ HERO ═══════ -->
 <section class="fx-hero">
-    <div class="fx-contenedor fx-hero-inner">
-        <div class="fx-etiqueta fx-revelar">
-            <span class="fx-etiqueta-punto"></span>
-            <span>Estudio de desarrollo independiente</span>
-        </div>
-        <h1 class="fx-revelar">
-            Creamos apps y juegos<br>
-            que <span class="fx-degradado">transforman tu día a día</span>
-        </h1>
-        <p class="fx-revelar">
-            FYNEX es un estudio enfocado en experiencias digitales de alto impacto:
-            herramientas financieras y de productividad que resuelven problemas reales,
-            y experiencias lúdicas diseñadas con obsesión por el detalle.
-        </p>
-        <div class="fx-acciones fx-revelar">
-            <a href="#apps" class="fx-btn fx-btn-primario">Explorar el catálogo</a>
-            <a href="/apps/debts-goodbye/" class="fx-btn fx-btn-secundario">Conocer Debts Goodbye ↗</a>
+    <div class="fx-contenedor">
+        <div class="fx-hero-grid">
+            <div class="fx-hero-txt">
+                <div class="fx-etiqueta fx-revelar">
+                    <span class="fx-etiqueta-punto"></span>
+                    <span>Estudio de desarrollo independiente</span>
+                </div>
+                <h1 class="fx-revelar">
+                    Creamos apps y juegos<br>
+                    que <span class="fx-degradado">transforman tu día a día</span>
+                </h1>
+                <p class="fx-revelar">
+                    FYNEX es un estudio enfocado en experiencias digitales de alto impacto:
+                    herramientas financieras y de productividad que resuelven problemas reales,
+                    y experiencias lúdicas diseñadas con obsesión por el detalle.
+                </p>
+                <div class="fx-acciones fx-revelar">
+                    <a href="#apps" class="fx-btn fx-btn-primario">Explorar el catálogo</a>
+                    <a href="/apps/debts-goodbye/" class="fx-btn fx-btn-secundario">Conocer Debts Goodbye ↗</a>
+                </div>
+            </div>
+
+            <div class="fx-hero-visual fx-revelar">
+                <div class="fx-hero-logo-frame">
+                    <div class="fx-hero-logo-halo"></div>
+                    <picture>
+                        <source srcset="/img/fynex-logo-animado.webp" type="image/webp">
+                        <img src="/img/fynex-logo-animado-poster.png" 
+                             alt="FYNEXHQ — Logo oficial en movimiento" 
+                             class="fx-hero-logo-img" 
+                             width="480" 
+                             height="606" 
+                             loading="eager"
+                             fetchpriority="high">
+                    </picture>
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -188,13 +213,28 @@
 <script>
 document.getElementById('anio').textContent = new Date().getFullYear();
 
-// Menú móvil
+// Header fijado translúcido con cambio de fondo al scroll
+(function () {
+    var header = document.querySelector('.fx-header');
+    if (!header) return;
+    function actualizarCabecera() {
+        if (window.pageYOffset > 15) {
+            header.classList.add('con-scroll');
+        } else {
+            header.classList.remove('con-scroll');
+        }
+    }
+    window.addEventListener('scroll', actualizarCabecera, { passive: true });
+    actualizarCabecera();
+})();
+
+// Menú móvil responsivo
 (function () {
     var toggle = document.getElementById('navToggle');
     var nav = document.getElementById('fxNav');
     if (!toggle || !nav) return;
 
-    function esMovil() { return window.matchMedia('(max-width: 740px)').matches; }
+    function esMovil() { return window.matchMedia('(max-width: 860px)').matches; }
     function cerrar() { if (esMovil()) { nav.hidden = true; toggle.setAttribute('aria-expanded', 'false'); } }
     function sincronizar() { nav.hidden = esMovil(); toggle.setAttribute('aria-expanded', 'false'); }
 
@@ -207,7 +247,105 @@ document.getElementById('anio').textContent = new Date().getFullYear();
         toggle.setAttribute('aria-expanded', String(!abierto));
     });
     nav.addEventListener('click', function (e) {
-        if (e.target.tagName === 'A') cerrar();
+        if (e.target.tagName === 'A' || e.target.closest('a')) cerrar();
+    });
+})();
+
+// Iluminación activa de sección en el encabezado (Scrollspy con resplandor naranja)
+(function () {
+    var enlaces = document.querySelectorAll('.fx-nav-enlace[data-seccion]');
+    if (!enlaces.length) return;
+
+    var ids = ['apps', 'estudio', 'contacto'];
+    var secciones = ids.map(function (id) {
+        return document.getElementById(id);
+    }).filter(Boolean);
+
+    function actualizarActivo() {
+        var scrollY = window.pageYOffset || document.documentElement.scrollTop;
+        var headerAlto = 80;
+        var seccionActual = null;
+
+        var hero = document.querySelector('.fx-hero');
+        var umbralHero = hero ? (hero.offsetTop + hero.offsetHeight - 220) : 280;
+
+        if (scrollY >= umbralHero) {
+            for (var i = 0; i < secciones.length; i++) {
+                var el = secciones[i];
+                var top = el.offsetTop - headerAlto - 60;
+                var bottom = top + el.offsetHeight;
+                if (scrollY >= top && scrollY < bottom) {
+                    seccionActual = el.id;
+                    break;
+                }
+            }
+
+            // Al acercarse al final del scroll, fijar en contacto
+            if ((window.innerHeight + scrollY) >= (document.documentElement.scrollHeight - 140)) {
+                seccionActual = 'contacto';
+            }
+        }
+
+        enlaces.forEach(function (enlace) {
+            var sec = enlace.getAttribute('data-seccion');
+            if (sec === seccionActual) {
+                enlace.classList.add('activo');
+            } else {
+                enlace.classList.remove('activo');
+            }
+        });
+    }
+
+    window.addEventListener('scroll', actualizarActivo, { passive: true });
+    window.addEventListener('resize', actualizarActivo);
+    actualizarActivo();
+
+    // Scroll suave ajustado al hacer click en los botones del encabezado
+    enlaces.forEach(function (enlace) {
+        enlace.addEventListener('click', function (e) {
+            var secId = this.getAttribute('data-seccion');
+            var destino = document.getElementById(secId);
+            if (destino) {
+                e.preventDefault();
+                var headerAlto = 72;
+                var targetTop = destino.getBoundingClientRect().top + window.pageYOffset - headerAlto;
+                window.scrollTo({ top: targetTop, behavior: 'smooth' });
+                enlaces.forEach(function (l) { l.classList.remove('activo'); });
+                enlace.classList.add('activo');
+            }
+        });
+    });
+})();
+
+// Efecto 3D de inclinación interactiva en el Logo del Hero al mover el cursor
+(function () {
+    var hero = document.querySelector('.fx-hero');
+    var frame = document.querySelector('.fx-hero-logo-frame');
+    if (!hero || !frame) return;
+
+    var ticking = false;
+    hero.addEventListener('mousemove', function (e) {
+        if (window.innerWidth < 860) return;
+        if (!ticking) {
+            window.requestAnimationFrame(function () {
+                var rect = frame.getBoundingClientRect();
+                var cx = rect.left + rect.width / 2;
+                var cy = rect.top + rect.height / 2;
+                var dx = (e.clientX - cx) / (rect.width / 2);
+                var dy = (e.clientY - cy) / (rect.height / 2);
+
+                var rotY = Math.max(-10, Math.min(10, dx * 9));
+                var rotX = Math.max(-10, Math.min(10, -dy * 9));
+
+                frame.style.transform = 'perspective(900px) rotateX(' + rotX.toFixed(2) + 'deg) rotateY(' + rotY.toFixed(2) + 'deg) translateY(-6px)';
+                ticking = false;
+            });
+            ticking = true;
+        }
+    });
+
+    hero.addEventListener('mouseleave', function () {
+        frame.style.transform = '';
     });
 })();
 
