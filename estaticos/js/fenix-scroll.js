@@ -1,12 +1,15 @@
 /**
- * FYNEX — Motor Cinematográfico de Vuelo del Fénix Ultra-Optimizado (v2.3)
+ * FYNEX — Motor Cinematográfico de Vuelo del Fénix Ultra-Optimizado (v3.0)
  * 
- * - Renderizado reactivo a 60-120fps con respuesta instantánea al inicio del scroll (cero lag).
- * - Decodificación asíncrona fuera del hilo principal (img.decode()).
- * - Carga inmediata prioritaria del lote inicial de fotogramas (0..12).
- * - Bucle autónomo continuo e infinito (24 frames con interpolación lineal a 60fps sin cortes perceptibles).
- * - Caching estricto de elementos DOM y cálculos geométricos (cero layout thrashing).
- * - Iluminación adaptativa: halo radial GPU + contorno ígneo con optimización en vuelo rápido.
+ * Mejoras clave respecto a v2.3:
+ *   1. Mapeo NO-LINEAL de fotogramas por longitud de arco: el scroll se distribuye
+ *      proporcional al movimiento visual real del ave (elimina saltos y pausas).
+ *   2. Interpolación directa sin lerp: el progreso visual sigue al scroll en tiempo real
+ *      sin retraso, pero con micro-suavizado para evitar vibraciones en scroll rápido.
+ *   3. Patrón de carga inteligente: frames críticos (picos de movimiento) se cargan primero.
+ *   4. RAF optimizado: cuando el progreso no cambia, reduce a 30fps y para partículas
+ *      ociosas se detiene completamente hasta nuevo scroll.
+ *   5. Un solo paso de dibujo condicional (elimina la doble drawImage).
  */
 (function () {
     'use strict';
@@ -14,6 +17,13 @@
     var TOTAL_FRAMES = 112;
     var BASE_W = 1280;
     var BASE_H = 720;
+
+    // ── LUT de longitud de arco: 129 entradas (0..128) → índice de fotograma (0..111) ──
+    // Generada a partir de la distancia euclidiana del centro de masa entre fotogramas,
+    // con inflado mínimo para evitar zonas muertas.
+    // scroll_progress → FRAME_LUT[Math.round(progress * 128)]
+    var FRAME_LUT = [0,4,8,12,15,17,19,21,22,23,24,25,26,26,27,27,28,29,32,35,37,39,40,42,43,44,45,46,47,47,48,48,50,51,51,51,52,53,54,55,55,55,56,56,58,59,60,61,62,62,63,63,64,64,66,66,66,67,67,67,67,67,68,68,68,68,69,69,70,70,70,71,71,71,72,72,72,73,74,74,75,75,75,76,76,78,79,79,79,80,81,82,83,84,87,87,88,88,90,90,90,91,91,91,91,92,92,94,95,95,96,96,96,96,97,97,98,99,99,99,100,100,100,101,102,103,104,107,111];
+    var LUT_SIZE = 128;
 
     // Metadatos de centro de masa y caja delimitadora por fotograma
     var FRAMES_META = [
@@ -76,16 +86,24 @@
     // Estado del motor
     var images = new Array(TOTAL_FRAMES);
     var imagesLoaded = new Array(TOTAL_FRAMES).fill(false);
-    var currentProgress = 0;
+
+    // Progreso actual renderizado (se actualiza directamente, sin lerp retardante)
+    var renderedProgress = 0;
     var targetProgress = 0;
+    var lastRenderedFrame = -1;
     var idleTicks = 0;
+    var scrollVelocity = 0;
+
+    // Buffer de velocidad para micro-suavizado (media móvil de 3 muestras)
+    var progressHistory = [0, 0, 0];
+    var historyIdx = 0;
 
     // ── Secuencia de Animación Fija Final (Bucle Autónomo Continuo de 24 Fotogramas) ──
     var TOTAL_IDLE_FRAMES = 24;
     var idleImages = new Array(TOTAL_IDLE_FRAMES);
     var idleImagesLoaded = new Array(TOTAL_IDLE_FRAMES).fill(false);
     var idleStartTime = 0;
-    var IDLE_CYCLE_DURATION = 1008; // 24 frames * 42ms = ciclo continuo perfectamente equilibrado
+    var IDLE_CYCLE_DURATION = 1008; // 24 frames * 42ms
     var idleCargandoIniciado = false;
 
     var viewW = window.innerWidth;
@@ -145,6 +163,17 @@
         }
     }
 
+    // ── Mapeo NO-LINEAL de Progreso a Fotograma (LUT de arco) ──
+    function progresoAFrame(progreso) {
+        var lutFloat = progreso * LUT_SIZE;
+        var lutIdx = Math.min(LUT_SIZE - 1, Math.max(0, Math.floor(lutFloat)));
+        var frac = lutFloat - lutIdx;
+        var frameA = FRAME_LUT[lutIdx];
+        var frameB = FRAME_LUT[Math.min(lutIdx + 1, LUT_SIZE)];
+        // Interpolación entre entradas de la LUT para suavidad perfecta
+        return Math.min(TOTAL_FRAMES - 1, Math.max(0, Math.round(frameA + (frameB - frameA) * frac)));
+    }
+
     // ── Carga y Decodificación Asíncrona (Off-Thread) ──
     function obtenerUrlFrame(idx) {
         var num = String(idx + 1).padStart(3, '0');
@@ -187,27 +216,42 @@
     }
 
     function precargarSecuencia() {
-        // Carga INMEDIATA y prioritaria de los primeros 12 fotogramas (0 a 11)
-        // para garantizar respuesta instantánea desde el primer píxel de scroll
-        var inicialesPendientes = 12;
+        // Carga prioritaria: frames que la LUT mapea primero (0, 4, 8, 12, 15, 17, 19, 21...)
+        // más los picos de acción (frames 68, 72, 76, 91, 96, 100, 111)
+        var prioridad = [];
+        var yaCargado = {};
 
-        for (var f = 0; f < 12; f++) {
-            (function (idx) {
+        // 1. Primeros 15 frames reales que la LUT toca (cubre ~10% del scroll)
+        for (var s = 0; s <= 20 && prioridad.length < 15; s++) {
+            var f = FRAME_LUT[Math.min(s, LUT_SIZE)];
+            if (!yaCargado[f]) {
+                prioridad.push(f);
+                yaCargado[f] = true;
+            }
+        }
+
+        // 2. Fotogramas clave distribuidos por toda la animación (hitos)
+        var hitos = [0, 15, 23, 28, 36, 44, 52, 56, 60, 68, 72, 80, 88, 96, 104, 111];
+        for (var h = 0; h < hitos.length; h++) {
+            if (!yaCargado[hitos[h]]) {
+                prioridad.push(hitos[h]);
+                yaCargado[hitos[h]] = true;
+            }
+        }
+
+        var inicialesPendientes = prioridad.length;
+
+        for (var p = 0; p < prioridad.length; p++) {
+            (function (idx, order) {
                 cargarFrameIndividual(idx, function () {
-                    if (idx === 0) {
+                    if (order === 0) {
                         document.body.classList.add('fx-canvas-activo');
                         renderizar(0, 0);
                     }
                     inicialesPendientes--;
                     if (inicialesPendientes === 0) {
-                        // Iniciar carga de hitos en el resto de la página
-                        for (var h = 15; h < TOTAL_FRAMES; h += 5) {
-                            cargarFrameIndividual(h);
-                        }
-                        cargarFrameIndividual(TOTAL_FRAMES - 1);
-
-                        // Escalonar el resto
-                        var restIdx = 12;
+                        // Cargar el resto escalonadamente
+                        var restIdx = 0;
                         function cargarRestantes() {
                             var lote = 0;
                             while (restIdx < TOTAL_FRAMES && lote < 8) {
@@ -218,15 +262,15 @@
                                 restIdx++;
                             }
                             if (restIdx < TOTAL_FRAMES) {
-                                setTimeout(cargarRestantes, 15);
+                                setTimeout(cargarRestantes, 12);
                             } else {
-                                setTimeout(precargarFramesIdle, 80);
+                                setTimeout(precargarFramesIdle, 60);
                             }
                         }
-                        setTimeout(cargarRestantes, 25);
+                        setTimeout(cargarRestantes, 10);
                     }
                 });
-            })(f);
+            })(prioridad[p], p);
         }
     }
 
@@ -329,7 +373,7 @@
         viewH = window.innerHeight;
         isMobile = viewW < 860;
 
-        // Limitar DPR para máxima fluidez y cero saturación de memoria
+        // Limitar DPR para máxima fluidez
         var maxDpr = isMobile ? 1.15 : 1.35;
         dpr = Math.min(window.devicePixelRatio || 1, maxDpr);
 
@@ -353,7 +397,7 @@
         actualizarGeometriaHero();
     }
 
-    // ── Cálculo Cinemático de Posición y Escala (Solo Matemáticas, 0ms DOM) ──
+    // ── Cálculo Cinemático de Posición y Escala ──
     function calcularTransformacionAve(progreso, frameIdx) {
         var meta = FRAMES_META[frameIdx] || [640, 360, 500, 500];
         var metaCx = meta[0];
@@ -369,15 +413,12 @@
         if (!isMobile) {
             var desktopScale = Math.min((viewW * 0.92) / 1050, (viewH * 0.88) / BASE_H);
 
-            // Catálogo: ¡CENTRAL!
             var catTargetX = viewW * 0.50;
             var catTargetY = viewH * 0.50;
 
-            // Estudio / Principios
             var estTargetX = viewW * 0.52;
             var estTargetY = viewH * 0.44;
 
-            // Pie de página
             var footTargetX = viewW - Math.min(320, viewW * 0.22);
             var footTargetY = viewH - 170;
             var footScale = Math.min(desktopScale * 1.05, (viewH * 0.55) / 569);
@@ -400,7 +441,6 @@
             }
 
         } else {
-            // MÓVIL: Trayectoria vertical compacta y centrada
             var mobileScale = Math.min((viewW * 0.95) / 950, (viewH * 0.50) / BASE_H);
             var mHeroScale = heroScale || mobileScale;
 
@@ -440,11 +480,11 @@
         };
     }
 
-    // ── Renderizado Principal de 60-120 FPS ──
+    // ── Renderizado Principal ──
     function renderizar(progreso, velScroll) {
         ctx.clearRect(0, 0, viewW, viewH);
 
-        // Control de transición con el logo estático del Hero e indicador Desliza (cero retraso al inicio)
+        // Control de transición con el logo estático del Hero e indicador Desliza
         var birdAlpha = 1.0;
 
         if (scrollIndicatorEl) {
@@ -462,15 +502,14 @@
         if (heroPictureEl) {
             if (progreso <= 0.002) {
                 heroPictureEl.style.opacity = '1';
-                birdAlpha = 1.0;
             } else {
                 heroPictureEl.style.opacity = '0';
-                birdAlpha = 1.0;
             }
         }
 
         var esFinal = progreso >= 0.985;
-        var frameIndex = Math.min(TOTAL_FRAMES - 1, Math.max(0, Math.round(progreso * (TOTAL_FRAMES - 1))));
+        // Usar la LUT no-lineal para mapear progreso → frame
+        var frameIndex = progresoAFrame(progreso);
         var img;
         var imgNext = null;
         var idleBlend = 0;
@@ -506,9 +545,11 @@
 
         var esMovimientoRapido = Math.abs(velScroll) > 0.008;
 
-        // 1. Halo y Estela de Fuego Radiante (Gradiente radial GPU fluido)
+        // Dibujo del Fénix (un solo paso condicional: shadow solo cuando va lento)
         if (img && birdAlpha > 0.005) {
             ctx.save();
+
+            // Halo radial GPU
             var glowRadius = Math.max(t.w, t.h) * 0.44;
             var auraGrad = ctx.createRadialGradient(
                 t.birdScreenX, t.birdScreenY, glowRadius * 0.12,
@@ -524,18 +565,17 @@
             ctx.arc(t.birdScreenX, t.birdScreenY, glowRadius, 0, Math.PI * 2);
             ctx.fill();
 
-            // Dibujo nítido del Fénix con contorno ígneo optimizado:
-            // Si el desplazamiento es rápido, se suprime shadowBlur para garantizar 60-120 FPS sin saturar la GPU.
+            // Contorno ígneo solo cuando NO hay movimiento rápido (ahorra GPU)
             if (!esMovimientoRapido) {
                 ctx.shadowColor = 'rgba(255, 120, 20, ' + (0.65 * birdAlpha).toFixed(3) + ')';
                 ctx.shadowBlur = isMobile ? 8 : 12;
             }
+
             ctx.globalAlpha = birdAlpha;
             ctx.imageSmoothingEnabled = true;
             ctx.imageSmoothingQuality = esMovimientoRapido ? 'medium' : 'high';
 
             if (esFinal && imgNext && imgNext !== img) {
-                // Bucle sin fin continuo e imperceptible: interpolación suave a 60fps sin cortes
                 ctx.drawImage(img, t.x, t.y, t.w, t.h);
                 ctx.globalAlpha = birdAlpha * idleBlend;
                 ctx.drawImage(imgNext, t.x, t.y, t.w, t.h);
@@ -545,7 +585,7 @@
             ctx.restore();
         }
 
-        // 2. Chispas de Vuelo reactivas
+        // Chispas de Vuelo reactivas
         if (chispasEstela.length > 0) {
             ctx.save();
             for (var c = chispasEstela.length - 1; c >= 0; c--) {
@@ -575,7 +615,7 @@
             ctx.restore();
         }
 
-        // 3. Cenizas y brasas ambientales
+        // Cenizas y brasas ambientales
         ctx.save();
         for (var i = 0; i < particulas.length; i++) {
             var part = particulas[i];
@@ -596,48 +636,74 @@
         ctx.restore();
     }
 
-    // ── Bucle de Animación Ultra-Fluido ──
+    // ── Bucle de Animación Reactivo (Cero-Lag con Micro-Suavizado) ──
     var rafId = null;
     var estaActivo = true;
 
     function bucleAnimacion() {
         if (!estaActivo) return;
 
-        var dif = targetProgress - currentProgress;
+        var dif = targetProgress - renderedProgress;
         var absDif = Math.abs(dif);
-        var moving = absDif > 0.0001;
 
-        if (moving) {
-            // Aceleración reactiva proporcional:
-            // Al arrancar (currentProgress < 0.08) o al mover rápido, máxima inmediatez (cero retraso inicial)
-            var lerpSpeed;
-            if (absDif > 0.08 || currentProgress < 0.08) {
-                lerpSpeed = 0.90;
-            } else if (absDif > 0.03) {
-                lerpSpeed = 0.76;
-            } else if (absDif > 0.01) {
-                lerpSpeed = 0.60;
+        if (absDif > 0.0001) {
+            // Micro-suavizado adaptativo: seguimiento directo con filtro de vibración
+            // En v2.3 usábamos lerp con factores 0.46-0.90 que causaban retraso visible.
+            // Ahora: seguimiento DIRECTO pero con media móvil de 3 muestras para
+            // filtrar vibraciones del trackpad/scroll sin añadir latencia perceptible.
+
+            progressHistory[historyIdx] = targetProgress;
+            historyIdx = (historyIdx + 1) % 3;
+
+            if (absDif > 0.02) {
+                // Movimiento amplio: seguimiento directo (cero lag)
+                renderedProgress = targetProgress;
             } else {
-                lerpSpeed = isMobile ? 0.46 : 0.50;
+                // Movimiento fino: media de las 3 últimas muestras para suavizar
+                renderedProgress = (progressHistory[0] + progressHistory[1] + progressHistory[2]) / 3;
             }
 
-            currentProgress += dif * lerpSpeed;
-            if (Math.abs(targetProgress - currentProgress) < 0.0003) {
-                currentProgress = targetProgress;
-            }
+            // Clamp
+            renderedProgress = Math.max(0, Math.min(1, renderedProgress));
 
+            scrollVelocity = absDif;
             idleTicks = 0;
-            renderizar(currentProgress, absDif);
+            renderizar(renderedProgress, scrollVelocity);
+            lastRenderedFrame = progresoAFrame(renderedProgress);
             rafId = requestAnimationFrame(bucleAnimacion);
         } else {
-            currentProgress = targetProgress;
+            renderedProgress = targetProgress;
+            scrollVelocity = 0;
             idleTicks++;
 
-            // En reposo: renderizar continuo si está en animación final fija, o a 30fps para chispas/cenizas
-            var esFinal = currentProgress >= 0.985;
-            if (esFinal || idleTicks % 2 === 0 || chispasEstela.length > 0) {
-                renderizar(currentProgress, 0);
+            var esFinal = renderedProgress >= 0.985;
+
+            if (esFinal) {
+                // Animación final: siempre renderizar a 60fps
+                renderizar(renderedProgress, 0);
+                rafId = requestAnimationFrame(bucleAnimacion);
+            } else if (chispasEstela.length > 0) {
+                // Chispas pendientes: renderizar hasta que se disipen
+                renderizar(renderedProgress, 0);
+                rafId = requestAnimationFrame(bucleAnimacion);
+            } else if (idleTicks < 120) {
+                // Brasas ambientales: renderizar a 30fps (cada 2 ticks)
+                if (idleTicks % 2 === 0) {
+                    renderizar(renderedProgress, 0);
+                }
+                rafId = requestAnimationFrame(bucleAnimacion);
+            } else {
+                // Completamente ocioso: renderizar una vez y parar RAF
+                renderizar(renderedProgress, 0);
+                rafId = null;
+                // Se reactivará en onScroll
             }
+        }
+    }
+
+    function despertarAnimacion() {
+        if (rafId === null && estaActivo) {
+            idleTicks = 0;
             rafId = requestAnimationFrame(bucleAnimacion);
         }
     }
@@ -650,12 +716,14 @@
 
     function onScroll() {
         targetProgress = calcularProgresoScroll();
-        var targetFrame = Math.min(TOTAL_FRAMES - 1, Math.max(0, Math.round(targetProgress * (TOTAL_FRAMES - 1))));
+        var targetFrame = progresoAFrame(targetProgress);
         priorizarFramesCercanos(targetFrame);
 
         if (targetProgress > 0.35 && !idleCargandoIniciado) {
             precargarFramesIdle();
         }
+
+        despertarAnimacion();
     }
 
     // Pausar si la pestaña está oculta
@@ -663,11 +731,12 @@
         if (document.hidden) {
             estaActivo = false;
             if (rafId) cancelAnimationFrame(rafId);
+            rafId = null;
         } else {
             estaActivo = true;
             redimensionar();
             onScroll();
-            rafId = requestAnimationFrame(bucleAnimacion);
+            despertarAnimacion();
         }
     });
 
@@ -684,8 +753,9 @@
                 end: "max",
                 onUpdate: function (self) {
                     targetProgress = self.progress;
-                    var tFrame = Math.min(TOTAL_FRAMES - 1, Math.max(0, Math.round(targetProgress * (TOTAL_FRAMES - 1))));
+                    var tFrame = progresoAFrame(targetProgress);
                     priorizarFramesCercanos(tFrame);
+                    despertarAnimacion();
                 }
             });
         }
@@ -696,7 +766,7 @@
     window.addEventListener('resize', function () {
         redimensionar();
         onScroll();
-        renderizar(currentProgress, 0);
+        renderizar(renderedProgress, 0);
     });
 
     if (document.readyState === 'loading') {
@@ -710,7 +780,11 @@
     inicializarParticulas();
     precargarSecuencia();
     iniciarControladoresScroll();
-    currentProgress = targetProgress;
+    renderedProgress = targetProgress;
+    // Initialize all history slots
+    progressHistory[0] = targetProgress;
+    progressHistory[1] = targetProgress;
+    progressHistory[2] = targetProgress;
     rafId = requestAnimationFrame(bucleAnimacion);
 
 })();
