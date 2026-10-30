@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/fynex.css">
+<link rel="stylesheet" href="/fynex.css?v=2.0">
 </head>
 <body style="--app-color: {{COLOR}};">
 
@@ -45,20 +45,21 @@
 <section class="fx-app-hero">
     <div class="fx-contenedor">
         <a href="/#apps" class="fx-volver">← Volver al catálogo</a>
-        <div class="fx-app-hero-inner">
-            <div class="fx-app-icono-wrap fx-revelar">
-                {{ICONO}}
-            </div>
+        <div class="fx-app-hero-grid">
             <div class="fx-app-hero-txt fx-revelar">
                 <div class="fx-app-hero-meta">
-                    <span class="fx-app-badge-oficial">✦ Producto Oficial FYNEX</span>
+                    <span class="fx-app-badge-oficial">{{BADGE_HERO}}</span>
                     <span class="fx-destacada-cat">{{CATEGORIA}}</span>
                     <span class="fx-app-version">v{{VERSION}}</span>
                 </div>
-                <h1>{{NOMBRE}}</h1>
+                <h1>{{HERO_TITULO}}</h1>
                 <p class="fx-tagline">{{TAGLINE}}</p>
                 <div class="fx-plataformas">{{PLATAFORMAS}}</div>
                 <div class="fx-acciones" style="justify-content: flex-start;">{{BOTONES}}</div>
+                {{HERO_GARANTIAS}}
+            </div>
+            <div class="fx-app-hero-visual fx-revelar">
+                {{HERO_VISUAL}}
             </div>
         </div>
 
@@ -69,8 +70,8 @@
 <!-- ═══════ SHOWCASE INTERACTIVO (GALERÍA CON MOCKUP) ═══════ -->
 {{SHOWCASE_GALERIA}}
 
-<!-- ═══════ QUÉ HACE Y PROPUESTA DE VALOR ═══════ -->
-{{DESCRIPCION}}
+<!-- ═══════ PILARES DE VALOR E INGENIERÍA ═══════ -->
+{{PILARES_VALOR}}
 
 <!-- ═══════ NOVEDADES E INNOVACIONES RECIENTES ═══════ -->
 {{NOVEDADES}}
@@ -90,7 +91,7 @@
 <div class="fx-lightbox" id="fxLightbox" role="dialog" aria-modal="true" aria-label="Vista previa de captura">
     <div class="fx-lightbox-content">
         <button type="button" class="fx-lightbox-cerrar" id="btnCerrarLightbox" aria-label="Cerrar imagen">✕</button>
-        <img src="" alt="" class="fx-lightbox-img" id="imgLightbox">
+        <img src="" alt="Vista previa de captura" class="fx-lightbox-img" id="imgLightbox">
         <div class="fx-lightbox-pie" id="pieLightbox"></div>
     </div>
 </div>

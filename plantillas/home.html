@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/fynex.css">
+<link rel="stylesheet" href="/fynex.css?v=2.0">
 <link rel="preload" href="/img/fenix_scroll/f_001.webp" as="image" type="image/webp">
 <link rel="preload" href="/img/fenix_scroll/f_002.webp" as="image" type="image/webp">
 </head>
@@ -75,20 +75,11 @@
                     <stop offset="78%" stop-color="#ffd54f" stop-opacity="0.75" />
                     <stop offset="100%" stop-color="#ff7a18" stop-opacity="0" />
                 </linearGradient>
-                <filter id="estelaGlowDifuso" x="-30%" y="-30%" width="160%" height="160%">
-                    <feGaussianBlur stdDeviation="22" result="blur1" />
-                    <feGaussianBlur stdDeviation="40" result="blur2" />
-                    <feMerge>
-                        <feMergeNode in="blur2" />
-                        <feMergeNode in="blur1" />
-                        <feMergeNode in="SourceGraphic" />
-                    </feMerge>
-                </filter>
             </defs>
 
             <!-- Resplandor amplio difuso de fondo -->
             <path class="fx-estela-aura" d="M -40,685 C 380,680 700,610 980,550 C 1220,495 1420,380 1640,220" 
-                  fill="none" stroke="url(#estelaFuegoPrincipal)" stroke-width="70" opacity="0.45" filter="url(#estelaGlowDifuso)" />
+                  fill="none" stroke="url(#estelaFuegoPrincipal)" stroke-width="70" opacity="0.45" />
 
             <!-- Estela de fuego ancha principal que cruza hacia el fénix -->
             <path class="fx-estela-cinta fx-estela-anim-1" d="M -40,680 C 380,680 700,605 980,545 C 1220,490 1420,375 1640,215" 
@@ -103,9 +94,6 @@
                   fill="none" stroke="url(#estelaFuegoNucleo)" stroke-width="4.5" stroke-linecap="round" />
         </svg>
     </div>
-
-    <!-- Canvas de cenizas incandescentes y partículas de fuego -->
-    <canvas class="fx-hero-cenizas" id="heroCenizas" aria-hidden="true"></canvas>
 
     <div class="fx-contenedor">
         <div class="fx-hero-grid">
@@ -182,7 +170,7 @@
 
             <!-- Resplandor amplio difuso de fondo -->
             <path class="fx-estela-aura" d="M 1650,20 C 1280,180 880,380 620,450 C 360,520 120,620 -50,710" 
-                  fill="none" stroke="url(#estelaCatPrincipal)" stroke-width="65" opacity="0.4" filter="url(#estelaGlowDifuso)" />
+                  fill="none" stroke="url(#estelaCatPrincipal)" stroke-width="65" opacity="0.4" />
 
             <!-- Estela ancha principal cruzando de arriba-derecha a centro-izquierda -->
             <path class="fx-estela-cinta fx-estela-anim-1" d="M 1650,20 C 1280,180 880,375 620,445 C 360,515 120,615 -50,705" 
@@ -269,7 +257,7 @@
 
             <!-- Resplandor amplio difuso de fondo -->
             <path class="fx-estela-aura" d="M -40,640 C 340,600 700,450 980,340 C 1260,240 1480,170 1650,130" 
-                  fill="none" stroke="url(#estelaEstPrincipal)" stroke-width="65" opacity="0.4" filter="url(#estelaGlowDifuso)" />
+                  fill="none" stroke="url(#estelaEstPrincipal)" stroke-width="65" opacity="0.4" />
 
             <!-- Estela ancha principal que asciende de izquierda a derecha -->
             <path class="fx-estela-cinta fx-estela-anim-1" d="M -40,635 C 340,595 700,445 980,335 C 1260,235 1480,165 1650,125" 
@@ -345,7 +333,7 @@
 
             <!-- Resplandor amplio difuso de fondo -->
             <path class="fx-estela-aura" d="M -40,110 C 350,170 780,270 1080,400 C 1260,480 1440,570 1650,610" 
-                  fill="none" stroke="url(#estelaContPrincipal)" stroke-width="65" opacity="0.4" filter="url(#estelaGlowDifuso)" />
+                  fill="none" stroke="url(#estelaContPrincipal)" stroke-width="65" opacity="0.4" />
 
             <!-- Estela ancha principal que aterriza en la esquina inferior derecha -->
             <path class="fx-estela-cinta fx-estela-anim-1" d="M -40,105 C 350,165 780,265 1080,395 C 1260,475 1440,565 1650,605" 
@@ -539,201 +527,6 @@ document.getElementById('anio').textContent = new Date().getFullYear();
     hero.addEventListener('mouseleave', function () {
         frame.style.transform = '';
     });
-})();
-
-// Sistema de partículas de cenizas y chispas de fuego flotantes (Hero)
-(function () {
-    var canvas = document.getElementById('heroCenizas');
-    var hero = document.querySelector('.fx-hero');
-    if (!canvas || !hero) return;
-
-    var ctx = canvas.getContext('2d');
-    var particulas = [];
-    var visible = true;
-    var mouseX = -1000;
-    var mouseY = -1000;
-    var animFrame = null;
-    var dpr = 1;
-
-    function resize() {
-        var rect = hero.getBoundingClientRect();
-        dpr = Math.min(window.devicePixelRatio || 1, 2);
-        canvas.width = Math.round(rect.width * dpr);
-        canvas.height = Math.round(rect.height * dpr);
-        canvas.style.width = rect.width + 'px';
-        canvas.style.height = rect.height + 'px';
-    }
-
-    function obtenerMaxParticulas() {
-        return window.innerWidth < 860 ? 30 : 65;
-    }
-
-    function crearParticula(inicial) {
-        var w = hero.offsetWidth || window.innerWidth;
-        var h = hero.offsetHeight || 600;
-
-        // Distribución: mayor concentración en la mitad derecha (entorno del fénix) y en la base de la estela
-        var enFenix = Math.random() < 0.65;
-        var x, y;
-
-        if (enFenix) {
-            // Zona del fénix y ala derecha
-            x = w * (0.42 + Math.random() * 0.55);
-            y = inicial ? (h * (0.15 + Math.random() * 0.82)) : (h * (0.75 + Math.random() * 0.25));
-        } else {
-            // Zona de la estela izquierda hacia el centro
-            x = w * Math.random() * 0.65;
-            y = inicial ? (h * Math.random()) : (h * (0.82 + Math.random() * 0.18));
-        }
-
-        // Tonalidades de ceniza incandescente y chispas
-        var tipo = Math.random();
-        var r, g, b;
-        if (tipo < 0.45) {
-            // Oro y ámbar ardiente
-            r = 255; g = 185 + Math.floor(Math.random() * 45); b = 35;
-        } else if (tipo < 0.78) {
-            // Naranja fuego vivo intenso
-            r = 255; g = 100 + Math.floor(Math.random() * 50); b = 12;
-        } else if (tipo < 0.92) {
-            // Chispa blanco-amarilla de alto calor
-            r = 255; g = 245; b = 190;
-        } else {
-            // Brasa de brasa roja profunda
-            r = 245; g = 55; b = 15;
-        }
-
-        var radio = 1.0 + Math.random() * 2.5;
-        var velocidadY = -(0.35 + Math.random() * 1.15);
-        var velocidadX = (Math.random() - 0.45) * 0.55;
-        var maxVida = 160 + Math.random() * 220;
-
-        return {
-            x: x,
-            y: y,
-            vx: velocidadX,
-            vy: velocidadY,
-            r: radio,
-            color: 'rgb(' + r + ',' + g + ',' + b + ')',
-            glowColor: 'rgba(' + r + ',' + g + ',' + b + ', 0.85)',
-            vida: inicial ? Math.random() * maxVida : 0,
-            maxVida: maxVida,
-            fase: Math.random() * Math.PI * 2,
-            amplitud: 0.25 + Math.random() * 0.65
-        };
-    }
-
-    function init() {
-        resize();
-        var max = obtenerMaxParticulas();
-        particulas = [];
-        for (var i = 0; i < max; i++) {
-            particulas.push(crearParticula(true));
-        }
-    }
-
-    function animar() {
-        if (!visible) return;
-
-        var w = hero.offsetWidth;
-        var h = hero.offsetHeight;
-
-        ctx.save();
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        ctx.clearRect(0, 0, w, h);
-
-        var max = obtenerMaxParticulas();
-        while (particulas.length < max) {
-            particulas.push(crearParticula(false));
-        }
-
-        for (var i = 0; i < particulas.length; i++) {
-            var p = particulas[i];
-            p.vida++;
-
-            // Movimiento ascendente con ondulación de corriente de calor
-            p.y += p.vy;
-            p.x += p.vx + Math.sin(p.vida * 0.03 + p.fase) * p.amplitud;
-
-            // Desplazamiento reactivo al cursor
-            if (mouseX > -500) {
-                var dx = p.x - mouseX;
-                var dy = p.y - mouseY;
-                var dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < 110 && dist > 0) {
-                    var fuerza = (1 - dist / 110) * 1.6;
-                    p.x += (dx / dist) * fuerza;
-                    p.y += (dy / dist) * fuerza * 0.5;
-                }
-            }
-
-            // Desvanecimiento suave
-            var progreso = p.vida / p.maxVida;
-            var opacidad = 1;
-            if (progreso < 0.15) {
-                opacidad = progreso / 0.15;
-            } else if (progreso > 0.65) {
-                opacidad = (1 - progreso) / 0.35;
-            }
-
-            // Titileo orgánico de fuego
-            var centelleo = 0.82 + Math.sin(p.vida * 0.12 + p.fase) * 0.18;
-            opacidad = Math.max(0, Math.min(1, opacidad * centelleo));
-
-            // Dibujo de la chispa / ceniza
-            ctx.save();
-            ctx.globalAlpha = opacidad;
-            ctx.shadowColor = p.glowColor;
-            ctx.shadowBlur = p.r * 3.8;
-
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            ctx.fillStyle = p.color;
-            ctx.fill();
-            ctx.restore();
-
-            // Renacer partícula al salir de los límites
-            if (p.vida >= p.maxVida || p.y < -25 || p.x < -30 || p.x > w + 30) {
-                particulas[i] = crearParticula(false);
-            }
-        }
-
-        ctx.restore();
-        animFrame = requestAnimationFrame(animar);
-    }
-
-    hero.addEventListener('mousemove', function (e) {
-        var rect = hero.getBoundingClientRect();
-        mouseX = e.clientX - rect.left;
-        mouseY = e.clientY - rect.top;
-    });
-    hero.addEventListener('mouseleave', function () {
-        mouseX = -1000;
-        mouseY = -1000;
-    });
-
-    if ('IntersectionObserver' in window) {
-        var obs = new IntersectionObserver(function (entries) {
-            entries.forEach(function (entry) {
-                visible = entry.isIntersecting;
-                if (visible) {
-                    if (!animFrame) animFrame = requestAnimationFrame(animar);
-                } else {
-                    if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
-                }
-            });
-        }, { threshold: 0.05 });
-        obs.observe(hero);
-    }
-
-    window.addEventListener('resize', function () {
-        resize();
-    });
-
-    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        init();
-        animFrame = requestAnimationFrame(animar);
-    }
 })();
 
 // Entrada escalonada al hacer scroll
@@ -932,9 +725,9 @@ document.getElementById('anio').textContent = new Date().getFullYear();
 </script>
 
 <!-- Motor de Scroll Cinematográfico GSAP & Fénix 3D -->
-<script src="/vendor/gsap.min.js" onerror="this.onerror=null;this.src='vendor/gsap.min.js'"></script>
-<script src="/vendor/ScrollTrigger.min.js" onerror="this.onerror=null;this.src='vendor/ScrollTrigger.min.js'"></script>
-<script src="/js/fenix-scroll.js" onerror="this.onerror=null;this.src='js/fenix-scroll.js'"></script>
+<script defer src="/vendor/gsap.min.js" onerror="this.onerror=null;this.src='vendor/gsap.min.js'"></script>
+<script defer src="/vendor/ScrollTrigger.min.js" onerror="this.onerror=null;this.src='vendor/ScrollTrigger.min.js'"></script>
+<script defer src="/js/fenix-scroll.js?v=2.0" onerror="this.onerror=null;this.src='js/fenix-scroll.js?v=2.0'"></script>
 
 </body>
 </html>

@@ -250,6 +250,252 @@ def seccion_destacada(app) -> str:
     return ""
 
 
+def botones_hero(app: dict) -> str:
+    """Botones para el hero principal de la página de producto."""
+    slug = app.get("slug")
+    if slug == "debts-goodbye":
+        return """
+            <a href="https://dgb.fynexhq.com" target="_blank" rel="noopener noreferrer" class="fx-btn fx-btn-primario">
+                <span>Abrir Web App</span> <span class="fx-flecha">↗</span>
+            </a>
+            <a href="https://play.google.com/store/apps/details?id=com.debtsgoodbye.free" target="_blank" rel="noopener noreferrer" class="fx-btn fx-btn-secundario">
+                <span>▶ Google Play</span>
+            </a>
+            <a href="#showcase" class="fx-btn fx-btn-terciario">
+                <span>Explorar módulos</span> <span class="fx-flecha">↓</span>
+            </a>"""
+    elif slug == "audiout":
+        return """
+            <a href="/apps/audiout/descargas/" class="fx-btn fx-btn-primario">
+                <span>Descargar v1.0.0 (.exe)</span> <span class="fx-flecha">⬇</span>
+            </a>
+            <a href="/apps/audiout/descargas/#portable" class="fx-btn fx-btn-secundario">
+                <span>⚡ Versión Portable</span>
+            </a>
+            <a href="#showcase" class="fx-btn fx-btn-terciario">
+                <span>Ver capturas en vivo</span> <span class="fx-flecha">↓</span>
+            </a>"""
+    else:
+        return botones(app)
+
+
+def generar_hero_visual(app: dict) -> str:
+    """Mockup destacado de producto con chips de métricas en vivo."""
+    slug = app.get("slug")
+    if slug == "debts-goodbye":
+        return """
+            <div class="fx-hero-mockup-stage stage-phone">
+                <div class="fx-hero-glow-back" style="background: radial-gradient(circle, rgba(30,120,129,0.38) 0%, transparent 68%);"></div>
+                <div class="fx-floating-chip chip-arriba-der">
+                    <span class="chip-ico">📉</span>
+                    <div class="chip-info">
+                        <span class="chip-tit">Ahorro proyectado</span>
+                        <span class="chip-val">-42% en intereses</span>
+                    </div>
+                </div>
+                <div class="fx-celular-frame fx-celular-hero">
+                    <div class="fx-celular-speaker"></div>
+                    <div class="fx-celular-pantalla">
+                        <img src="/img/apps/debts-goodbye/capturas/02_dashboard_resumen_real.png" 
+                             alt="Debts Goodbye Dashboard Financiero" 
+                             class="fx-celular-img" 
+                             width="275" 
+                             height="435" 
+                             loading="eager">
+                    </div>
+                </div>
+                <div class="fx-floating-chip chip-abajo-izq">
+                    <span class="chip-ico">🤖</span>
+                    <div class="chip-info">
+                        <span class="chip-tit">Asesor Fynex IA</span>
+                        <span class="chip-val">Diagnóstico DTI Activo</span>
+                    </div>
+                </div>
+            </div>"""
+    elif slug == "audiout":
+        return """
+            <div class="fx-hero-mockup-stage stage-desktop">
+                <div class="fx-hero-glow-back" style="background: radial-gradient(circle, rgba(2,132,199,0.36) 0%, transparent 68%);"></div>
+                <div class="fx-floating-chip chip-arriba-der">
+                    <span class="chip-ico">🔊</span>
+                    <div class="chip-info">
+                        <span class="chip-tit">Sincronización Acústica</span>
+                        <span class="chip-val">0 ms Desfase Acumulado</span>
+                    </div>
+                </div>
+                <div class="fx-desktop-frame fx-desktop-hero">
+                    <div class="fx-desktop-bar">
+                        <span class="fx-desktop-dot rojo"></span>
+                        <span class="fx-desktop-dot amarillo"></span>
+                        <span class="fx-desktop-dot verde"></span>
+                        <span class="fx-desktop-title-tiny">Audiout v1.0.0 — Panel Multi-Salida</span>
+                    </div>
+                    <div class="fx-desktop-pantalla">
+                        <img src="/img/apps/audiout/capturas_reales/01_multi_salida_real.png" 
+                             alt="Audiout Panel Multi-Salida" 
+                             class="fx-desktop-img" 
+                             width="460" 
+                             height="420" 
+                             loading="eager">
+                    </div>
+                </div>
+                <div class="fx-floating-chip chip-abajo-izq">
+                    <span class="chip-ico">🎛️</span>
+                    <div class="chip-info">
+                        <span class="chip-tit">Motor DSP WASAPI</span>
+                        <span class="chip-val">32-bit Float · 48 kHz</span>
+                    </div>
+                </div>
+            </div>"""
+    else:
+        icono_src = app.get("icono")
+        if icono_src:
+            return '<div class="fx-app-icono-wrap"><img src="/%s" alt="%s" class="fx-app-icono" width="136" height="136"></div>' % (esc(icono_src), esc(app["nombre"]))
+        return '<div class="fx-app-icono-wrap"><div class="fx-app-icono fx-card-icono-vacio">✦</div></div>'
+
+
+def generar_hero_garantias(app: dict) -> str:
+    """Franja de garantías de privacidad y calidad técnica para el hero."""
+    slug = app.get("slug")
+    if slug == "debts-goodbye":
+        return """
+            <div class="fx-hero-garantias">
+                <div class="fx-garantia-item">
+                    <span class="fx-garantia-ico">🛡️</span>
+                    <div class="fx-garantia-content">
+                        <strong>100% Privado</strong>
+                        <span>Cero anuncios · Sin rastreadores</span>
+                    </div>
+                </div>
+                <div class="fx-garantia-item">
+                    <span class="fx-garantia-ico">🧮</span>
+                    <div class="fx-garantia-content">
+                        <strong>Algoritmo Avalancha</strong>
+                        <span>Ahorra millones en intereses</span>
+                    </div>
+                </div>
+                <div class="fx-garantia-item">
+                    <span class="fx-garantia-ico">✨</span>
+                    <div class="fx-garantia-content">
+                        <strong>Copiloto Fynex IA</strong>
+                        <span>Diagnóstico DTI en tiempo real</span>
+                    </div>
+                </div>
+            </div>"""
+    elif slug == "audiout":
+        return """
+            <div class="fx-hero-garantias">
+                <div class="fx-garantia-item">
+                    <span class="fx-garantia-ico">⚡</span>
+                    <div class="fx-garantia-content">
+                        <strong>Cero Eco Acústico</strong>
+                        <span>Compensación BT A2DP vs HDMI</span>
+                    </div>
+                </div>
+                <div class="fx-garantia-item">
+                    <span class="fx-garantia-ico">🔒</span>
+                    <div class="fx-garantia-content">
+                        <strong>LockedDelayFIFO</strong>
+                        <span>Búfer elástico anti-desfase</span>
+                    </div>
+                </div>
+                <div class="fx-garantia-item">
+                    <span class="fx-garantia-ico">🛡️</span>
+                    <div class="fx-garantia-content">
+                        <strong>Sin Drivers de Kernel</strong>
+                        <span>100% Estable en Windows 10/11</span>
+                    </div>
+                </div>
+            </div>"""
+    return ""
+
+
+def generar_pilares(app: dict) -> str:
+    """Pilares profundos de propuesta de valor e ingeniería de cada producto."""
+    slug = app.get("slug")
+    if slug == "debts-goodbye":
+        return """
+<section class="fx-seccion fx-seccion-pilares">
+    <div class="fx-contenedor">
+        <div class="fx-seccion-cab centrado fx-revelar">
+            <span class="fx-app-badge-oficial" style="margin-bottom: 14px;">✦ INGENIERÍA FINANCIERA</span>
+            <h2>Control patrimonial con rigor matemático</h2>
+            <p>Debts Goodbye no es una simple libreta de apuntes: es un motor algorítmico diseñado para optimizar tu flujo de caja, eliminar intereses parásitos y proteger tu privacidad.</p>
+        </div>
+        <div class="fx-pilares-grid fx-revelar">
+            <article class="fx-pilar-card">
+                <div class="fx-pilar-numero">01</div>
+                <div class="fx-pilar-icono">🧮</div>
+                <h3>Amortización Científica: Avalancha vs Bola de Nieve</h3>
+                <p>Compara el impacto financiero de liquidar primero las deudas de mayor tasa efectiva anual (Avalancha) frente a las de menor saldo (Bola de Nieve). Incluye soporte exclusivo para Crédito Educativo con período de gracia de capital.</p>
+                <div class="fx-pilar-chip">Ahorro proyectado de hasta 42% en intereses</div>
+            </article>
+            <article class="fx-pilar-card">
+                <div class="fx-pilar-numero">02</div>
+                <div class="fx-pilar-icono">💳</div>
+                <h3>Matemática Unificada de Tarjetas con Anclaje Bancario</h3>
+                <p>Motor de cuotas compartidas que avanza automáticamente con el calendario. Si el extracto bancario difiere por seguros o comisiones, puedes fijar un "ancla" y la serie temporal se recalcula en tiempo real.</p>
+                <div class="fx-pilar-chip">Sincronización exacta con extractos bancarios</div>
+            </article>
+            <article class="fx-pilar-card">
+                <div class="fx-pilar-numero">03</div>
+                <div class="fx-pilar-icono">🤖</div>
+                <h3>Copiloto Fynex IA con Privacidad Absoluta</h3>
+                <p>Diagnóstico patrimonial instantáneo, cálculo de ratio DTI (Deuda sobre Ingreso), registro conversacional por lenguaje natural y exportación ejecutiva en PDF. Cero publicidad, cero rastreadores y sin venta de datos a terceros.</p>
+                <div class="fx-pilar-chip">5 consultas gratuitas diarias · 100% Privado</div>
+            </article>
+        </div>
+    </div>
+</section>"""
+    elif slug == "audiout":
+        return """
+<section class="fx-seccion fx-seccion-pilares">
+    <div class="fx-contenedor">
+        <div class="fx-seccion-cab centrado fx-revelar">
+            <span class="fx-app-badge-oficial" style="margin-bottom: 14px;">✦ INGENIERÍA DE AUDIO DIGITAL</span>
+            <h2>Transmisión acústica sincronizada para Windows</h2>
+            <p>Audiout resuelve los desafíos físicos de la latencia de radiofrecuencia Bluetooth y el desfase de transporte entre periféricos de sonido independientes.</p>
+        </div>
+        <div class="fx-pilares-grid fx-revelar">
+            <article class="fx-pilar-card">
+                <div class="fx-pilar-numero">01</div>
+                <div class="fx-pilar-icono">⚡</div>
+                <h3>La Física del Desfase Bluetooth vs HDMI Resuelta</h3>
+                <p>Los parlantes Bluetooth A2DP introducen de 120 ms a 200 ms de latencia por hardware. Audiout retarda las salidas cableadas en la cantidad milimétrica exacta (ej. 165 ms) para que el sonido llegue a tus oídos al mismo instante físico, eliminando el filtrado peine.</p>
+                <div class="fx-pilar-chip">Cero eco acústico · Sincronización al unísono</div>
+            </article>
+            <article class="fx-pilar-card">
+                <div class="fx-pilar-numero">02</div>
+                <div class="fx-pilar-icono">🔒</div>
+                <h3>Motor DSP LockedDelayFIFO Anti-Deriva</h3>
+                <p>Búfer elástico en tiempo real que absorbe derivas de reloj oscilador y purga colas parásitas al pausar o cambiar videos en YouTube, Netflix o Spotify. Mantiene la sincronización estricta sin desafinar el audio.</p>
+                <div class="fx-pilar-chip">Convergencia permanente a 0 ms de error</div>
+            </article>
+            <article class="fx-pilar-card">
+                <div class="fx-pilar-numero">03</div>
+                <div class="fx-pilar-icono">🔀</div>
+                <h3>Enrutamiento Selectivo con WinRT AudioPolicy</h3>
+                <p>Asigna dispositivos de audio independientes por proceso (Spotify a parlantes externos, Discord a auriculares, Chrome al monitor) sin instalar controladores de kernel invasivos ni requerir reinicios del sistema operativo.</p>
+                <div class="fx-pilar-chip">WASAPI Float 32-bit · Menos de 1.5% de CPU</div>
+            </article>
+        </div>
+    </div>
+</section>"""
+    else:
+        desc = app.get("descripcion_larga", "")
+        if not desc:
+            return ""
+        return """
+<section class="fx-seccion">
+    <div class="fx-contenedor">
+        <div class="fx-seccion-cab fx-revelar" style="max-width:820px; margin-left:auto; margin-right:auto; text-align:center;">
+            <h2>Acerca de %s</h2>
+            <p style="font-size:1.1rem; line-height:1.7;">%s</p>
+        </div>
+    </div>
+</section>""" % (esc(app["nombre"]), esc(desc))
+
+
 def apps_del_pie() -> str:
     filas = [
         '<li><a href="/apps/%s/">%s</a></li>' % (esc(a["slug"]), esc(a["nombre"]))
@@ -327,6 +573,12 @@ def generar_detalle(app: dict) -> str:
         if tipo_disp == "desktop":
             marco_mockup = """
                 <div class="fx-desktop-frame">
+                    <div class="fx-desktop-bar">
+                        <span class="fx-desktop-dot rojo"></span>
+                        <span class="fx-desktop-dot amarillo"></span>
+                        <span class="fx-desktop-dot verde"></span>
+                        <span class="fx-desktop-title-tiny">Audiout v1.0.0 — Centro de Control</span>
+                    </div>
                     <div class="fx-desktop-pantalla">
                         <img src="/%s" alt="%s" class="fx-desktop-img" id="mockupPantalla">
                     </div>
@@ -471,8 +723,16 @@ def generar_detalle(app: dict) -> str:
 </section>""" % (esc(tit_arq), esc(sub_arq), cards_arq)
 
     # Banner CTA final
-    titulo_cta = app.get("cta_titulo") or "Comienza hoy tu camino hacia una mejor experiencia"
-    desc_cta = app.get("cta_desc") or "Descarga la aplicación o accede directamente desde tu dispositivo."
+    slug = app.get("slug")
+    if slug == "debts-goodbye":
+        titulo_cta = "Comienza hoy tu camino hacia la libertad financiera"
+        desc_cta = "Sin anuncios invasivos, sin suscripciones forzosas y con total control de tus datos. Disponible en la Web y en Google Play."
+    elif slug == "audiout":
+        titulo_cta = "Experimenta el sonido al unísono definitivo en Windows"
+        desc_cta = "Descarga el instalador oficial guiado para Windows 10 y 11 o utiliza la versión 100% portable lista para llevar en USB."
+    else:
+        titulo_cta = app.get("cta_titulo") or "Comienza hoy tu camino hacia una mejor experiencia"
+        desc_cta = app.get("cta_desc") or "Descarga la aplicación o accede directamente desde tu dispositivo."
 
     partes_cta = []
     if app.get("url_descargas"):
@@ -486,6 +746,8 @@ def generar_detalle(app: dict) -> str:
             % (esc(app["url_propia"]), esc(app["nombre"]))
         )
     for t in app.get("tiendas", []):
+        if not t.get("url"):
+            continue
         partes_cta.append(
             '<a href="%s" target="_blank" rel="noopener noreferrer" class="fx-btn fx-btn-secundario">%s %s</a>'
             % (esc(t["url"]), esc(t.get("icono", "▶")), esc(t["nombre"]))
@@ -524,26 +786,44 @@ def generar_detalle(app: dict) -> str:
     else:
         privacidad = ""
 
+    # Hero enriquecido
+    if slug == "debts-goodbye":
+        badge_hero = "✦ SAAS FINANCIERO PERSONAL"
+        hero_titulo = "Sal de tus deudas con un plan, no con suerte."
+        tagline_txt = "Control total de ingresos, gastos, deudas y tarjetas con Fynex IA, estrategias científicas Avalancha y Bola de Nieve, y sincronización nativa en tiempo real."
+    elif slug == "audiout":
+        badge_hero = "✦ ESTACIÓN DE AUDIO NATIVA PARA WINDOWS"
+        hero_titulo = "Sincroniza y duplica audio en Windows al unísono."
+        tagline_txt = "Transmite simultáneamente a parlantes Bluetooth, HDMI y altavoces con sincronización milimétrica al instante, motor LockedDelayFIFO anti-desfase y división por programas."
+    else:
+        badge_hero = "✦ Producto Oficial FYNEX"
+        hero_titulo = esc(app["nombre"])
+        tagline_txt = esc(app.get("tagline") or app.get("descripcion_corta", ""))
+
     return rellenar(plantilla, {
         "NOMBRE": esc(app["nombre"]),
         "DESC_CORTA": esc(app["descripcion_corta"]),
         "COLOR": esc(app["color"]),
         "CATEGORIA": esc(app["categoria"]),
-        "TAGLINE": esc(app["tagline"]),
+        "TAGLINE": tagline_txt,
         "VERSION": esc(app.get("version", "1.0.0")),
         "ICONO": icono,
         "ICONO_URL": esc(app.get("icono", "img/apps/debts-goodbye.png")),
-        "NAV_CTA": nav_cta,
-        "PLATAFORMAS": "".join('<span class="fx-plataforma">%s</span>' % esc(p)
-                               for p in app.get("plataformas", [])),
-        "BOTONES": botones(app),
+        "BADGE_HERO": badge_hero,
+        "HERO_TITULO": hero_titulo,
+        "HERO_GARANTIAS": generar_hero_garantias(app),
+        "HERO_VISUAL": generar_hero_visual(app),
+        "BOTONES": botones_hero(app),
         "METRICAS": metricas,
         "SHOWCASE_GALERIA": showcase,
-        "DESCRIPCION": descripcion,
+        "PILARES_VALOR": generar_pilares(app),
         "NOVEDADES": novedades,
         "CARACTERISTICAS": caracteristicas,
         "ARQUITECTURA": arquitectura,
         "CTA_BANNER": cta_banner,
+        "NAV_CTA": nav_cta,
+        "PLATAFORMAS": "".join('<span class="fx-plataforma">%s</span>' % esc(p)
+                               for p in app.get("plataformas", [])),
         "FOOTER_APPS": apps_del_pie(),
         "ESTUDIO_DESC": esc(catalogo.ESTUDIO["descripcion"]),
         "PRIVACIDAD": privacidad,

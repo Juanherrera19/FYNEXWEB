@@ -1538,6 +1538,20 @@ button { font-family: inherit; }
     transform: translateX(-3px);
 }
 
+.fx-app-hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.18fr) minmax(0, 0.82fr);
+    gap: 48px;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    margin-bottom: 38px;
+}
+body[style*="#0284c7"] .fx-app-hero-grid {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: 42px;
+}
+
 .fx-app-hero-inner {
     display: grid;
     grid-template-columns: auto 1fr;
@@ -1545,6 +1559,160 @@ button { font-family: inherit; }
     align-items: center;
     position: relative;
     z-index: 2;
+}
+
+.fx-app-hero-visual {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+/* ── Escenario del Mockup en el Hero y Chips Flotantes ── */
+.fx-hero-mockup-stage {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px 12px;
+}
+.fx-hero-glow-back {
+    position: absolute;
+    inset: -25px;
+    border-radius: 50%;
+    pointer-events: none;
+    filter: blur(48px);
+    z-index: 1;
+}
+
+.fx-celular-hero {
+    width: 275px;
+    z-index: 2;
+    transform: perspective(1000px) rotateY(-4deg) rotateX(2deg);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+}
+.fx-celular-hero:hover {
+    transform: perspective(1000px) rotateY(0deg) rotateX(0deg) translateY(-4px);
+    box-shadow: 0 32px 85px rgba(0, 0, 0, 0.85), 0 0 50px var(--app-glow);
+}
+
+.fx-desktop-hero {
+    width: 100%;
+    max-width: 520px;
+    z-index: 2;
+    transform: perspective(1000px) rotateY(-3deg) rotateX(2deg);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+}
+.fx-desktop-hero:hover {
+    transform: perspective(1000px) rotateY(0deg) rotateX(0deg) translateY(-4px);
+    box-shadow: 0 36px 95px rgba(0, 0, 0, 0.9), 0 0 60px var(--app-glow);
+}
+
+/* Chips Flotantes de Valor / Métricas en Vivo */
+.fx-floating-chip {
+    position: absolute;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background: rgba(10, 14, 23, 0.90);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 16px;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.65), 0 0 20px rgba(0, 0, 0, 0.4);
+    animation: fxLevitacion 4s ease-in-out infinite alternate;
+    user-select: none;
+    pointer-events: none;
+}
+.chip-arriba-der {
+    top: 10px;
+    right: -24px;
+    animation-delay: -1.5s;
+}
+.chip-abajo-izq {
+    bottom: 20px;
+    left: -24px;
+    animation-delay: -3s;
+}
+.fx-floating-chip .chip-ico {
+    font-size: 1.35rem;
+    line-height: 1;
+}
+.fx-floating-chip .chip-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.fx-floating-chip .chip-tit {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--fx-txt-3);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.fx-floating-chip .chip-val {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: var(--fx-txt);
+    white-space: nowrap;
+}
+
+/* Botón terciario para anclas internas */
+.fx-btn-terciario {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--fx-border);
+    color: var(--fx-txt-2);
+    padding: 12px 20px;
+    border-radius: var(--fx-radio-btn);
+    font-size: 0.92rem;
+    font-weight: 650;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.22s ease;
+}
+.fx-btn-terciario:hover {
+    color: var(--fx-txt);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+/* Franja de Garantías / Confianza del Hero */
+.fx-hero-garantias {
+    display: flex;
+    align-items: stretch;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-top: 26px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.fx-garantia-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.fx-garantia-ico {
+    font-size: 1.3rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+.fx-garantia-content {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.82rem;
+    line-height: 1.35;
+}
+.fx-garantia-content strong {
+    color: var(--fx-txt);
+    font-weight: 750;
+}
+.fx-garantia-content span {
+    color: var(--fx-txt-3);
 }
 
 .fx-app-icono-wrap {
@@ -1968,6 +2136,85 @@ button { font-family: inherit; }
     font-size: 0.9rem;
     font-weight: 600;
     text-align: center;
+}
+
+/* ── Pilares de Valor e Ingeniería ── */
+.fx-seccion-pilares {
+    position: relative;
+}
+.fx-pilares-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 36px;
+}
+.fx-pilar-card {
+    background: var(--fx-surface-glass);
+    border: 1px solid var(--fx-border);
+    border-radius: var(--fx-radio-lg);
+    padding: 34px 28px;
+    position: relative;
+    backdrop-filter: blur(16px);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.26s var(--fx-trans-suave), border-color 0.24s ease, box-shadow 0.26s ease;
+}
+.fx-pilar-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 255, 255, 0.24);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5);
+}
+.fx-pilar-numero {
+    font-size: 2.8rem;
+    font-weight: 900;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.06);
+    position: absolute;
+    top: 20px;
+    right: 24px;
+    pointer-events: none;
+    font-variant-numeric: tabular-nums;
+}
+.fx-pilar-icono {
+    font-size: 1.8rem;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+.fx-pilar-card h3 {
+    font-size: 1.22rem;
+    font-weight: 780;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+    line-height: 1.3;
+}
+.fx-pilar-card p {
+    color: var(--fx-txt-2);
+    font-size: 0.92rem;
+    line-height: 1.62;
+    flex-grow: 1;
+    margin-bottom: 20px;
+}
+.fx-pilar-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--fx-border);
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #5eead4;
+    width: fit-content;
+}
+body[style*="#0284c7"] .fx-pilar-chip {
+    color: #38bdf8;
 }
 
 /* ── Novedades e Innovaciones Recientes ── */
@@ -2774,9 +3021,16 @@ button { font-family: inherit; }
         line-height: 1.38;
     }
 
-    /* ── Hero Página de Producto (Debts Goodbye) ── */
+    /* ── Hero Página de Producto (Rediseño Móvil Dividido) ── */
     .fx-app-hero {
-        padding: 44px 0 40px;
+        padding: 44px 0 36px;
+    }
+    .fx-app-hero-grid {
+        grid-template-columns: 1fr !important;
+        gap: 32px;
+        text-align: center;
+        justify-items: center;
+        margin-bottom: 24px;
     }
     .fx-app-hero-inner {
         grid-template-columns: 1fr;
@@ -2790,15 +3044,81 @@ button { font-family: inherit; }
         border-radius: 26px;
     }
     .fx-app-hero h1 {
-        font-size: clamp(2rem, 7.5vw, 2.8rem);
+        font-size: clamp(2rem, 7.2vw, 2.7rem);
+        line-height: 1.14;
     }
     .fx-app-hero-meta, .fx-plataformas, .fx-app-hero-txt .fx-acciones {
-        justify-content: center;
+        justify-content: center !important;
     }
     .fx-app-hero-txt .fx-acciones {
         width: 100%;
         flex-direction: column;
-        gap: 12px;
+        gap: 10px;
+    }
+    .fx-app-hero-txt .fx-acciones .fx-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Franja de garantías en móvil */
+    .fx-hero-garantias {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 14px;
+        padding-top: 18px;
+        margin-top: 20px;
+    }
+    .fx-garantia-item {
+        justify-content: center;
+    }
+    .fx-garantia-content {
+        align-items: center;
+    }
+
+    /* Mockup y Chips en Móvil */
+    .fx-hero-mockup-stage {
+        padding: 14px 4px;
+        width: 100%;
+    }
+    .fx-celular-hero {
+        width: min(255px, 72vw);
+        transform: none !important;
+    }
+    .fx-desktop-hero {
+        max-width: 100%;
+        transform: none !important;
+    }
+    .chip-arriba-der {
+        top: -4px;
+        right: -6px;
+    }
+    .chip-abajo-izq {
+        bottom: -4px;
+        left: -6px;
+    }
+    .fx-floating-chip {
+        padding: 7px 12px;
+        gap: 7px;
+        border-radius: 12px;
+    }
+    .fx-floating-chip .chip-ico {
+        font-size: 1.1rem;
+    }
+    .fx-floating-chip .chip-tit {
+        font-size: 0.65rem;
+    }
+    .fx-floating-chip .chip-val {
+        font-size: 0.78rem;
+    }
+
+    /* Pilares en móvil */
+    .fx-pilares-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    .fx-pilar-card {
+        padding: 24px 20px;
     }
 
     /* ── Métricas en Móvil: Cuadrícula 2x2 Compacta ── */
