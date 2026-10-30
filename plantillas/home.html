@@ -27,17 +27,13 @@
 <header class="fx-header">
     <div class="fx-contenedor fx-header-inner">
         <a href="/" class="fx-marca">
-            <img src="/img/fynex-logo-sm.png" alt="FYNEX" class="fx-marca-ave" width="32" height="32">
+            <img src="/img/fynex-logo-sm.png" alt="FYNEX" class="fx-marca-ave" width="30" height="30">
             <span>FYNEX</span>
         </a>
-        <button class="fx-nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="fxNav">☰</button>
-        <nav class="fx-nav" id="fxNav">
+        <nav class="fx-nav" id="fxNav" aria-label="Navegación principal">
             <a href="#apps" class="fx-nav-enlace" data-seccion="apps">Catálogo</a>
             <a href="#estudio" class="fx-nav-enlace" data-seccion="estudio">Estudio</a>
             <a href="#contacto" class="fx-nav-enlace" data-seccion="contacto">Contacto</a>
-            <div class="fx-nav-cta-movil">
-                <a href="/apps/debts-goodbye/" class="fx-nav-cta">✦ Debts Goodbye</a>
-            </div>
         </nav>
         <div class="fx-header-cta">
             <a href="/apps/debts-goodbye/" class="fx-nav-cta">✦ Debts Goodbye</a>
@@ -49,75 +45,81 @@
 
 <!-- ═══════ HERO ═══════ -->
 <section class="fx-hero">
-    <!-- Estelas naranjosas de fuego radiantes en el fondo -->
+    <!-- Estelas cálidas de fuego ambarino radiantes en el fondo (Tonalidad naranja aterciopelada) -->
     <div class="fx-hero-estelas-wrap" aria-hidden="true">
         <svg class="fx-hero-estelas-svg" viewBox="0 0 1600 700" preserveAspectRatio="none">
             <defs>
                 <linearGradient id="estelaFuegoPrincipal" x1="0%" y1="100%" x2="100%" y2="15%">
-                    <stop offset="0%" stop-color="#ff3300" stop-opacity="0" />
-                    <stop offset="15%" stop-color="#ff4d00" stop-opacity="0.4" />
-                    <stop offset="42%" stop-color="#ff7a18" stop-opacity="0.85" />
-                    <stop offset="68%" stop-color="#ffbe2e" stop-opacity="0.95" />
-                    <stop offset="85%" stop-color="#ff5722" stop-opacity="0.6" />
-                    <stop offset="100%" stop-color="#ff1a00" stop-opacity="0" />
+                    <stop offset="0%" stop-color="#9a3412" stop-opacity="0" />
+                    <stop offset="18%" stop-color="#c2410c" stop-opacity="0.35" />
+                    <stop offset="45%" stop-color="#ea580c" stop-opacity="0.75" />
+                    <stop offset="68%" stop-color="#f97316" stop-opacity="0.85" />
+                    <stop offset="85%" stop-color="#e65100" stop-opacity="0.55" />
+                    <stop offset="100%" stop-color="#7c2d12" stop-opacity="0" />
                 </linearGradient>
                 <linearGradient id="estelaFuegoSecundaria" x1="0%" y1="95%" x2="100%" y2="5%">
-                    <stop offset="0%" stop-color="#ff5722" stop-opacity="0" />
-                    <stop offset="25%" stop-color="#ff7a18" stop-opacity="0.3" />
-                    <stop offset="55%" stop-color="#ffaa00" stop-opacity="0.55" />
-                    <stop offset="78%" stop-color="#ff3d00" stop-opacity="0.4" />
-                    <stop offset="100%" stop-color="#ff1100" stop-opacity="0" />
+                    <stop offset="0%" stop-color="#7c2d12" stop-opacity="0" />
+                    <stop offset="25%" stop-color="#c2410c" stop-opacity="0.30" />
+                    <stop offset="55%" stop-color="#f59e0b" stop-opacity="0.50" />
+                    <stop offset="80%" stop-color="#ea580c" stop-opacity="0.35" />
+                    <stop offset="100%" stop-color="#9a3412" stop-opacity="0" />
+                </linearGradient>
+                <linearGradient id="estelaFuegoSuave" x1="5%" y1="100%" x2="95%" y2="20%">
+                    <stop offset="0%" stop-color="#ea580c" stop-opacity="0" />
+                    <stop offset="30%" stop-color="#f97316" stop-opacity="0.25" />
+                    <stop offset="65%" stop-color="#fb923c" stop-opacity="0.45" />
+                    <stop offset="90%" stop-color="#c2410c" stop-opacity="0.20" />
+                    <stop offset="100%" stop-color="#7c2d12" stop-opacity="0" />
                 </linearGradient>
                 <linearGradient id="estelaFuegoNucleo" x1="0%" y1="100%" x2="100%" y2="25%">
-                    <stop offset="0%" stop-color="#ffffff" stop-opacity="0" />
-                    <stop offset="35%" stop-color="#fff59d" stop-opacity="0.75" />
-                    <stop offset="58%" stop-color="#ffffff" stop-opacity="0.95" />
-                    <stop offset="78%" stop-color="#ffd54f" stop-opacity="0.75" />
-                    <stop offset="100%" stop-color="#ff7a18" stop-opacity="0" />
+                    <stop offset="0%" stop-color="#ffedd5" stop-opacity="0" />
+                    <stop offset="35%" stop-color="#fed7aa" stop-opacity="0.65" />
+                    <stop offset="60%" stop-color="#ffedd5" stop-opacity="0.80" />
+                    <stop offset="82%" stop-color="#fdba74" stop-opacity="0.60" />
+                    <stop offset="100%" stop-color="#ea580c" stop-opacity="0" />
                 </linearGradient>
             </defs>
 
-            <!-- Resplandor amplio difuso de fondo -->
+            <!-- 1. Resplandor difuso amplio de fondo (Atmósfera cálida no cegadora) -->
             <path class="fx-estela-aura" d="M -40,685 C 380,680 700,610 980,550 C 1220,495 1420,380 1640,220" 
-                  fill="none" stroke="url(#estelaFuegoPrincipal)" stroke-width="70" opacity="0.45" />
+                  fill="none" stroke="url(#estelaFuegoPrincipal)" stroke-width="75" opacity="0.35" />
 
-            <!-- Estela de fuego ancha principal que cruza hacia el fénix -->
+            <!-- 2. Cinta ancha principal que cruza hacia el fénix -->
             <path class="fx-estela-cinta fx-estela-anim-1" d="M -40,680 C 380,680 700,605 980,545 C 1220,490 1420,375 1640,215" 
-                  fill="none" stroke="url(#estelaFuegoPrincipal)" stroke-width="26" stroke-linecap="round" />
+                  fill="none" stroke="url(#estelaFuegoPrincipal)" stroke-width="24" stroke-linecap="round" />
 
-            <!-- Estela secundaria que asciende tras las alas del fénix -->
-            <path class="fx-estela-cinta fx-estela-anim-2" d="M 80,700 C 480,655 840,590 1160,510 C 1370,420 1530,280 1640,110" 
+            <!-- 3. Cinta secundaria que asciende tras las alas del fénix -->
+            <path class="fx-estela-cinta fx-estela-anim-2" d="M 60,700 C 460,650 820,580 1140,500 C 1350,410 1520,270 1640,100" 
                   fill="none" stroke="url(#estelaFuegoSecundaria)" stroke-width="16" stroke-linecap="round" />
 
-            <!-- Hebra incandescente central muy brillante -->
+            <!-- 4. Tercera cinta suave en arco superior para mayor riqueza visual -->
+            <path class="fx-estela-cinta fx-estela-anim-1" d="M -20,640 C 320,620 660,560 940,490 C 1180,420 1390,320 1620,180" 
+                  fill="none" stroke="url(#estelaFuegoSuave)" stroke-width="12" stroke-linecap="round" />
+
+            <!-- 5. Filamento cálido central que guía la mirada sin saturar -->
             <path class="fx-estela-nucleo" d="M -35,682 C 385,678 705,603 985,543 C 1225,488 1425,373 1640,213" 
-                  fill="none" stroke="url(#estelaFuegoNucleo)" stroke-width="4.5" stroke-linecap="round" />
+                  fill="none" stroke="url(#estelaFuegoNucleo)" stroke-width="3.5" stroke-linecap="round" />
         </svg>
     </div>
 
     <div class="fx-contenedor">
         <div class="fx-hero-grid">
             <div class="fx-hero-txt">
-                <div class="fx-etiqueta fx-revelar">
-                    <span class="fx-etiqueta-punto"></span>
-                    <span>Estudio de desarrollo independiente</span>
-                </div>
-                <h1 class="fx-revelar">
-                    Creamos apps y juegos<br>
-                    que <span class="fx-degradado">transforman tu día a día</span>
+                <h1>
+                    Tecnología concebida con<br>
+                    <span class="fx-degradado">precisión, privacidad y potencia</span>
                 </h1>
-                <p class="fx-revelar">
-                    FYNEX es un estudio enfocado en experiencias digitales de alto impacto:
-                    herramientas financieras y de productividad que resuelven problemas reales,
-                    y experiencias lúdicas diseñadas con obsesión por el detalle.
+                <p>
+                    FYNEX desarrolla herramientas financieras y tecnología de audio digital de alto calibre:
+                    arquitectura 100% nativa en tu dispositivo, latencia cero y un diseño refinado construido para perdurar.
                 </p>
-                <div class="fx-acciones fx-revelar">
+                <div class="fx-acciones">
                     <a href="#apps" class="fx-btn fx-btn-primario">Explorar el catálogo</a>
                     <a href="/apps/debts-goodbye/" class="fx-btn fx-btn-secundario">Conocer Debts Goodbye ↗</a>
                 </div>
             </div>
 
-            <div class="fx-hero-visual fx-revelar">
+            <div class="fx-hero-visual">
                 <div class="fx-hero-logo-frame">
                     <div class="fx-hero-logo-halo"></div>
                     <picture>
@@ -133,6 +135,15 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Indicador de desplazamiento cinematográfico "Desliza" -->
+    <div class="fx-hero-scroll-indicator" id="heroScrollIndicator" aria-hidden="true">
+        <div class="fx-mouse-icon">
+            <span class="fx-mouse-wheel"></span>
+        </div>
+        <span class="fx-scroll-txt">Desliza</span>
+        <span class="fx-scroll-arrow">↓</span>
     </div>
 </section>
 
@@ -270,28 +281,7 @@ document.getElementById('anio').textContent = new Date().getFullYear();
     actualizarCabecera();
 })();
 
-// Menú móvil responsivo
-(function () {
-    var toggle = document.getElementById('navToggle');
-    var nav = document.getElementById('fxNav');
-    if (!toggle || !nav) return;
 
-    function esMovil() { return window.matchMedia('(max-width: 860px)').matches; }
-    function cerrar() { if (esMovil()) { nav.hidden = true; toggle.setAttribute('aria-expanded', 'false'); } }
-    function sincronizar() { nav.hidden = esMovil(); toggle.setAttribute('aria-expanded', 'false'); }
-
-    sincronizar();
-    window.addEventListener('resize', sincronizar);
-
-    toggle.addEventListener('click', function () {
-        var abierto = !nav.hidden;
-        nav.hidden = abierto;
-        toggle.setAttribute('aria-expanded', String(!abierto));
-    });
-    nav.addEventListener('click', function (e) {
-        if (e.target.tagName === 'A' || e.target.closest('a')) cerrar();
-    });
-})();
 
 // Iluminación activa de sección en el encabezado (Scrollspy con resplandor naranja)
 (function () {

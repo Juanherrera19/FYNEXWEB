@@ -125,20 +125,23 @@ def tarjeta(app: dict) -> str:
     tipo = esc(app.get("tipo", "app"))
     clases = "fx-card fx-card-%s fx-revelar%s" % (slug, " fx-card-pronto" if pronto else "")
 
-    # 1. Columna Izquierda: Mockup de Dispositivo Inclinado con Personalidad 3D
+    # 1. Columna Izquierda: Mockup de Dispositivo Inclinado con Marco y Enfoque Seguro
     if slug == "debts-goodbye":
         mockup_html = """
             <div class="fx-card-mockup-col fx-mockup-col-debts">
                 <div class="fx-card-mockup-glow" aria-hidden="true"></div>
                 <div class="fx-card-decor-ray" aria-hidden="true"></div>
                 <div class="fx-device-phone fx-tilt-phone">
-                    <div class="fx-phone-notch" aria-hidden="true"></div>
-                    <img src="/img/apps/debts-goodbye/capturas/02_dashboard_resumen_real.png" 
-                         alt="Debts Goodbye Dashboard Financiero" 
-                         class="fx-device-screen-img" 
-                         width="154" 
-                         height="280" 
-                         loading="lazy">
+                    <div class="fx-phone-speaker" aria-hidden="true"></div>
+                    <div class="fx-phone-camera" aria-hidden="true"></div>
+                    <div class="fx-phone-screen-frame">
+                        <img src="/img/apps/debts-goodbye/capturas/02_dashboard_resumen_real.png" 
+                             alt="Debts Goodbye Dashboard Financiero" 
+                             class="fx-device-screen-img" 
+                             width="148" 
+                             height="260" 
+                             loading="lazy">
+                    </div>
                 </div>
             </div>"""
     elif slug == "audiout":
@@ -151,14 +154,16 @@ def tarjeta(app: dict) -> str:
                         <span class="fx-desktop-dot rojo"></span>
                         <span class="fx-desktop-dot amarillo"></span>
                         <span class="fx-desktop-dot verde"></span>
-                        <span class="fx-desktop-title-tiny">Audiout</span>
+                        <span class="fx-desktop-title-tiny">Audiout Studio</span>
                     </div>
-                    <img src="/img/apps/audiout/capturas_reales/01_multi_salida_real.png" 
-                         alt="Audiout Panel Multi-Salida" 
-                         class="fx-device-screen-img" 
-                         width="196" 
-                         height="190" 
-                         loading="lazy">
+                    <div class="fx-desktop-screen-frame">
+                        <img src="/img/apps/audiout/capturas_reales/01_multi_salida_real.png" 
+                             alt="Audiout Panel Multi-Salida" 
+                             class="fx-device-screen-img" 
+                             width="190" 
+                             height="165" 
+                             loading="lazy">
+                    </div>
                 </div>
             </div>"""
     else:

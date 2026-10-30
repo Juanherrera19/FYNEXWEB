@@ -21,17 +21,13 @@
 <header class="fx-header">
     <div class="fx-contenedor fx-header-inner">
         <a href="/" class="fx-marca">
-            <img src="/img/fynex-logo-sm.png" alt="FYNEX" class="fx-marca-ave" width="32" height="32">
+            <img src="/img/fynex-logo-sm.png" alt="FYNEX" class="fx-marca-ave" width="30" height="30">
             <span>FYNEX</span>
         </a>
-        <button class="fx-nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="fxNav">☰</button>
-        <nav class="fx-nav" id="fxNav">
+        <nav class="fx-nav" id="fxNav" aria-label="Navegación principal">
             <a href="/#apps" class="fx-nav-enlace">Catálogo</a>
             <a href="/#estudio" class="fx-nav-enlace">Estudio</a>
             <a href="/#contacto" class="fx-nav-enlace">Contacto</a>
-            <div class="fx-nav-cta-movil">
-                {{NAV_CTA}}
-            </div>
         </nav>
         <div class="fx-header-cta">
             {{NAV_CTA}}
@@ -136,25 +132,7 @@ document.getElementById('anio').textContent = new Date().getFullYear();
     actualizar();
 })();
 
-// Menú móvil
-(function () {
-    var toggle = document.getElementById('navToggle');
-    var nav = document.getElementById('fxNav');
-    if (!toggle || !nav) return;
-    function esMovil() { return window.matchMedia('(max-width: 860px)').matches; }
-    function cerrar() { if (esMovil()) { nav.hidden = true; toggle.setAttribute('aria-expanded', 'false'); } }
-    function sincronizar() { nav.hidden = esMovil(); toggle.setAttribute('aria-expanded', 'false'); }
-    sincronizar();
-    window.addEventListener('resize', sincronizar);
-    toggle.addEventListener('click', function () {
-        var abierto = !nav.hidden;
-        nav.hidden = abierto;
-        toggle.setAttribute('aria-expanded', String(!abierto));
-    });
-    nav.addEventListener('click', function (e) {
-        if (e.target.tagName === 'A' || e.target.closest('a')) cerrar();
-    });
-})();
+
 
 // Scroll reveal
 (function () {

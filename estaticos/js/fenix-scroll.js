@@ -349,16 +349,25 @@
     function renderizar(progreso, velScroll) {
         ctx.clearRect(0, 0, viewW, viewH);
 
-        // Control de transición con el logo estático del Hero
+        // Control de transición con el logo estático del Hero e indicador Desliza
         var heroPicture = document.querySelector('.fx-hero-logo-frame picture') || document.querySelector('.fx-hero-logo-img');
+        var scrollIndicator = document.getElementById('heroScrollIndicator');
         var birdAlpha = 1.0;
 
+        if (scrollIndicator) {
+            if (progreso > 0.04) {
+                scrollIndicator.classList.add('oculto');
+            } else {
+                scrollIndicator.classList.remove('oculto');
+            }
+        }
+
         if (heroPicture) {
-            if (progreso <= 0.002) {
+            if (progreso <= 0.006) {
                 heroPicture.style.opacity = '1';
                 birdAlpha = 0;
-            } else if (progreso < 0.025) {
-                var cross = (progreso - 0.002) / (0.025 - 0.002);
+            } else if (progreso < 0.045) {
+                var cross = (progreso - 0.006) / (0.045 - 0.006);
                 heroPicture.style.opacity = (1 - cross).toFixed(3);
                 birdAlpha = cross;
             } else {
@@ -381,17 +390,17 @@
         ultimaPosAve.x = t.birdScreenX;
         ultimaPosAve.y = t.birdScreenY;
 
-        // 1. Halo de Fuego Radiante que bordea y envuelve al Fénix
+        // 1. Halo y Estela de Fuego Radiante en los Bordes y Silueta del Ave (Aura + Contorno)
         if (img && birdAlpha > 0.005) {
             ctx.save();
-            var glowRadius = Math.max(t.w, t.h) * 0.45;
+            var glowRadius = Math.max(t.w, t.h) * 0.44;
             var auraGrad = ctx.createRadialGradient(
                 t.birdScreenX, t.birdScreenY, glowRadius * 0.12,
                 t.birdScreenX, t.birdScreenY, glowRadius
             );
-            auraGrad.addColorStop(0, 'rgba(255, 122, 24, ' + (0.34 * birdAlpha) + ')');
-            auraGrad.addColorStop(0.35, 'rgba(255, 77, 0, ' + (0.20 * birdAlpha) + ')');
-            auraGrad.addColorStop(0.70, 'rgba(255, 170, 0, ' + (0.08 * birdAlpha) + ')');
+            auraGrad.addColorStop(0, 'rgba(230, 81, 0, ' + (0.35 * birdAlpha) + ')');
+            auraGrad.addColorStop(0.40, 'rgba(245, 124, 0, ' + (0.18 * birdAlpha) + ')');
+            auraGrad.addColorStop(0.75, 'rgba(255, 112, 67, ' + (0.06 * birdAlpha) + ')');
             auraGrad.addColorStop(1, 'rgba(255, 50, 0, 0)');
 
             ctx.fillStyle = auraGrad;
@@ -399,7 +408,15 @@
             ctx.arc(t.birdScreenX, t.birdScreenY, glowRadius, 0, Math.PI * 2);
             ctx.fill();
 
-            // Dibujar el ave
+            // Pase 1: Estela exterior de fuego intenso contorneando los bordes del Fénix
+            ctx.shadowColor = 'rgba(255, 95, 0, ' + (0.78 * birdAlpha).toFixed(3) + ')';
+            ctx.shadowBlur = isMobile ? 16 : 26;
+            ctx.globalAlpha = birdAlpha * 0.85;
+            ctx.drawImage(img, t.x, t.y, t.w, t.h);
+
+            // Pase 2: Contorno ambarino nítido en bordes y plumas + cuerpo del fénix
+            ctx.shadowColor = 'rgba(255, 185, 40, ' + (0.55 * birdAlpha).toFixed(3) + ')';
+            ctx.shadowBlur = isMobile ? 8 : 12;
             ctx.globalAlpha = birdAlpha;
             ctx.imageSmoothingEnabled = true;
             ctx.imageSmoothingQuality = 'high';
@@ -474,16 +491,29 @@
         if (!estaActivo) return;
 
         var dif = targetProgress - currentProgress;
-        var moving = Math.abs(dif) > 0.0003;
+        var absDif = Math.abs(dif);
+        var moving = absDif > 0.0002;
 
         if (moving) {
-            // Suavizado inercial ágil, reactivo e inmediato (0.45 = respuesta sin retraso)
-            var lerpSpeed = isMobile ? 0.42 : 0.45;
+            // Aceleración reactiva ultra-rápida ligada a la velocidad del scroll:
+            // Si el usuario desliza rápido, el seguimiento es prácticamente instantáneo (0ms lag)
+            var lerpSpeed;
+            if (absDif > 0.08) {
+                lerpSpeed = 0.94;
+            } else if (absDif > 0.03) {
+                lerpSpeed = 0.78;
+            } else {
+                lerpSpeed = isMobile ? 0.52 : 0.56;
+            }
+
             currentProgress += dif * lerpSpeed;
-            if (targetProgress === 0 && currentProgress < 0.005) currentProgress = 0;
-            else if (targetProgress === 1 && currentProgress > 0.995) currentProgress = 1;
+            if (targetProgress <= 0.006 && currentProgress < 0.012) {
+                currentProgress = 0;
+            } else if (targetProgress >= 0.994 && currentProgress > 0.988) {
+                currentProgress = 1;
+            }
             idleTicks = 0;
-            renderizar(currentProgress, Math.abs(dif));
+            renderizar(currentProgress, absDif);
             rafId = requestAnimationFrame(bucleAnimacion);
         } else {
             currentProgress = targetProgress;
