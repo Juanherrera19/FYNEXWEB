@@ -100,33 +100,25 @@
 
 </main>
 
-<footer class="fx-footer">
+<footer class="fx-footer fx-footer-compact">
     <div class="fx-contenedor">
-        <div class="fx-footer-grid">
-            <div>
-                <div class="fx-marca">
-                    <img src="/img/fynex-logo-sm.png" alt="FYNEX" class="fx-marca-ave" width="30" height="30">
-                    <span>FYNEX</span>
-                </div>
-                <p class="fx-footer-desc">{{ESTUDIO_DESC}}</p>
+        <div class="fx-footer-compact-inner">
+            <nav class="fx-footer-nav" aria-label="Navegación del pie">
+                <a href="/" class="fx-footer-link">Inicio</a>
+                <span class="fx-footer-sep" aria-hidden="true">·</span>
+                <a href="/#apps" class="fx-footer-link">Catálogo</a>
+                <span class="fx-footer-sep" aria-hidden="true">·</span>
+                <a href="/apps/{{SLUG}}/" class="fx-footer-link">{{NOMBRE}}</a>
+                <span class="fx-footer-sep" aria-hidden="true">·</span>
+                <a href="/#estudio" class="fx-footer-link">Cómo trabajamos</a>
+                <span class="fx-footer-sep" aria-hidden="true">·</span>
+                <a href="/#contacto" class="fx-footer-link">Contacto</a>
+            </nav>
+            <div class="fx-footer-legal-line">
+                <span>© <span id="anio">2026</span> Todos los derechos reservados.</span>
+                <span class="fx-footer-sep-legal" aria-hidden="true">·</span>
+                <span>Distribución oficial libre de publicidad invasiva.</span>
             </div>
-            <div>
-                <h5>Catálogo</h5>
-                <ul>{{FOOTER_APPS}}</ul>
-            </div>
-            <div>
-                <h5>Estudio</h5>
-                <ul>
-                    <li><a href="/#estudio">Cómo trabajamos</a></li>
-                    <li><a href="/#contacto">Contacto</a></li>
-                    <li><a href="/apps/{{SLUG}}/">{{NOMBRE}}</a></li>
-                    <li><a href="/">Inicio</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="fx-footer-legal">
-            <span>© <span id="anio">2026</span> FYNEX. Todos los derechos reservados.</span>
-            <span>Distribución de software oficial y libre de publicidad invasiva.</span>
         </div>
     </div>
 </footer>

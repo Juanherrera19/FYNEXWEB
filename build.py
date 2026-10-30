@@ -116,49 +116,132 @@ def botones_tarjeta(app: dict) -> str:
 
 
 def tarjeta(app: dict) -> str:
-    """Una tarjeta del catálogo con spotlight y atributos de filtro."""
+    """Una tarjeta del catálogo con diseño split de 2 columnas inspirado en maqueta visual."""
     pronto = app["estado"] != "publicada"
-    clases = "fx-card fx-revelar" + (" fx-card-pronto" if pronto else "")
+    slug = esc(app["slug"])
+    nombre = esc(app["nombre"])
+    color = esc(app["color"])
+    categoria = esc(app.get("categoria", "App"))
     tipo = esc(app.get("tipo", "app"))
+    clases = "fx-card fx-revelar" + (" fx-card-pronto" if pronto else "")
 
-    if app.get("icono"):
-        icono = ('<img src="/%s" alt="%s" class="fx-card-icono" width="68" height="68" '
-                 'loading="lazy">' % (esc(app["icono"]), esc(app["nombre"])))
+    # 1. Columna Izquierda: Mockup de Dispositivo (Phone / Desktop / Holograma)
+    if slug == "debts-goodbye":
+        mockup_html = """
+            <div class="fx-card-mockup-col">
+                <div class="fx-card-mockup-glow" aria-hidden="true"></div>
+                <div class="fx-device-phone">
+                    <div class="fx-phone-notch" aria-hidden="true"></div>
+                    <img src="/img/apps/debts-goodbye/capturas/02_dashboard_resumen_real.png" 
+                         alt="Debts Goodbye Dashboard" 
+                         class="fx-device-screen-img" 
+                         width="154" 
+                         height="280" 
+                         loading="lazy">
+                </div>
+            </div>"""
+    elif slug == "audiout":
+        mockup_html = """
+            <div class="fx-card-mockup-col">
+                <div class="fx-card-mockup-glow" aria-hidden="true"></div>
+                <div class="fx-device-desktop">
+                    <div class="fx-desktop-bar" aria-hidden="true">
+                        <span class="fx-desktop-dot rojo"></span>
+                        <span class="fx-desktop-dot amarillo"></span>
+                        <span class="fx-desktop-dot verde"></span>
+                        <span class="fx-desktop-title-tiny">Audiout</span>
+                    </div>
+                    <img src="/img/apps/audiout/capturas_reales/01_multi_salida_real.png" 
+                         alt="Audiout Panel Multi-Salida" 
+                         class="fx-device-screen-img" 
+                         width="196" 
+                         height="190" 
+                         loading="lazy">
+                </div>
+            </div>"""
     else:
-        icono = '<div class="fx-card-icono fx-card-icono-vacio">✦</div>'
+        icono_holo = "🎮" if tipo == "juego" else "✦"
+        tag_holo = "JUEGO EN DESARROLLO" if tipo == "juego" else "APP EN DESARROLLO"
+        mockup_html = """
+            <div class="fx-card-mockup-col">
+                <div class="fx-card-mockup-glow" aria-hidden="true"></div>
+                <div class="fx-device-holo">
+                    <div class="fx-holo-pulse" aria-hidden="true">%s</div>
+                    <span class="fx-holo-tag">%s</span>
+                    <span class="fx-holo-lab">FYNEX LABS</span>
+                </div>
+            </div>""" % (icono_holo, tag_holo)
+
+    # 2. Columna Derecha: Icono, Título, Tagline, Chips de Plataforma y Botones
+    if app.get("icono"):
+        icono_html = ('<img src="/%s" alt="%s" class="fx-card-ico-img" width="48" height="48" loading="lazy">' 
+                      % (esc(app["icono"]), nombre))
+    else:
+        icono_html = '<div class="fx-card-ico-img fx-card-ico-placeholder">✦</div>'
 
     if pronto:
-        badge_status = '<span class="fx-card-badge-status fx-card-badge-pronto">Próximamente</span>'
-        pie = '<div class="fx-card-pie-pronto"><span class="fx-insignia-pronto">Muy pronto</span></div>'
+        status_html = '<span class="fx-card-status-pill pronto"><span class="fx-card-status-dot"></span>Próximamente</span>'
+        btn_primario = '<span class="fx-btn-vermas fx-btn-vermas-disabled"><span>En desarrollo</span></span>'
+        btn_accion = ""
     else:
-        badge_status = '<span class="fx-card-badge-status">Disponible</span>'
-        btn_detalles = ('<a href="/apps/%s/" class="fx-btn fx-btn-secundario fx-btn-sm fx-btn-bloque">Ver detalles</a>'
-                        % esc(app["slug"]))
-        pie = btn_detalles + botones_tarjeta(app)
+        status_html = '<span class="fx-card-status-pill"><span class="fx-card-status-dot"></span>Disponible</span>'
+        btn_primario = ('<a href="/apps/%s/" class="fx-btn-vermas"><span>Ver más</span> <span class="fx-flecha">→</span></a>' 
+                        % slug)
+        
+        if app.get("url_propia"):
+            btn_accion = ('<a href="%s" target="_blank" rel="noopener noreferrer" class="fx-btn-accion-rapida" title="Abrir Web App"><span>Abrir app ↗</span></a>' 
+                          % esc(app["url_propia"]))
+        elif app.get("url_descargas"):
+            btn_accion = ('<a href="%s" class="fx-btn-accion-rapida" title="Descargas oficiales"><span>Descargar ⬇</span></a>' 
+                          % esc(app["url_descargas"]))
+        else:
+            btn_accion = ""
 
-    chips_plataforma = "".join(
-        '<span class="fx-plataforma" style="font-size:0.75rem; padding:3px 8px;">%s</span>' % esc(p)
-        for p in app.get("plataformas", [])
-    )
+    # Chips de plataformas con iconos
+    chips = []
+    for p in app.get("plataformas", []):
+        p_str = esc(p)
+        p_low = p.lower()
+        if "android" in p_low:
+            ico = "🤖"
+        elif "windows" in p_low:
+            ico = "💻"
+        elif "web" in p_low or "pwa" in p_low:
+            ico = "🌐"
+        elif "multi" in p_low:
+            ico = "⚡"
+        else:
+            ico = "✦"
+        chips.append('<span class="fx-plat-pill"><span class="fx-plat-ico">%s</span>%s</span>' % (ico, p_str))
+    chips_html = "".join(chips)
+
+    tagline_txt = esc(app.get("tagline") or app.get("descripcion_corta", ""))
 
     return """
         <article class="%s" data-tipo="%s" style="--app-color: %s;">
-            <div class="fx-card-top">
-                %s
-                <div class="fx-card-badges-row">
-                    <span class="fx-card-cat">%s</span>
+            %s
+            <div class="fx-card-info-col">
+                <div class="fx-card-head-row">
+                    <div class="fx-card-ico-wrap">%s</div>
+                    <div class="fx-card-head-meta">
+                        <span class="fx-card-cat-tag">%s</span>
+                        %s
+                    </div>
+                </div>
+                <h3 class="fx-card-title">%s</h3>
+                <p class="fx-card-tagline">%s</p>
+                <div class="fx-card-plataformas">%s</div>
+                <div class="fx-card-btns-row">
+                    %s
                     %s
                 </div>
             </div>
-            <h3>%s</h3>
-            <p class="fx-card-desc">%s</p>
-            <div class="fx-plataformas" style="margin-bottom:18px;">%s</div>
-            <div class="fx-card-pie">%s</div>
         </article>""" % (
-        clases, tipo, esc(app["color"]),
-        icono, esc(app["categoria"]), badge_status,
-        esc(app["nombre"]), esc(app["descripcion_corta"]),
-        chips_plataforma, pie,
+        clases, tipo, color,
+        mockup_html,
+        icono_html, categoria, status_html,
+        nombre, tagline_txt, chips_html,
+        btn_primario, btn_accion
     )
 
 
