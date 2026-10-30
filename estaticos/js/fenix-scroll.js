@@ -81,6 +81,15 @@
     var lastRenderedFrame = -1;
     var idleTicks = 0;
 
+    // ── Secuencia de Animación Fija Final (Bucle Autónomo de 22 Fotogramas) ──
+    var TOTAL_IDLE_FRAMES = 22;
+    var idleImages = new Array(TOTAL_IDLE_FRAMES);
+    var idleImagesLoaded = new Array(TOTAL_IDLE_FRAMES).fill(false);
+    var idleAnimIndex = 0;
+    var lastIdleTime = 0;
+    var IDLE_FRAME_INTERVAL = 42; // ~24fps animación fluida cinematográfica
+    var idleCargandoIniciado = false;
+
     var viewW = window.innerWidth;
     var viewH = window.innerHeight;
     var isMobile = viewW < 860;
@@ -180,6 +189,8 @@
             }
             if (idx < TOTAL_FRAMES) {
                 setTimeout(cargarLote, 20);
+            } else {
+                setTimeout(precargarFramesIdle, 100);
             }
         }
         setTimeout(cargarLote, 30);
@@ -194,6 +205,38 @@
             if (pos < TOTAL_FRAMES && imagesLoaded[pos] && images[pos]) return images[pos];
         }
         return images[0];
+    }
+
+    // ── Pre-carga y Selección de Fotogramas del Bucle Fijo Final ──
+    function obtenerUrlIdleFrame(idx) {
+        var num = String(idx + 1).padStart(2, '0');
+        return baseAssetPath + 'img/fenix_scroll/final_' + num + '.webp';
+    }
+
+    function precargarFramesIdle() {
+        if (idleCargandoIniciado) return;
+        idleCargandoIniciado = true;
+        for (var i = 0; i < TOTAL_IDLE_FRAMES; i++) {
+            (function (index) {
+                var img = new Image();
+                img.onload = function () {
+                    idleImages[index] = img;
+                    idleImagesLoaded[index] = true;
+                };
+                img.src = obtenerUrlIdleFrame(index);
+            })(i);
+        }
+    }
+
+    function obtenerMejorImagenIdle(idx) {
+        if (idleImagesLoaded[idx] && idleImages[idx]) return idleImages[idx];
+        for (var offset = 1; offset < TOTAL_IDLE_FRAMES; offset++) {
+            var ant = (idx - offset + TOTAL_IDLE_FRAMES) % TOTAL_IDLE_FRAMES;
+            if (idleImagesLoaded[ant] && idleImages[ant]) return idleImages[ant];
+            var pos = (idx + offset) % TOTAL_IDLE_FRAMES;
+            if (idleImagesLoaded[pos] && idleImages[pos]) return idleImages[pos];
+        }
+        return images[TOTAL_FRAMES - 1] || images[0];
     }
 
     // ── Dimensionado Adaptativo (DPR inteligente para erradicar saturación GPU) ──
@@ -376,8 +419,23 @@
             }
         }
 
+        var esFinal = progreso >= 0.985;
         var frameIndex = Math.min(TOTAL_FRAMES - 1, Math.max(0, Math.round(progreso * (TOTAL_FRAMES - 1))));
-        var img = obtenerMejorImagen(frameIndex);
+        var img;
+
+        if (esFinal) {
+            var ahora = performance.now();
+            if (ahora - lastIdleTime >= IDLE_FRAME_INTERVAL) {
+                idleAnimIndex = (idleAnimIndex + 1) % TOTAL_IDLE_FRAMES;
+                lastIdleTime = ahora;
+            }
+            img = obtenerMejorImagenIdle(idleAnimIndex);
+        } else {
+            img = obtenerMejorImagen(frameIndex);
+            idleAnimIndex = 0;
+            lastIdleTime = 0;
+        }
+
         var t = calcularTransformacionAve(progreso, frameIndex);
 
         // Chispas reactivas al movimiento
@@ -519,8 +577,9 @@
             currentProgress = targetProgress;
             idleTicks++;
 
-            // En reposo: renderizar partículas a 30fps para 0% carga innecesaria
-            if (idleTicks % 2 === 0 || chispasEstela.length > 0) {
+            // En reposo: renderizar a 30fps para chispas/cenizas, o reproducir la animación fija del fénix al final de la página
+            var esFinal = currentProgress >= 0.985;
+            if (esFinal || idleTicks % 2 === 0 || chispasEstela.length > 0) {
                 renderizar(currentProgress, 0);
             }
             rafId = requestAnimationFrame(bucleAnimacion);
@@ -538,6 +597,9 @@
 
     function onScroll() {
         targetProgress = calcularProgresoScroll();
+        if (targetProgress > 0.4 && !idleCargandoIniciado) {
+            precargarFramesIdle();
+        }
     }
 
     // Pausar si la pestaña está oculta
