@@ -1052,7 +1052,7 @@ button { font-family: inherit; }
     z-index: 2;
 }
 
-/* ── Columna Izquierda: Mockup de Dispositivo Elevado ── */
+/* ── Columna Izquierda: Mockup de Dispositivo Inclinado 3D ── */
 .fx-card-mockup-col {
     position: relative;
     display: flex;
@@ -1063,42 +1063,74 @@ button { font-family: inherit; }
 }
 .fx-card-mockup-glow {
     position: absolute;
-    width: 160px;
-    height: 160px;
+    width: 170px;
+    height: 170px;
     border-radius: 50%;
-    background: radial-gradient(circle, var(--app-color) 0%, transparent 70%);
-    opacity: 0.35;
-    filter: blur(28px);
     pointer-events: none;
     z-index: 1;
+    filter: blur(34px);
     transition: opacity 0.35s ease, transform 0.35s ease;
 }
+.fx-card-decor-ray {
+    position: absolute;
+    top: 15%;
+    left: 10%;
+    width: 80%;
+    height: 70%;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.18;
+    filter: blur(16px);
+    border-radius: 50%;
+    transition: opacity 0.35s ease;
+}
+.fx-mockup-col-debts .fx-card-mockup-glow {
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.65) 0%, rgba(5, 150, 105, 0.30) 45%, transparent 70%);
+    opacity: 0.55;
+}
+.fx-mockup-col-debts .fx-card-decor-ray {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.5) 0%, transparent 60%);
+}
+.fx-mockup-col-audiout .fx-card-mockup-glow {
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.60) 0%, rgba(79, 70, 229, 0.28) 45%, transparent 70%);
+    opacity: 0.55;
+}
+.fx-mockup-col-audiout .fx-card-decor-ray {
+    background: linear-gradient(135deg, rgba(147, 51, 234, 0.5) 0%, transparent 60%);
+}
 .fx-card:hover .fx-card-mockup-glow {
-    opacity: 0.65;
-    transform: scale(1.15);
+    opacity: 0.85;
+    transform: scale(1.18);
+}
+.fx-card:hover .fx-card-decor-ray {
+    opacity: 0.32;
 }
 
-/* Mockup de Teléfono Celular (Debts Goodbye) */
+/* Mockup de Teléfono Celular Inclinado 3D (Debts Goodbye) */
 .fx-device-phone {
     position: relative;
     z-index: 2;
     width: 148px;
-    height: 260px;
-    background: #030509;
-    border-radius: 24px;
-    border: 3px solid rgba(255, 255, 255, 0.16);
+    height: 258px;
+    background: #020405;
+    border-radius: 26px;
+    border: 3.5px solid #14201a;
     box-shadow: 
-        0 18px 36px -8px rgba(0, 0, 0, 0.8),
-        0 0 20px -2px var(--app-color),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+        -15px 20px 42px -6px rgba(0, 0, 0, 0.90),
+        0 0 25px -4px rgba(34, 197, 94, 0.28),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.16);
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    transform: perspective(800px) rotateY(-5deg) rotateX(3deg);
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: perspective(900px) rotateY(16deg) rotateX(4deg) rotateZ(-3deg);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
 }
 .fx-card:hover .fx-device-phone {
-    transform: perspective(800px) rotateY(0deg) rotateX(0deg) translateY(-4px);
+    transform: perspective(900px) rotateY(8deg) rotateX(2deg) rotateZ(-1deg) translateY(-5px);
+    box-shadow: 
+        -18px 25px 48px -4px rgba(0, 0, 0, 0.92),
+        0 0 38px -2px rgba(34, 197, 94, 0.45),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.26);
 }
 .fx-phone-notch {
     position: absolute;
@@ -1112,27 +1144,31 @@ button { font-family: inherit; }
     z-index: 4;
 }
 
-/* Mockup de Ventana Desktop (Audiout) */
+/* Mockup de Ventana Desktop Inclinada 3D (Audiout) */
 .fx-device-desktop {
     position: relative;
     z-index: 2;
-    width: 190px;
-    height: 195px;
-    background: #090d16;
-    border-radius: 14px;
-    border: 2px solid rgba(255, 255, 255, 0.14);
+    width: 196px;
+    height: 192px;
+    background: #060814;
+    border-radius: 16px;
+    border: 2.5px solid rgba(255, 255, 255, 0.16);
     box-shadow: 
-        0 18px 36px -8px rgba(0, 0, 0, 0.85),
-        0 0 22px -2px var(--app-color),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+        -15px 20px 42px -6px rgba(0, 0, 0, 0.92),
+        0 0 26px -4px rgba(139, 92, 246, 0.28),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.14);
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    transform: perspective(800px) rotateY(5deg) rotateX(2deg);
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: perspective(900px) rotateY(14deg) rotateX(4deg) rotateZ(-2deg);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
 }
 .fx-card:hover .fx-device-desktop {
-    transform: perspective(800px) rotateY(0deg) rotateX(0deg) translateY(-4px);
+    transform: perspective(900px) rotateY(7deg) rotateX(2deg) rotateZ(-1deg) translateY(-5px);
+    box-shadow: 
+        -18px 25px 48px -4px rgba(0, 0, 0, 0.95),
+        0 0 38px -2px rgba(139, 92, 246, 0.45),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.24);
 }
 .fx-desktop-bar {
     height: 20px;
@@ -1158,6 +1194,12 @@ button { font-family: inherit; }
     color: #94a3b8;
     margin-left: 6px;
     letter-spacing: 0.02em;
+}
+.fx-device-screen-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 /* Mockup Holográfico en Desarrollo */
@@ -2974,13 +3016,21 @@ body[style*="#0284c7"] .fx-pilar-chip {
     .fx-catalogo-slider .fx-card-mockup-col {
         min-height: 190px;
     }
+    .fx-catalogo-slider .fx-card.fx-card-debts-goodbye {
+        background: radial-gradient(ellipse at 50% 28%, rgba(16, 120, 60, 0.40) 0%, rgba(6, 45, 25, 0.22) 50%, rgba(5, 10, 9, 0.96) 88%), #040807 !important;
+    }
+    .fx-catalogo-slider .fx-card.fx-card-audiout {
+        background: radial-gradient(ellipse at 50% 28%, rgba(79, 70, 229, 0.36) 0%, rgba(49, 46, 129, 0.20) 50%, rgba(6, 8, 20, 0.96) 88%), #050612 !important;
+    }
     .fx-catalogo-slider .fx-device-phone {
-        width: 126px;
-        height: 220px;
+        width: 130px;
+        height: 226px;
+        transform: perspective(900px) rotateY(12deg) rotateX(3deg) rotateZ(-2deg);
     }
     .fx-catalogo-slider .fx-device-desktop {
-        width: 170px;
-        height: 160px;
+        width: 178px;
+        height: 168px;
+        transform: perspective(900px) rotateY(10deg) rotateX(3deg) rotateZ(-1deg);
     }
     .fx-catalogo-slider .fx-device-holo {
         width: 145px;
@@ -3375,17 +3425,56 @@ body[style*="#0284c7"] .fx-pilar-chip {
 
 /* Ventanas Oscuras y Menos Translúcidas con Efecto Vidrio Premium y Reflejos de Fuego */
 .fx-card {
-    background: rgba(8, 11, 20, 0.90) !important;
-    backdrop-filter: blur(24px) saturate(160%) !important;
-    -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
-    border: 1px solid rgba(255, 122, 24, 0.18) !important;
-    box-shadow: 0 16px 45px rgba(0, 0, 0, 0.72), inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 25px rgba(255, 90, 0, 0.06) !important;
+    background: rgba(8, 11, 20, 0.90);
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 16px 45px rgba(0, 0, 0, 0.72), inset 0 1px 0 rgba(255, 255, 255, 0.08);
     position: relative;
 }
-.fx-card:hover {
-    background: rgba(10, 14, 25, 0.94) !important;
-    border-color: rgba(255, 140, 40, 0.45) !important;
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.82), 0 0 35px rgba(255, 122, 24, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+
+/* Tarjeta Debts Goodbye: atmósfera esmeralda profunda con resplandor suave */
+.fx-card.fx-card-debts-goodbye {
+    background: radial-gradient(ellipse at 20% 50%, rgba(16, 120, 60, 0.36) 0%, rgba(6, 45, 25, 0.22) 42%, rgba(5, 10, 9, 0.96) 82%), #040807 !important;
+    border: 1px solid rgba(45, 212, 191, 0.28) !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 35px -8px rgba(16, 185, 129, 0.24) !important;
+}
+.fx-card.fx-card-debts-goodbye:hover {
+    background: radial-gradient(ellipse at 20% 50%, rgba(16, 140, 70, 0.44) 0%, rgba(6, 52, 28, 0.26) 42%, rgba(6, 12, 10, 0.98) 82%), #050a08 !important;
+    border-color: rgba(52, 211, 153, 0.58) !important;
+    box-shadow: 0 26px 65px rgba(0, 0, 0, 0.9), 0 0 50px -5px rgba(16, 185, 129, 0.42) !important;
+}
+.fx-card.fx-card-debts-goodbye .fx-card-ico-wrap {
+    border: 1px solid rgba(52, 211, 153, 0.4);
+    box-shadow: 0 0 18px rgba(16, 185, 129, 0.32);
+    border-radius: 14px;
+}
+.fx-card.fx-card-debts-goodbye .fx-card-cat-tag {
+    color: #5eead4;
+    background: rgba(30, 120, 129, 0.22);
+    border: 1px solid rgba(45, 212, 191, 0.38);
+}
+
+/* Tarjeta Audiout: atmósfera índigo / púrpura acústica con resplandor suave */
+.fx-card.fx-card-audiout {
+    background: radial-gradient(ellipse at 20% 50%, rgba(79, 70, 229, 0.32) 0%, rgba(49, 46, 129, 0.20) 42%, rgba(6, 8, 20, 0.96) 82%), #050612 !important;
+    border: 1px solid rgba(139, 92, 246, 0.30) !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 35px -8px rgba(124, 58, 237, 0.24) !important;
+}
+.fx-card.fx-card-audiout:hover {
+    background: radial-gradient(ellipse at 20% 50%, rgba(99, 102, 241, 0.42) 0%, rgba(55, 48, 163, 0.25) 42%, rgba(7, 10, 25, 0.98) 82%), #060818 !important;
+    border-color: rgba(168, 85, 247, 0.58) !important;
+    box-shadow: 0 26px 65px rgba(0, 0, 0, 0.9), 0 0 50px -5px rgba(124, 58, 237, 0.42) !important;
+}
+.fx-card.fx-card-audiout .fx-card-ico-wrap {
+    border: 1px solid rgba(168, 85, 247, 0.4);
+    box-shadow: 0 0 18px rgba(139, 92, 246, 0.32);
+    border-radius: 14px;
+}
+.fx-card.fx-card-audiout .fx-card-cat-tag {
+    color: #c084fc;
+    background: rgba(124, 58, 237, 0.22);
+    border: 1px solid rgba(168, 85, 247, 0.38);
 }
 
 .fx-valor-card {

@@ -154,11 +154,8 @@
     }
 
     function cargarFramesEscalonados() {
-        // En móvil solo cargamos cada 2do fotograma (56 frames en vez de 112 = 50% de RAM y red)
-        var step = isMobile ? 2 : 1;
-        
         // Hitos clave de navegación primero
-        var hitos = [15, 30, 48, 65, 80, 95, TOTAL_FRAMES - 1];
+        var hitos = [10, 25, 45, 60, 75, 90, 100, TOTAL_FRAMES - 1];
         hitos.forEach(function (h) {
             if (!imagesLoaded[h]) {
                 var img = new Image();
@@ -170,8 +167,8 @@
         var idx = 1;
         function cargarLote() {
             var enLote = 0;
-            while (idx < TOTAL_FRAMES && enLote < 4) {
-                if (!imagesLoaded[idx] && (idx % step === 0)) {
+            while (idx < TOTAL_FRAMES && enLote < 6) {
+                if (!imagesLoaded[idx]) {
                     (function (i) {
                         var img = new Image();
                         img.onload = function () { images[i] = img; imagesLoaded[i] = true; };
@@ -182,14 +179,10 @@
                 idx++;
             }
             if (idx < TOTAL_FRAMES) {
-                if (window.requestIdleCallback) {
-                    window.requestIdleCallback(cargarLote);
-                } else {
-                    setTimeout(cargarLote, 35);
-                }
+                setTimeout(cargarLote, 20);
             }
         }
-        setTimeout(cargarLote, 80);
+        setTimeout(cargarLote, 30);
     }
 
     function obtenerMejorImagen(idx) {
@@ -264,7 +257,7 @@
         }
     }
 
-    // ── Suavizado C1 Hermite Continuo de Trayectoria ──
+    // ── Cálculo Cinemático de Posición, Escala y Trayectoria ──
     function calcularTransformacionAve(progreso, frameIdx) {
         var meta = FRAMES_META[frameIdx] || [640, 360, 500, 500];
         var metaCx = meta[0];
@@ -274,60 +267,65 @@
         var birdScreenX, birdScreenY, currentScale;
 
         if (!isMobile) {
-            var desktopScale = Math.min((viewW * 0.90) / 1050, (viewH * 0.86) / BASE_H);
+            var desktopScale = Math.min((viewW * 0.92) / 1050, (viewH * 0.88) / BASE_H);
 
-            var p0x = heroGeo.x, p0y = heroGeo.y, s0 = heroGeo.scale;
-            var p1x = viewW * 0.44, p1y = viewH * 0.52;
-            var p2x = viewW * 0.62, p2y = viewH * 0.42;
-            var p3x = viewW - Math.min(300, viewW * 0.22);
-            var p3y = viewH - 160;
-            var s3 = Math.min(desktopScale * 1.05, (viewH * 0.54) / 569);
+            var heroTargetX = heroGeo.x;
+            var heroTargetY = heroGeo.y;
+            var heroScale = heroGeo.scale;
 
-            // Interpolación continua con aceleración armónica suave
-            if (progreso < 0.25) {
-                var u = progreso / 0.25;
-                var ease = u * u * (3 - 2 * u); // Smoothstep
-                birdScreenX = p0x + (p1x - p0x) * ease;
-                birdScreenY = p0y + (p1y - p0y) * ease;
-                currentScale = s0 + (desktopScale - s0) * ease;
+            // Catálogo: ¡CENTRAL!
+            var catTargetX = viewW * 0.50;
+            var catTargetY = viewH * 0.50;
+
+            // Estudio
+            var estTargetX = viewW * 0.52;
+            var estTargetY = viewH * 0.44;
+
+            // Pie de página
+            var footTargetX = viewW - Math.min(320, viewW * 0.22);
+            var footTargetY = viewH - 170;
+            var footScale = Math.min(desktopScale * 1.05, (viewH * 0.55) / 569);
+
+            // Interpolación directa y ágil ligada al scroll
+            if (progreso < 0.26) {
+                var p = progreso / 0.26;
+                birdScreenX = heroTargetX + (catTargetX - heroTargetX) * p;
+                birdScreenY = heroTargetY + (catTargetY - heroTargetY) * p;
+                currentScale = heroScale + (desktopScale - heroScale) * p;
             } else if (progreso < 0.65) {
-                var u2 = (progreso - 0.25) / 0.40;
-                var ease2 = u2 * u2 * (3 - 2 * u2);
-                birdScreenX = p1x + (p2x - p1x) * ease2;
-                birdScreenY = p1y + (p2y - p1y) * ease2;
+                var p2 = (progreso - 0.26) / 0.39;
+                birdScreenX = catTargetX + (estTargetX - catTargetX) * p2;
+                birdScreenY = catTargetY + (estTargetY - catTargetY) * p2;
                 currentScale = desktopScale;
             } else {
-                var u3 = (progreso - 0.65) / 0.35;
-                var ease3 = u3 * u3 * (3 - 2 * u3);
-                birdScreenX = p2x + (p3x - p2x) * ease3;
-                birdScreenY = p2y + (p3y - p2y) * ease3;
-                currentScale = desktopScale + (s3 - desktopScale) * ease3;
+                var p3 = (progreso - 0.65) / 0.35;
+                birdScreenX = estTargetX + (footTargetX - estTargetX) * p3;
+                birdScreenY = estTargetY + (footTargetY - estTargetY) * p3;
+                currentScale = desktopScale + (footScale - desktopScale) * p3;
             }
 
         } else {
             // MÓVIL: Trayectoria vertical compacta y centrada
-            var mobileScale = Math.min((viewW * 0.92) / 950, (viewH * 0.48) / BASE_H);
+            var mobileScale = Math.min((viewW * 0.95) / 950, (viewH * 0.50) / BASE_H);
             var mHeroScale = heroGeo.scale || mobileScale;
 
             var msX = heroGeo.x, msY = heroGeo.y;
-            var mmX = viewW * 0.5, mmY = viewH * 0.38;
-            var meX = viewW * 0.5, meY = viewH * 0.68;
+            var mmX = viewW * 0.50, mmY = viewH * 0.40;
+            var meX = viewW * 0.50, meY = viewH * 0.70;
 
-            if (progreso < 0.25) {
-                var um = progreso / 0.25;
-                var em = um * um * (3 - 2 * um);
-                birdScreenX = msX + (mmX - msX) * em;
-                birdScreenY = msY + (mmY - msY) * em;
-                currentScale = mHeroScale + (mobileScale - mHeroScale) * em;
-            } else if (progreso < 0.80) {
+            if (progreso < 0.26) {
+                var pm = progreso / 0.26;
+                birdScreenX = msX + (mmX - msX) * pm;
+                birdScreenY = msY + (mmY - msY) * pm;
+                currentScale = mHeroScale + (mobileScale - mHeroScale) * pm;
+            } else if (progreso < 0.75) {
                 birdScreenX = mmX;
                 birdScreenY = mmY;
                 currentScale = mobileScale;
             } else {
-                var um2 = (progreso - 0.80) / 0.20;
-                var em2 = um2 * um2 * (3 - 2 * um2);
-                birdScreenX = mmX + (meX - mmX) * em2;
-                birdScreenY = mmY + (meY - mmY) * em2;
+                var pm2 = (progreso - 0.75) / 0.25;
+                birdScreenX = mmX + (meX - mmX) * pm2;
+                birdScreenY = mmY + (meY - mmY) * pm2;
                 currentScale = mobileScale;
             }
         }
@@ -383,10 +381,28 @@
         ultimaPosAve.x = t.birdScreenX;
         ultimaPosAve.y = t.birdScreenY;
 
-        // 1. Dibujar el Ave
+        // 1. Halo de Fuego Radiante que bordea y envuelve al Fénix
         if (img && birdAlpha > 0.005) {
             ctx.save();
+            var glowRadius = Math.max(t.w, t.h) * 0.45;
+            var auraGrad = ctx.createRadialGradient(
+                t.birdScreenX, t.birdScreenY, glowRadius * 0.12,
+                t.birdScreenX, t.birdScreenY, glowRadius
+            );
+            auraGrad.addColorStop(0, 'rgba(255, 122, 24, ' + (0.34 * birdAlpha) + ')');
+            auraGrad.addColorStop(0.35, 'rgba(255, 77, 0, ' + (0.20 * birdAlpha) + ')');
+            auraGrad.addColorStop(0.70, 'rgba(255, 170, 0, ' + (0.08 * birdAlpha) + ')');
+            auraGrad.addColorStop(1, 'rgba(255, 50, 0, 0)');
+
+            ctx.fillStyle = auraGrad;
+            ctx.beginPath();
+            ctx.arc(t.birdScreenX, t.birdScreenY, glowRadius, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Dibujar el ave
             ctx.globalAlpha = birdAlpha;
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
             ctx.drawImage(img, t.x, t.y, t.w, t.h);
             ctx.restore();
         }
@@ -461,8 +477,8 @@
         var moving = Math.abs(dif) > 0.0003;
 
         if (moving) {
-            // Lerp inercial ágil
-            var lerpSpeed = isMobile ? 0.32 : 0.22;
+            // Suavizado inercial ágil, reactivo e inmediato (0.45 = respuesta sin retraso)
+            var lerpSpeed = isMobile ? 0.42 : 0.45;
             currentProgress += dif * lerpSpeed;
             if (targetProgress === 0 && currentProgress < 0.005) currentProgress = 0;
             else if (targetProgress === 1 && currentProgress > 0.995) currentProgress = 1;
@@ -473,7 +489,7 @@
             currentProgress = targetProgress;
             idleTicks++;
 
-            // En reposo: renderizar partículas a 30fps para 0% carga de CPU/GPU
+            // En reposo: renderizar partículas a 30fps para 0% carga innecesaria
             if (idleTicks % 2 === 0 || chispasEstela.length > 0) {
                 renderizar(currentProgress, 0);
             }
@@ -507,8 +523,26 @@
         }
     });
 
-    // Iniciar eventos
-    window.addEventListener('scroll', onScroll, { passive: true });
+    // Iniciar eventos nativos + GSAP ScrollTrigger
+    function iniciarControladoresScroll() {
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('wheel', onScroll, { passive: true });
+        window.addEventListener('touchmove', onScroll, { passive: true });
+
+        if (window.gsap && window.ScrollTrigger) {
+            window.gsap.registerPlugin(window.ScrollTrigger);
+            window.ScrollTrigger.create({
+                start: 0,
+                end: "max",
+                onUpdate: function (self) {
+                    targetProgress = self.progress;
+                }
+            });
+        }
+
+        onScroll();
+    }
+
     window.addEventListener('resize', function () {
         redimensionar();
         onScroll();
@@ -518,7 +552,7 @@
     redimensionar();
     inicializarParticulas();
     precargarSecuencia();
-    onScroll();
+    iniciarControladoresScroll();
     currentProgress = targetProgress;
     rafId = requestAnimationFrame(bucleAnimacion);
 

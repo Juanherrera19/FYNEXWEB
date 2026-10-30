@@ -123,17 +123,18 @@ def tarjeta(app: dict) -> str:
     color = esc(app["color"])
     categoria = esc(app.get("categoria", "App"))
     tipo = esc(app.get("tipo", "app"))
-    clases = "fx-card fx-revelar" + (" fx-card-pronto" if pronto else "")
+    clases = "fx-card fx-card-%s fx-revelar%s" % (slug, " fx-card-pronto" if pronto else "")
 
-    # 1. Columna Izquierda: Mockup de Dispositivo (Phone / Desktop / Holograma)
+    # 1. Columna Izquierda: Mockup de Dispositivo Inclinado con Personalidad 3D
     if slug == "debts-goodbye":
         mockup_html = """
-            <div class="fx-card-mockup-col">
+            <div class="fx-card-mockup-col fx-mockup-col-debts">
                 <div class="fx-card-mockup-glow" aria-hidden="true"></div>
-                <div class="fx-device-phone">
+                <div class="fx-card-decor-ray" aria-hidden="true"></div>
+                <div class="fx-device-phone fx-tilt-phone">
                     <div class="fx-phone-notch" aria-hidden="true"></div>
                     <img src="/img/apps/debts-goodbye/capturas/02_dashboard_resumen_real.png" 
-                         alt="Debts Goodbye Dashboard" 
+                         alt="Debts Goodbye Dashboard Financiero" 
                          class="fx-device-screen-img" 
                          width="154" 
                          height="280" 
@@ -142,9 +143,10 @@ def tarjeta(app: dict) -> str:
             </div>"""
     elif slug == "audiout":
         mockup_html = """
-            <div class="fx-card-mockup-col">
+            <div class="fx-card-mockup-col fx-mockup-col-audiout">
                 <div class="fx-card-mockup-glow" aria-hidden="true"></div>
-                <div class="fx-device-desktop">
+                <div class="fx-card-decor-ray" aria-hidden="true"></div>
+                <div class="fx-device-desktop fx-tilt-window">
                     <div class="fx-desktop-bar" aria-hidden="true">
                         <span class="fx-desktop-dot rojo"></span>
                         <span class="fx-desktop-dot amarillo"></span>
@@ -215,10 +217,15 @@ def tarjeta(app: dict) -> str:
         chips.append('<span class="fx-plat-pill"><span class="fx-plat-ico">%s</span>%s</span>' % (ico, p_str))
     chips_html = "".join(chips)
 
-    tagline_txt = esc(app.get("tagline") or app.get("descripcion_corta", ""))
+    if slug == "debts-goodbye":
+        tagline_txt = "Toma el control de tus finanzas. Planifica, ahorra y alcanza tus metas."
+    elif slug == "audiout":
+        tagline_txt = "Tu audio, donde lo necesitas. Conecta, distribuye y disfruta."
+    else:
+        tagline_txt = esc(app.get("tagline") or app.get("descripcion_corta", ""))
 
     return """
-        <article class="%s" data-tipo="%s" style="--app-color: %s;">
+        <article class="%s" data-tipo="%s" data-slug="%s" style="--app-color: %s;">
             %s
             <div class="fx-card-info-col">
                 <div class="fx-card-head-row">
@@ -237,7 +244,7 @@ def tarjeta(app: dict) -> str:
                 </div>
             </div>
         </article>""" % (
-        clases, tipo, color,
+        clases, tipo, slug, color,
         mockup_html,
         icono_html, categoria, status_html,
         nombre, tagline_txt, chips_html,
