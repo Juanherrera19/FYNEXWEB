@@ -1,11 +1,12 @@
 /**
- * FYNEX — Motor Cinematográfico de Vuelo del Fénix Ultra-Optimizado (v2.0)
+ * FYNEX — Motor Cinematográfico de Vuelo del Fénix Ultra-Optimizado (v2.2)
  * 
- * - Renderizado reactivo de 60fps ligado al scroll con suavizado inercial bidireccional.
- * - Throttling inteligente en reposo para 0% consumo innecesario de GPU/CPU.
- * - DPR adaptativo (1.15x móvil / 1.5x desktop) para erradicar el consumo excesivo de memoria.
- * - Partículas de fuego y chispas de propulsión unificadas en un único búfer de alto rendimiento.
- * - Trayectoria Hermite C1 continua sin tirones ni cambios bruscos de ángulo.
+ * - Renderizado reactivo a 60-120fps con suavizado inercial adaptativo y cero lag.
+ * - Decodificación asíncrona fuera del hilo principal (img.decode()) para erradicar el jank.
+ * - Priorización dinámica de fotogramas según velocidad y posición del scroll.
+ * - Caching estricto de elementos DOM y cálculos geométricos (cero layout thrashing).
+ * - Iluminación adaptativa: halo radial GPU + contorno ígneo con optimización en vuelo rápido.
+ * - Bucle autónomo de 22 frames al llegar al reposo final, alineado al subpíxel.
  */
 (function () {
     'use strict';
@@ -77,8 +78,6 @@
     var imagesLoaded = new Array(TOTAL_FRAMES).fill(false);
     var currentProgress = 0;
     var targetProgress = 0;
-    var lastRenderedProgress = -1;
-    var lastRenderedFrame = -1;
     var idleTicks = 0;
 
     // ── Secuencia de Animación Fija Final (Bucle Autónomo de 22 Fotogramas) ──
@@ -95,9 +94,15 @@
     var isMobile = viewW < 860;
     var dpr = 1;
 
+    // Referencias DOM y caché de geometría (erradica reflows en cada frame)
+    var heroPictureEl = null;
+    var scrollIndicatorEl = null;
+    var cachedHeroGeo = { x: 0, absY: 0, scale: 1, valido: false };
+    var cachedMaxScroll = 1;
+
     // ── Sistema de Partículas Liviano (Cenizas y Chispas de Vuelo) ──
     var particulas = [];
-    var NUM_PARTICULAS = isMobile ? 14 : 26;
+    var NUM_PARTICULAS = isMobile ? 12 : 22;
     var chispasEstela = [];
     var ultimaPosAve = { x: 0, y: 0 };
 
@@ -105,10 +110,10 @@
         return {
             x: Math.random() * viewW,
             y: yAleatoria ? Math.random() * viewH : viewH + Math.random() * 30,
-            vx: (Math.random() - 0.5) * 0.5,
-            vy: -(0.4 + Math.random() * 0.9),
-            size: 1.0 + Math.random() * 2.2,
-            alpha: 0.15 + Math.random() * 0.45,
+            vx: (Math.random() - 0.5) * 0.4,
+            vy: -(0.3 + Math.random() * 0.8),
+            size: 1.0 + Math.random() * 2.0,
+            alpha: 0.15 + Math.random() * 0.40,
             color: Math.random() > 0.5 ? '255, 122, 24' : '255, 190, 46',
             tiempo: Math.random() * 100,
             osc: 0.8 + Math.random() * 1.2
@@ -124,76 +129,95 @@
 
     function emitirChispasEstela(x, y, velocidad) {
         if (prefiereReducido || isMobile) return;
-        var cantidad = Math.min(3, Math.max(1, Math.floor(velocidad * 4)));
+        var cantidad = Math.min(2, Math.max(1, Math.floor(velocidad * 3)));
         for (var i = 0; i < cantidad; i++) {
-            var angulo = Math.PI * 0.5 + (Math.random() - 0.5) * 1.0;
-            var vel = 1.2 + Math.random() * 2.5;
+            var angulo = Math.PI * 0.5 + (Math.random() - 0.5) * 0.8;
+            var vel = 1.2 + Math.random() * 2.2;
             chispasEstela.push({
-                x: x + (Math.random() - 0.5) * 50,
-                y: y + (Math.random() - 0.5) * 35,
+                x: x + (Math.random() - 0.5) * 40,
+                y: y + (Math.random() - 0.5) * 30,
                 vx: Math.cos(angulo) * vel,
-                vy: -Math.sin(angulo) * vel - 0.8,
-                size: 1.5 + Math.random() * 2.0,
+                vy: -Math.sin(angulo) * vel - 0.6,
+                size: 1.2 + Math.random() * 1.8,
                 vida: 1.0,
-                decay: 0.03 + Math.random() * 0.04,
+                decay: 0.04 + Math.random() * 0.04,
                 color: Math.random() > 0.4 ? '255, 190, 46' : '255, 122, 24'
             });
         }
     }
 
-    // ── Pre-carga Eficiente de Fotogramas ──
+    // ── Carga y Decodificación Asíncrona (Off-Thread) ──
     function obtenerUrlFrame(idx) {
         var num = String(idx + 1).padStart(3, '0');
         return baseAssetPath + 'img/fenix_scroll/f_' + num + '.webp';
     }
 
+    function cargarFrameIndividual(i, callback) {
+        if (imagesLoaded[i]) {
+            if (callback) callback();
+            return;
+        }
+        if (images[i]) return; // ya encolado
+
+        var img = new Image();
+        images[i] = img;
+        img.onload = function () {
+            if (img.decode) {
+                img.decode().then(function () {
+                    imagesLoaded[i] = true;
+                    if (callback) callback();
+                }).catch(function () {
+                    imagesLoaded[i] = true;
+                    if (callback) callback();
+                });
+            } else {
+                imagesLoaded[i] = true;
+                if (callback) callback();
+            }
+        };
+        img.src = obtenerUrlFrame(i);
+    }
+
+    function priorizarFramesCercanos(targetFrame) {
+        for (var off = 0; off <= 4; off++) {
+            var fa = targetFrame - off;
+            var fb = targetFrame + off;
+            if (fa >= 0 && !imagesLoaded[fa]) cargarFrameIndividual(fa);
+            if (fb < TOTAL_FRAMES && !imagesLoaded[fb]) cargarFrameIndividual(fb);
+        }
+    }
+
     function precargarSecuencia() {
-        // 1. Fotograma 1 inmediato para arrancar sin parpadeo
-        var f0 = new Image();
-        f0.onload = function () {
-            images[0] = f0;
-            imagesLoaded[0] = true;
+        // 1. Fotograma 1 inmediato
+        cargarFrameIndividual(0, function () {
             document.body.classList.add('fx-canvas-activo');
             renderizar(0, 0);
 
-            // 2. Pre-cargar escalonado en background
-            cargarFramesEscalonados();
-        };
-        f0.src = obtenerUrlFrame(0);
-    }
-
-    function cargarFramesEscalonados() {
-        // Hitos clave de navegación primero
-        var hitos = [10, 25, 45, 60, 75, 90, 100, TOTAL_FRAMES - 1];
-        hitos.forEach(function (h) {
-            if (!imagesLoaded[h]) {
-                var img = new Image();
-                img.onload = function () { images[h] = img; imagesLoaded[h] = true; };
-                img.src = obtenerUrlFrame(h);
+            // 2. Pre-cargar hitos uniformes distribuidos por todo el sitio (cada 5 frames)
+            for (var h = 5; h < TOTAL_FRAMES; h += 5) {
+                cargarFrameIndividual(h);
             }
-        });
+            cargarFrameIndividual(TOTAL_FRAMES - 1);
 
-        var idx = 1;
-        function cargarLote() {
-            var enLote = 0;
-            while (idx < TOTAL_FRAMES && enLote < 6) {
-                if (!imagesLoaded[idx]) {
-                    (function (i) {
-                        var img = new Image();
-                        img.onload = function () { images[i] = img; imagesLoaded[i] = true; };
-                        img.src = obtenerUrlFrame(i);
-                    })(idx);
-                    enLote++;
+            // 3. Pre-cargar los fotogramas intermedios de forma escalonada
+            var idx = 1;
+            function cargarRestantes() {
+                var lote = 0;
+                while (idx < TOTAL_FRAMES && lote < 8) {
+                    if (!imagesLoaded[idx] && !images[idx]) {
+                        cargarFrameIndividual(idx);
+                        lote++;
+                    }
+                    idx++;
                 }
-                idx++;
+                if (idx < TOTAL_FRAMES) {
+                    setTimeout(cargarRestantes, 15);
+                } else {
+                    setTimeout(precargarFramesIdle, 100);
+                }
             }
-            if (idx < TOTAL_FRAMES) {
-                setTimeout(cargarLote, 20);
-            } else {
-                setTimeout(precargarFramesIdle, 100);
-            }
-        }
-        setTimeout(cargarLote, 30);
+            setTimeout(cargarRestantes, 25);
+        });
     }
 
     function obtenerMejorImagen(idx) {
@@ -220,8 +244,18 @@
             (function (index) {
                 var img = new Image();
                 img.onload = function () {
-                    idleImages[index] = img;
-                    idleImagesLoaded[index] = true;
+                    if (img.decode) {
+                        img.decode().then(function () {
+                            idleImages[index] = img;
+                            idleImagesLoaded[index] = true;
+                        }).catch(function () {
+                            idleImages[index] = img;
+                            idleImagesLoaded[index] = true;
+                        });
+                    } else {
+                        idleImages[index] = img;
+                        idleImagesLoaded[index] = true;
+                    }
                 };
                 img.src = obtenerUrlIdleFrame(index);
             })(i);
@@ -239,14 +273,54 @@
         return images[TOTAL_FRAMES - 1] || images[0];
     }
 
-    // ── Dimensionado Adaptativo (DPR inteligente para erradicar saturación GPU) ──
+    // ── Dimensionado y Caching Geométrico (Cero layout thrashing en RAF) ──
+    function actualizarGeometriaHero() {
+        heroPictureEl = document.querySelector('.fx-hero-logo-frame picture') || document.querySelector('.fx-hero-logo-img');
+        scrollIndicatorEl = document.getElementById('heroScrollIndicator');
+
+        var el = document.querySelector('.fx-hero-logo-img') || document.querySelector('.fx-hero-logo-frame');
+        if (el) {
+            var r = el.getBoundingClientRect();
+            if (r.width > 20 && r.height > 20) {
+                var scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
+                var absCx = r.left + r.width * 0.462;
+                var absCy = (r.top + scrollTop) + r.height * 0.498;
+                var birdH = r.height * 0.982;
+                cachedHeroGeo = {
+                    x: absCx,
+                    absY: absCy,
+                    scale: birdH / 569,
+                    valido: true
+                };
+                return;
+            }
+        }
+        if (!isMobile) {
+            var fScale = Math.min((viewW * 0.90) / 1050, (viewH * 0.86) / BASE_H);
+            cachedHeroGeo = {
+                x: Math.min(viewW - 220, viewW * 0.5 + Math.min(viewW, 1200) * 0.24),
+                absY: Math.min(viewH * 0.48, 420),
+                scale: fScale,
+                valido: false
+            };
+        } else {
+            var mScale = Math.min((viewW * 0.92) / 950, (viewH * 0.48) / BASE_H);
+            cachedHeroGeo = {
+                x: viewW * 0.72,
+                absY: viewH * 0.22,
+                scale: mScale,
+                valido: false
+            };
+        }
+    }
+
     function redimensionar() {
         viewW = window.innerWidth;
         viewH = window.innerHeight;
         isMobile = viewW < 860;
 
-        // Limitar DPR para máxima fluidez y cero consumo excesivo
-        var maxDpr = isMobile ? 1.15 : 1.5;
+        // Limitar DPR para máxima fluidez y cero saturación de memoria
+        var maxDpr = isMobile ? 1.15 : 1.35;
         dpr = Math.min(window.devicePixelRatio || 1, maxDpr);
 
         canvas.width = Math.round(viewW * dpr);
@@ -257,70 +331,39 @@
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.scale(dpr, dpr);
 
-        NUM_PARTICULAS = isMobile ? 14 : 26;
+        NUM_PARTICULAS = isMobile ? 12 : 22;
         if (particulas.length > NUM_PARTICULAS) {
             particulas.length = NUM_PARTICULAS;
         }
+
+        var doc = document.documentElement;
+        var body = document.body;
+        cachedMaxScroll = Math.max(1, (doc.scrollHeight || 0) - viewH, (body.scrollHeight || 0) - viewH);
+
+        actualizarGeometriaHero();
     }
 
-    // Geometría del Logo del Hero
-    function obtenerGeometriaHero() {
-        var el = document.querySelector('.fx-hero-logo-img') || document.querySelector('.fx-hero-logo-frame');
-        if (el) {
-            var r = el.getBoundingClientRect();
-            if (r.width > 20 && r.height > 20) {
-                var scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
-                var absCx = r.left + r.width * 0.462;
-                var absCy = (r.top + scrollTop) + r.height * 0.498;
-                var birdH = r.height * 0.982;
-                return {
-                    x: absCx,
-                    y: absCy - scrollTop,
-                    scale: birdH / 569,
-                    valido: true
-                };
-            }
-        }
-        if (!isMobile) {
-            var fScale = Math.min((viewW * 0.90) / 1050, (viewH * 0.86) / BASE_H);
-            return {
-                x: Math.min(viewW - 220, viewW * 0.5 + Math.min(viewW, 1200) * 0.24),
-                y: Math.min(viewH * 0.48, 420),
-                scale: fScale,
-                valido: false
-            };
-        } else {
-            var mScale = Math.min((viewW * 0.92) / 950, (viewH * 0.48) / BASE_H);
-            return {
-                x: viewW * 0.72,
-                y: viewH * 0.22,
-                scale: mScale,
-                valido: false
-            };
-        }
-    }
-
-    // ── Cálculo Cinemático de Posición, Escala y Trayectoria ──
+    // ── Cálculo Cinemático de Posición y Escala (Solo Matemáticas, 0ms DOM) ──
     function calcularTransformacionAve(progreso, frameIdx) {
         var meta = FRAMES_META[frameIdx] || [640, 360, 500, 500];
         var metaCx = meta[0];
         var metaCy = meta[1];
 
-        var heroGeo = obtenerGeometriaHero();
+        var scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
+        var heroTargetX = cachedHeroGeo.x;
+        var heroTargetY = cachedHeroGeo.absY - scrollTop;
+        var heroScale = cachedHeroGeo.scale;
+
         var birdScreenX, birdScreenY, currentScale;
 
         if (!isMobile) {
             var desktopScale = Math.min((viewW * 0.92) / 1050, (viewH * 0.88) / BASE_H);
 
-            var heroTargetX = heroGeo.x;
-            var heroTargetY = heroGeo.y;
-            var heroScale = heroGeo.scale;
-
             // Catálogo: ¡CENTRAL!
             var catTargetX = viewW * 0.50;
             var catTargetY = viewH * 0.50;
 
-            // Estudio
+            // Estudio / Principios
             var estTargetX = viewW * 0.52;
             var estTargetY = viewH * 0.44;
 
@@ -329,7 +372,6 @@
             var footTargetY = viewH - 170;
             var footScale = Math.min(desktopScale * 1.05, (viewH * 0.55) / 569);
 
-            // Interpolación directa y ágil ligada al scroll
             if (progreso < 0.26) {
                 var p = progreso / 0.26;
                 birdScreenX = heroTargetX + (catTargetX - heroTargetX) * p;
@@ -350,9 +392,9 @@
         } else {
             // MÓVIL: Trayectoria vertical compacta y centrada
             var mobileScale = Math.min((viewW * 0.95) / 950, (viewH * 0.50) / BASE_H);
-            var mHeroScale = heroGeo.scale || mobileScale;
+            var mHeroScale = heroScale || mobileScale;
 
-            var msX = heroGeo.x, msY = heroGeo.y;
+            var msX = heroTargetX, msY = heroTargetY;
             var mmX = viewW * 0.50, mmY = viewH * 0.40;
             var meX = viewW * 0.50, meY = viewH * 0.70;
 
@@ -388,33 +430,35 @@
         };
     }
 
-    // ── Renderizado Principal de Alto Rendimiento ──
+    // ── Renderizado Principal de 60-120 FPS ──
     function renderizar(progreso, velScroll) {
         ctx.clearRect(0, 0, viewW, viewH);
 
-        // Control de transición con el logo estático del Hero e indicador Desliza
-        var heroPicture = document.querySelector('.fx-hero-logo-frame picture') || document.querySelector('.fx-hero-logo-img');
-        var scrollIndicator = document.getElementById('heroScrollIndicator');
+        // Control de transición con el logo estático del Hero e indicador Desliza (usando referencias cacheadas)
         var birdAlpha = 1.0;
 
-        if (scrollIndicator) {
+        if (scrollIndicatorEl) {
             if (progreso > 0.04) {
-                scrollIndicator.classList.add('oculto');
+                if (!scrollIndicatorEl.classList.contains('oculto')) {
+                    scrollIndicatorEl.classList.add('oculto');
+                }
             } else {
-                scrollIndicator.classList.remove('oculto');
+                if (scrollIndicatorEl.classList.contains('oculto')) {
+                    scrollIndicatorEl.classList.remove('oculto');
+                }
             }
         }
 
-        if (heroPicture) {
+        if (heroPictureEl) {
             if (progreso <= 0.006) {
-                heroPicture.style.opacity = '1';
+                heroPictureEl.style.opacity = '1';
                 birdAlpha = 0;
             } else if (progreso < 0.045) {
                 var cross = (progreso - 0.006) / (0.045 - 0.006);
-                heroPicture.style.opacity = (1 - cross).toFixed(3);
+                heroPictureEl.style.opacity = (1 - cross).toFixed(3);
                 birdAlpha = cross;
             } else {
-                heroPicture.style.opacity = '0';
+                heroPictureEl.style.opacity = '0';
                 birdAlpha = 1.0;
             }
         }
@@ -448,7 +492,9 @@
         ultimaPosAve.x = t.birdScreenX;
         ultimaPosAve.y = t.birdScreenY;
 
-        // 1. Halo y Estela de Fuego Radiante en los Bordes y Silueta del Ave (Aura + Contorno)
+        var esMovimientoRapido = Math.abs(velScroll) > 0.008;
+
+        // 1. Halo y Estela de Fuego Radiante (Gradiente radial GPU fluido)
         if (img && birdAlpha > 0.005) {
             ctx.save();
             var glowRadius = Math.max(t.w, t.h) * 0.44;
@@ -466,23 +512,20 @@
             ctx.arc(t.birdScreenX, t.birdScreenY, glowRadius, 0, Math.PI * 2);
             ctx.fill();
 
-            // Pase 1: Estela exterior de fuego intenso contorneando los bordes del Fénix
-            ctx.shadowColor = 'rgba(255, 95, 0, ' + (0.78 * birdAlpha).toFixed(3) + ')';
-            ctx.shadowBlur = isMobile ? 16 : 26;
-            ctx.globalAlpha = birdAlpha * 0.85;
-            ctx.drawImage(img, t.x, t.y, t.w, t.h);
-
-            // Pase 2: Contorno ambarino nítido en bordes y plumas + cuerpo del fénix
-            ctx.shadowColor = 'rgba(255, 185, 40, ' + (0.55 * birdAlpha).toFixed(3) + ')';
-            ctx.shadowBlur = isMobile ? 8 : 12;
+            // Dibujo nítido del Fénix con contorno ígneo optimizado:
+            // Si el desplazamiento es rápido, se suprime shadowBlur para garantizar 60-120 FPS sin saturar la GPU.
+            if (!esMovimientoRapido) {
+                ctx.shadowColor = 'rgba(255, 120, 20, ' + (0.65 * birdAlpha).toFixed(3) + ')';
+                ctx.shadowBlur = isMobile ? 8 : 12;
+            }
             ctx.globalAlpha = birdAlpha;
             ctx.imageSmoothingEnabled = true;
-            ctx.imageSmoothingQuality = 'high';
+            ctx.imageSmoothingQuality = esMovimientoRapido ? 'medium' : 'high';
             ctx.drawImage(img, t.x, t.y, t.w, t.h);
             ctx.restore();
         }
 
-        // 2. Chispas de Vuelo (Efecto de halo directo sin shadowBlur costoso)
+        // 2. Chispas de Vuelo reactivas
         if (chispasEstela.length > 0) {
             ctx.save();
             for (var c = chispasEstela.length - 1; c >= 0; c--) {
@@ -499,14 +542,12 @@
                 }
 
                 var rAlpha = Math.max(0, ch.vida);
-                // Halo exterior suave
                 ctx.fillStyle = 'rgba(' + ch.color + ', ' + (rAlpha * 0.25).toFixed(2) + ')';
                 ctx.beginPath();
-                ctx.arc(ch.x, ch.y, ch.size * 2.2, 0, Math.PI * 2);
+                ctx.arc(ch.x, ch.y, ch.size * 2.0, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Núcleo brillante
-                ctx.fillStyle = 'rgba(255, 255, 255, ' + (rAlpha * 0.9).toFixed(2) + ')';
+                ctx.fillStyle = 'rgba(255, 255, 255, ' + (rAlpha * 0.85).toFixed(2) + ')';
                 ctx.beginPath();
                 ctx.arc(ch.x, ch.y, ch.size * 0.8, 0, Math.PI * 2);
                 ctx.fill();
@@ -518,30 +559,24 @@
         ctx.save();
         for (var i = 0; i < particulas.length; i++) {
             var part = particulas[i];
-            part.tiempo += 0.018;
-            part.x += part.vx + Math.sin(part.tiempo * part.osc) * 0.4;
+            part.tiempo += 0.02;
+            part.x += part.vx + Math.sin(part.tiempo * part.osc) * 0.35;
             part.y += part.vy;
 
-            if (part.y < -15) {
-                part.y = viewH + 15;
-                part.x = Math.random() * viewW;
+            if (part.y < -20 || part.x < -20 || part.x > viewW + 20) {
+                particulas[i] = crearParticulaAmbiente(false);
+                continue;
             }
-            if (part.x < -20) part.x = viewW + 20;
-            if (part.x > viewW + 20) part.x = -20;
 
-            var aP = part.alpha * (0.8 + 0.2 * Math.sin(part.tiempo * 3));
-            ctx.fillStyle = 'rgba(' + part.color + ', ' + aP.toFixed(2) + ')';
+            ctx.fillStyle = 'rgba(' + part.color + ', ' + part.alpha.toFixed(2) + ')';
             ctx.beginPath();
             ctx.arc(part.x, part.y, part.size, 0, Math.PI * 2);
             ctx.fill();
         }
         ctx.restore();
-
-        lastRenderedProgress = progreso;
-        lastRenderedFrame = frameIndex;
     }
 
-    // ── Bucle de Animación Inteligente con Ahorro de Energía en Reposo ──
+    // ── Bucle de Animación Ultra-Fluido ──
     var rafId = null;
     var estaActivo = true;
 
@@ -550,26 +585,27 @@
 
         var dif = targetProgress - currentProgress;
         var absDif = Math.abs(dif);
-        var moving = absDif > 0.0002;
+        var moving = absDif > 0.0001;
 
         if (moving) {
-            // Aceleración reactiva ultra-rápida ligada a la velocidad del scroll:
-            // Si el usuario desliza rápido, el seguimiento es prácticamente instantáneo (0ms lag)
+            // Aceleración reactiva proporcional:
+            // Cuanto más rápido se desplaza el usuario, más inmediata es la respuesta (0 lag)
             var lerpSpeed;
             if (absDif > 0.08) {
-                lerpSpeed = 0.94;
+                lerpSpeed = 0.92;
             } else if (absDif > 0.03) {
-                lerpSpeed = 0.78;
+                lerpSpeed = 0.75;
+            } else if (absDif > 0.01) {
+                lerpSpeed = 0.58;
             } else {
-                lerpSpeed = isMobile ? 0.52 : 0.56;
+                lerpSpeed = isMobile ? 0.44 : 0.48;
             }
 
             currentProgress += dif * lerpSpeed;
-            if (targetProgress <= 0.006 && currentProgress < 0.012) {
-                currentProgress = 0;
-            } else if (targetProgress >= 0.994 && currentProgress > 0.988) {
-                currentProgress = 1;
+            if (Math.abs(targetProgress - currentProgress) < 0.0003) {
+                currentProgress = targetProgress;
             }
+
             idleTicks = 0;
             renderizar(currentProgress, absDif);
             rafId = requestAnimationFrame(bucleAnimacion);
@@ -577,7 +613,7 @@
             currentProgress = targetProgress;
             idleTicks++;
 
-            // En reposo: renderizar a 30fps para chispas/cenizas, o reproducir la animación fija del fénix al final de la página
+            // En reposo: renderizar continuo si está en animación final fija, o a 30fps para chispas/cenizas
             var esFinal = currentProgress >= 0.985;
             if (esFinal || idleTicks % 2 === 0 || chispasEstela.length > 0) {
                 renderizar(currentProgress, 0);
@@ -588,16 +624,16 @@
 
     // ── Control de Scroll Pasivo y Reactivo ──
     function calcularProgresoScroll() {
-        var doc = document.documentElement;
-        var body = document.body;
-        var maxScroll = Math.max(1, (doc.scrollHeight || 0) - window.innerHeight, (body.scrollHeight || 0) - window.innerHeight);
-        var scrollTop = window.pageYOffset || doc.scrollTop || body.scrollTop || 0;
-        return Math.min(1, Math.max(0, scrollTop / maxScroll));
+        var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+        return Math.min(1, Math.max(0, scrollTop / cachedMaxScroll));
     }
 
     function onScroll() {
         targetProgress = calcularProgresoScroll();
-        if (targetProgress > 0.4 && !idleCargandoIniciado) {
+        var targetFrame = Math.min(TOTAL_FRAMES - 1, Math.max(0, Math.round(targetProgress * (TOTAL_FRAMES - 1))));
+        priorizarFramesCercanos(targetFrame);
+
+        if (targetProgress > 0.35 && !idleCargandoIniciado) {
             precargarFramesIdle();
         }
     }
@@ -615,7 +651,7 @@
         }
     });
 
-    // Iniciar eventos nativos + GSAP ScrollTrigger
+    // Iniciar eventos nativos optimizados
     function iniciarControladoresScroll() {
         window.addEventListener('scroll', onScroll, { passive: true });
         window.addEventListener('wheel', onScroll, { passive: true });
@@ -628,6 +664,8 @@
                 end: "max",
                 onUpdate: function (self) {
                     targetProgress = self.progress;
+                    var tFrame = Math.min(TOTAL_FRAMES - 1, Math.max(0, Math.round(targetProgress * (TOTAL_FRAMES - 1))));
+                    priorizarFramesCercanos(tFrame);
                 }
             });
         }
@@ -640,6 +678,13 @@
         onScroll();
         renderizar(currentProgress, 0);
     });
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function () {
+            redimensionar();
+            actualizarGeometriaHero();
+        });
+    }
 
     redimensionar();
     inicializarParticulas();
