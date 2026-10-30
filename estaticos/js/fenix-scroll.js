@@ -1,12 +1,12 @@
 /**
- * FYNEX — Motor Cinematográfico de Vuelo del Fénix Ultra-Optimizado (v2.2)
+ * FYNEX — Motor Cinematográfico de Vuelo del Fénix Ultra-Optimizado (v2.3)
  * 
- * - Renderizado reactivo a 60-120fps con suavizado inercial adaptativo y cero lag.
- * - Decodificación asíncrona fuera del hilo principal (img.decode()) para erradicar el jank.
- * - Priorización dinámica de fotogramas según velocidad y posición del scroll.
+ * - Renderizado reactivo a 60-120fps con respuesta instantánea al inicio del scroll (cero lag).
+ * - Decodificación asíncrona fuera del hilo principal (img.decode()).
+ * - Carga inmediata prioritaria del lote inicial de fotogramas (0..12).
+ * - Bucle autónomo continuo e infinito (24 frames con interpolación lineal a 60fps sin cortes perceptibles).
  * - Caching estricto de elementos DOM y cálculos geométricos (cero layout thrashing).
  * - Iluminación adaptativa: halo radial GPU + contorno ígneo con optimización en vuelo rápido.
- * - Bucle autónomo de 22 frames al llegar al reposo final, alineado al subpíxel.
  */
 (function () {
     'use strict';
@@ -80,13 +80,12 @@
     var targetProgress = 0;
     var idleTicks = 0;
 
-    // ── Secuencia de Animación Fija Final (Bucle Autónomo de 22 Fotogramas) ──
-    var TOTAL_IDLE_FRAMES = 22;
+    // ── Secuencia de Animación Fija Final (Bucle Autónomo Continuo de 24 Fotogramas) ──
+    var TOTAL_IDLE_FRAMES = 24;
     var idleImages = new Array(TOTAL_IDLE_FRAMES);
     var idleImagesLoaded = new Array(TOTAL_IDLE_FRAMES).fill(false);
-    var idleAnimIndex = 0;
-    var lastIdleTime = 0;
-    var IDLE_FRAME_INTERVAL = 42; // ~24fps animación fluida cinematográfica
+    var idleStartTime = 0;
+    var IDLE_CYCLE_DURATION = 1008; // 24 frames * 42ms = ciclo continuo perfectamente equilibrado
     var idleCargandoIniciado = false;
 
     var viewW = window.innerWidth;
@@ -179,7 +178,7 @@
     }
 
     function priorizarFramesCercanos(targetFrame) {
-        for (var off = 0; off <= 4; off++) {
+        for (var off = 0; off <= 5; off++) {
             var fa = targetFrame - off;
             var fb = targetFrame + off;
             if (fa >= 0 && !imagesLoaded[fa]) cargarFrameIndividual(fa);
@@ -188,36 +187,47 @@
     }
 
     function precargarSecuencia() {
-        // 1. Fotograma 1 inmediato
-        cargarFrameIndividual(0, function () {
-            document.body.classList.add('fx-canvas-activo');
-            renderizar(0, 0);
+        // Carga INMEDIATA y prioritaria de los primeros 12 fotogramas (0 a 11)
+        // para garantizar respuesta instantánea desde el primer píxel de scroll
+        var inicialesPendientes = 12;
 
-            // 2. Pre-cargar hitos uniformes distribuidos por todo el sitio (cada 5 frames)
-            for (var h = 5; h < TOTAL_FRAMES; h += 5) {
-                cargarFrameIndividual(h);
-            }
-            cargarFrameIndividual(TOTAL_FRAMES - 1);
-
-            // 3. Pre-cargar los fotogramas intermedios de forma escalonada
-            var idx = 1;
-            function cargarRestantes() {
-                var lote = 0;
-                while (idx < TOTAL_FRAMES && lote < 8) {
-                    if (!imagesLoaded[idx] && !images[idx]) {
-                        cargarFrameIndividual(idx);
-                        lote++;
+        for (var f = 0; f < 12; f++) {
+            (function (idx) {
+                cargarFrameIndividual(idx, function () {
+                    if (idx === 0) {
+                        document.body.classList.add('fx-canvas-activo');
+                        renderizar(0, 0);
                     }
-                    idx++;
-                }
-                if (idx < TOTAL_FRAMES) {
-                    setTimeout(cargarRestantes, 15);
-                } else {
-                    setTimeout(precargarFramesIdle, 100);
-                }
-            }
-            setTimeout(cargarRestantes, 25);
-        });
+                    inicialesPendientes--;
+                    if (inicialesPendientes === 0) {
+                        // Iniciar carga de hitos en el resto de la página
+                        for (var h = 15; h < TOTAL_FRAMES; h += 5) {
+                            cargarFrameIndividual(h);
+                        }
+                        cargarFrameIndividual(TOTAL_FRAMES - 1);
+
+                        // Escalonar el resto
+                        var restIdx = 12;
+                        function cargarRestantes() {
+                            var lote = 0;
+                            while (restIdx < TOTAL_FRAMES && lote < 8) {
+                                if (!imagesLoaded[restIdx] && !images[restIdx]) {
+                                    cargarFrameIndividual(restIdx);
+                                    lote++;
+                                }
+                                restIdx++;
+                            }
+                            if (restIdx < TOTAL_FRAMES) {
+                                setTimeout(cargarRestantes, 15);
+                            } else {
+                                setTimeout(precargarFramesIdle, 80);
+                            }
+                        }
+                        setTimeout(cargarRestantes, 25);
+                    }
+                });
+            })(f);
+        }
     }
 
     function obtenerMejorImagen(idx) {
@@ -434,11 +444,11 @@
     function renderizar(progreso, velScroll) {
         ctx.clearRect(0, 0, viewW, viewH);
 
-        // Control de transición con el logo estático del Hero e indicador Desliza (usando referencias cacheadas)
+        // Control de transición con el logo estático del Hero e indicador Desliza (cero retraso al inicio)
         var birdAlpha = 1.0;
 
         if (scrollIndicatorEl) {
-            if (progreso > 0.04) {
+            if (progreso > 0.035) {
                 if (!scrollIndicatorEl.classList.contains('oculto')) {
                     scrollIndicatorEl.classList.add('oculto');
                 }
@@ -450,13 +460,9 @@
         }
 
         if (heroPictureEl) {
-            if (progreso <= 0.006) {
+            if (progreso <= 0.002) {
                 heroPictureEl.style.opacity = '1';
-                birdAlpha = 0;
-            } else if (progreso < 0.045) {
-                var cross = (progreso - 0.006) / (0.045 - 0.006);
-                heroPictureEl.style.opacity = (1 - cross).toFixed(3);
-                birdAlpha = cross;
+                birdAlpha = 1.0;
             } else {
                 heroPictureEl.style.opacity = '0';
                 birdAlpha = 1.0;
@@ -466,18 +472,24 @@
         var esFinal = progreso >= 0.985;
         var frameIndex = Math.min(TOTAL_FRAMES - 1, Math.max(0, Math.round(progreso * (TOTAL_FRAMES - 1))));
         var img;
+        var imgNext = null;
+        var idleBlend = 0;
 
         if (esFinal) {
             var ahora = performance.now();
-            if (ahora - lastIdleTime >= IDLE_FRAME_INTERVAL) {
-                idleAnimIndex = (idleAnimIndex + 1) % TOTAL_IDLE_FRAMES;
-                lastIdleTime = ahora;
-            }
-            img = obtenerMejorImagenIdle(idleAnimIndex);
+            if (idleStartTime === 0) idleStartTime = ahora;
+            var tTrans = ahora - idleStartTime;
+            var frameFloat = ((tTrans % IDLE_CYCLE_DURATION) / IDLE_CYCLE_DURATION) * TOTAL_IDLE_FRAMES;
+            var idxA = Math.floor(frameFloat) % TOTAL_IDLE_FRAMES;
+            var idxB = (idxA + 1) % TOTAL_IDLE_FRAMES;
+            idleBlend = frameFloat - Math.floor(frameFloat);
+
+            img = obtenerMejorImagenIdle(idxA);
+            imgNext = obtenerMejorImagenIdle(idxB);
         } else {
             img = obtenerMejorImagen(frameIndex);
-            idleAnimIndex = 0;
-            lastIdleTime = 0;
+            idleStartTime = 0;
+            imgNext = null;
         }
 
         var t = calcularTransformacionAve(progreso, frameIndex);
@@ -521,7 +533,15 @@
             ctx.globalAlpha = birdAlpha;
             ctx.imageSmoothingEnabled = true;
             ctx.imageSmoothingQuality = esMovimientoRapido ? 'medium' : 'high';
-            ctx.drawImage(img, t.x, t.y, t.w, t.h);
+
+            if (esFinal && imgNext && imgNext !== img) {
+                // Bucle sin fin continuo e imperceptible: interpolación suave a 60fps sin cortes
+                ctx.drawImage(img, t.x, t.y, t.w, t.h);
+                ctx.globalAlpha = birdAlpha * idleBlend;
+                ctx.drawImage(imgNext, t.x, t.y, t.w, t.h);
+            } else {
+                ctx.drawImage(img, t.x, t.y, t.w, t.h);
+            }
             ctx.restore();
         }
 
@@ -589,16 +609,16 @@
 
         if (moving) {
             // Aceleración reactiva proporcional:
-            // Cuanto más rápido se desplaza el usuario, más inmediata es la respuesta (0 lag)
+            // Al arrancar (currentProgress < 0.08) o al mover rápido, máxima inmediatez (cero retraso inicial)
             var lerpSpeed;
-            if (absDif > 0.08) {
-                lerpSpeed = 0.92;
+            if (absDif > 0.08 || currentProgress < 0.08) {
+                lerpSpeed = 0.90;
             } else if (absDif > 0.03) {
-                lerpSpeed = 0.75;
+                lerpSpeed = 0.76;
             } else if (absDif > 0.01) {
-                lerpSpeed = 0.58;
+                lerpSpeed = 0.60;
             } else {
-                lerpSpeed = isMobile ? 0.44 : 0.48;
+                lerpSpeed = isMobile ? 0.46 : 0.50;
             }
 
             currentProgress += dif * lerpSpeed;

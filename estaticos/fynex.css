@@ -856,7 +856,7 @@ button { font-family: inherit; }
 .fx-catalogo-topbar {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
     gap: 16px;
     margin-bottom: 28px;
     flex-wrap: wrap;
@@ -1793,19 +1793,53 @@ button { font-family: inherit; }
 }
 @media (max-width: 860px) {
     .fx-principios-box {
-        padding: 38px 24px 28px;
-        border-radius: 20px;
+        padding: 36px 22px 28px !important;
+        border-radius: 20px !important;
     }
     .fx-principios-grid {
-        grid-template-columns: 1fr;
-        gap: 36px;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 30px !important;
+        width: 100% !important;
+    }
+    .fx-principio-col {
+        width: 100% !important;
+        max-width: 100% !important;
+        text-align: left !important;
+        padding-bottom: 22px !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.07) !important;
+    }
+    .fx-principio-col:last-child {
+        border-bottom: none !important;
+        padding-bottom: 0 !important;
+    }
+    .fx-principio-pod-wrap {
+        margin-bottom: 16px !important;
+    }
+    .fx-principio-pod {
+        width: 68px !important;
+        height: 68px !important;
+    }
+    .fx-principio-num {
+        font-size: 0.95rem !important;
+        margin-bottom: 8px !important;
+    }
+    .fx-principio-nombre {
+        font-size: 1.25rem !important;
+        line-height: 1.28 !important;
+        margin-bottom: 10px !important;
+    }
+    .fx-principio-desc {
+        font-size: 0.95rem !important;
+        line-height: 1.6 !important;
+        color: #cbd5e1 !important;
     }
     .fx-principios-cab {
-        text-align: left;
-        margin-bottom: 34px;
+        text-align: left !important;
+        margin-bottom: 30px !important;
     }
-    .fx-principios-track {
-        max-width: 240px;
+    .fx-principios-track-wrap {
+        display: none !important;
     }
 }
 
@@ -3344,31 +3378,14 @@ body[style*="#0284c7"] .fx-pilar-chip {
         padding: 6px 11px;
     }
 
-    /* ── Filtros y Navegación del Catálogo en Móvil ── */
+    /* ── Navegación del Catálogo en Móvil ── */
     .fx-catalogo-topbar {
         display: flex;
         flex-direction: row;
         align-items: center;
-        justify-content: space-between;
+        justify-content: flex-end;
         gap: 12px;
         margin-bottom: 16px;
-    }
-    .fx-filtros {
-        flex: 1;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        justify-content: flex-start;
-        padding: 4px 2px 8px;
-        margin-bottom: 0;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-    }
-    .fx-filtros::-webkit-scrollbar { display: none; }
-    .fx-filtro-btn {
-        white-space: nowrap;
-        flex-shrink: 0;
-        padding: 8px 14px;
-        font-size: 0.82rem;
     }
     .fx-slider-btn {
         width: 38px;
@@ -3426,35 +3443,30 @@ body[style*="#0284c7"] .fx-pilar-chip {
         font-size: 1.22rem;
     }
 
-    /* ── Principios de Ingeniería y Diseño: EXACTAMENTE EN 3 COLUMNAS ── */
-    .fx-valores-grid {
-        display: grid !important;
-        grid-template-columns: repeat(3, 1fr) !important;
-        gap: 10px;
+    /* ── Principios de Ingeniería y Diseño: Cómoda Lectura Vertical en Móvil ── */
+    .fx-principios-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 28px !important;
+        width: 100% !important;
     }
-    .fx-valor-card {
-        padding: 18px 12px;
-        border-radius: 16px;
-        min-width: 0;
+    .fx-principio-col {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding-bottom: 22px !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.07) !important;
     }
-    .fx-valor-numero {
-        font-size: 1.6rem;
-        top: 6px;
-        right: 8px;
+    .fx-principio-col:last-child {
+        border-bottom: none !important;
+        padding-bottom: 0 !important;
     }
-    .fx-valor-icono {
-        font-size: 1.6rem;
-        margin-bottom: 8px;
+    .fx-principio-nombre {
+        font-size: 1.25rem !important;
     }
-    .fx-valor-card h4 {
-        font-size: 0.86rem;
-        font-weight: 750;
-        line-height: 1.25;
-        margin-bottom: 6px;
-    }
-    .fx-valor-card p {
-        font-size: 0.74rem;
-        line-height: 1.38;
+    .fx-principio-desc {
+        font-size: 0.95rem !important;
+        color: #cbd5e1 !important;
+        line-height: 1.6 !important;
     }
 
     /* ── Hero Página de Producto (Rediseño Móvil Dividido) ── */
